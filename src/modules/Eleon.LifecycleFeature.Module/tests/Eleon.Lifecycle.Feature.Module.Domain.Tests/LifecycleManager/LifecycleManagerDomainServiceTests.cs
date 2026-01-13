@@ -2236,8 +2236,8 @@ public class LifecycleManagerDomainServiceTests : ModuleDomainTestBase<ModuleDom
                 {
                     RefId = _testUserId.ToString(),
                     ActorType = LifecycleActorTypes.User,
-                    Status = LifecycleActorStatus.Approved, // Already approved (after concurrency conflict)
-                    IsEnroute = false
+                    Status = LifecycleActorStatus.Approved // Already approved (after concurrency conflict)
+                    // IsEnroute is computed property based on Status, IsApprovalNeeded, and IsActive
                 }
             }
         };

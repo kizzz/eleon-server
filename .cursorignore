@@ -1,0 +1,93 @@
+# =========================================================
+# EleonSoft Analyzer / Concat Tools - Recursive Ignore Rules
+# =========================================================
+
+# Build output (match any depth)
+**/bin/**
+**/obj/**
+**/out/**
+**/dist/**
+**/publish/**
+**/artifacts/**
+**/coverage/**
+
+# Framework-specific build/cache directories
+**/.next/**
+**/.angular/**
+**/.nx/**
+**/.turbo/**
+**/.cache/**
+
+# Visual Studio / IDE folders
+**/.vs/**
+**/.vscode/**
+**/.idea/**
+
+# Git metadata
+**/.git/**
+.gitignore
+.gitattributes
+
+# Binary and compiled artifacts
+**/*.dll
+**/*.exe
+**/*.pdb
+**/*.dmp
+**/*.so
+**/*.dylib
+**/*.a
+**/*.lib
+**/*.nupkg
+**/*.snupkg
+
+# Archive files
+**/*.zip
+**/*.tar
+**/*.7z
+
+# Temporary / cache / log files
+**/*.tmp
+**/*.log
+**/*.bak
+**/*.swp
+**/*.cache
+**/*.lock
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.DS_Store
+**/Thumbs.db
+
+# Coverage / test results
+**/TestResults/**
+**/coverage/**
+**/*.coverage
+**/*.trx
+**/*.testsettings
+
+# IDE and tooling noise
+**/_ReSharper*/
+**/*.resharper
+**/*.ncrunch*
+**/*.vssscc
+**/*.vspscc
+
+# Local publish or package outputs
+**/*.manifest
+**/*.msix*
+**/*.appx*
+**/*.bundle
+**/*.publish.xml
+
+# Exclude only binary or build artifacts, not sources
+!*.cs
+!*.json
+!*.yaml
+!*.yml
+!*.xml
+!*.config
+!*.*
+
+src-helper
+src/immunities/other/** */
+src/eleonsoft/server/src/modules/Eleon.AuthMvc.Module/wwwroot/** */

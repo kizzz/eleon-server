@@ -2074,6 +2074,7 @@
         "dependencies": {
           "Common.EventBus.Abstractions.Module.Full": "[1.0.0, )",
           "DeviceDetector.NET": "[6.4.7, )",
+          "Eleon.Abp.Lib.Full": "[1.0.0, )",
           "Eleon.Authorization.Lib.Full": "[1.0.0, )",
           "Eleon.Common.Lib.Full": "[1.0.0, )",
           "Eleon.HealthChecks.Lib.Full": "[1.0.0, )",
@@ -2491,13 +2492,8 @@
           "Eleon.TenantSettings.Lib.Full": "[1.0.0, )",
           "MailKit": "[4.14.1, )",
           "System.Data.SqlClient": "[4.9.0, )",
-          "Volo.Abp.Account.Application": "[10.0.1, )",
           "Volo.Abp.AuditLogging.EntityFrameworkCore": "[10.0.1, )",
           "Volo.Abp.AutoMapper": "[10.0.1, )",
-          "Volo.Abp.BackgroundJobs.Domain": "[10.0.1, )",
-          "Volo.Abp.BackgroundJobs.EntityFrameworkCore": "[10.0.1, )",
-          "Volo.Abp.BlobStoring.Database.Domain": "[10.0.1, )",
-          "Volo.Abp.BlobStoring.Database.EntityFrameworkCore": "[10.0.1, )",
           "Volo.Abp.FeatureManagement.Application": "[10.0.1, )",
           "Volo.Abp.FeatureManagement.EntityFrameworkCore": "[10.0.1, )",
           "Volo.Abp.FeatureManagement.HttpApi.Client": "[10.0.1, )",
@@ -2517,10 +2513,7 @@
           "Volo.Abp.TenantManagement.Application": "[10.0.1, )",
           "Volo.Abp.TenantManagement.Application.Contracts": "[10.0.1, )",
           "Volo.Abp.TenantManagement.HttpApi.Client": "[10.0.1, )",
-          "Volo.Abp.TextTemplating": "[10.0.1, )",
-          "Volo.CmsKit.Domain.Shared": "[10.0.1, )",
-          "Volo.CmsKit.HttpApi": "[10.0.1, )",
-          "Volo.CmsKit.HttpApi.Client": "[10.0.1, )"
+          "Volo.Abp.TextTemplating": "[10.0.1, )"
         }
       },
       "eleon.identityquerying.module.full": {

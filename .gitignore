@@ -1,0 +1,89 @@
+
+# Dotnet
+bin/
+obj/
+TestResults/
+*.user
+*.suo
+.vs/
+**/bin-build*/
+
+# Artifacts
+artifacts/
+!artifacts/**/.keep
+
+# Coverage/mutation
+StrykerOutput/
+coverage*
+CoverageResults/
+
+# Node
+node_modules/
+
+# Angular
+.nx/
+.angular/
+
+# VS Code/Devcontainer
+.vscode/
+.devcontainer/.env
+.dotnet/
+.devcontainer/codex-root-config/wsl/log
+.devcontainer/codex-root-config/wsl/sessions
+output
+.devcontainer/codex-root-config/wsl
+
+appsettings.Debug.json
+Logs/
+
+.containers/telemetry/data
+
+
+
+bin/
+!.nuke/bin
+obj/
+# Node artifact files
+node_modules/
+dist/
+
+.config/custom/*
+
+# Log files
+
+*.log
+
+.nx/
+.angular/
+.angular
+.containers/telemetry/data/*
+.containers/memory/data/*
+!.containers/telemetry/data/.gitkeep
+!.containers/memory/data/.gitkeep
+analytics/
+.agents/codex/sessions
+packages-microsoft-prod.deb
+nuget_cache.db-wal
+nuget_cache.db-shm
+nuget_cache.db
+.codex/sessions
+.codex/auth.json-vhotm
+.codex/auth.json-admin
+.codex/auth.json
+.codex/history.jsonl
+.codex/history.jsonl
+.local
+
+publish/
+tmp
+.nuke/artifacts
+src/eleonsoft/server/.nuget
+.codex/lin/sessions
+.codex/lin/history.jsonl
+.codex/lin/skills/.system
+.codex/skills/.system
+.cursor/lin/projects
+.codex/lin/version.json
+.codex/lin/auth.json
+.cursor/lin/plans
+.nuget

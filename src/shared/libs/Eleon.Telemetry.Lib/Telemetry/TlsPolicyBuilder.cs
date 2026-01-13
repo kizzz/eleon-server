@@ -69,9 +69,23 @@ internal static class TlsPolicyBuilder
     {
       try
       {
-        var cert = new X509Certificate2(tlsOptions.ClientCertificate.Path);
+        X509Certificate2 cert;
+        var path = tlsOptions.ClientCertificate.Path;
+        var contentType = X509Certificate2.GetCertContentType(path);
+        
+        if (contentType == X509ContentType.Pkcs12)
+        {
+          // PKCS#12/PFX file - load with null password (no password support in current options)
+          cert = X509CertificateLoader.LoadPkcs12FromFile(path, password: null);
+        }
+        else
+        {
+          // Plain certificate (PEM/DER)
+          cert = X509CertificateLoader.LoadCertificateFromFile(path);
+        }
+        
         handler.ClientCertificates.Add(cert);
-        logger?.LogDebug("TLS client certificate loaded from path: {Path}", tlsOptions.ClientCertificate.Path);
+        logger?.LogDebug("TLS client certificate loaded from path: {Path}", path);
       }
       catch (Exception ex)
       {

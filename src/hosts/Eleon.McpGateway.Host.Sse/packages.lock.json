@@ -980,6 +980,7 @@
         "dependencies": {
           "Common.EventBus.Abstractions.Module.Full": "[1.0.0, )",
           "DeviceDetector.NET": "[6.4.7, )",
+          "Eleon.Abp.Lib.Full": "[1.0.0, )",
           "Eleon.Authorization.Lib.Full": "[1.0.0, )",
           "Eleon.Common.Lib.Full": "[1.0.0, )",
           "Eleon.HealthChecks.Lib.Full": "[1.0.0, )",

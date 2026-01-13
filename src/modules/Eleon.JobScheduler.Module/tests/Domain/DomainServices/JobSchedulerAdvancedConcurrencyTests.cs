@@ -399,7 +399,7 @@ public class JobSchedulerAdvancedConcurrencyTests : DomainTestBase
             .WithId(taskExecutionId)
             .WithTaskId(taskId)
             .WithStatus(JobSchedulerTaskExecutionStatus.Executing) // BUG: Still Executing even though all actions are done
-            .WithFinishedAtUtc(null) // Also missing FinishedAtUtc
+            .WithFinishedAt(null) // Also missing FinishedAtUtc
             .WithActionExecution(actionExecution1)
             .WithActionExecution(actionExecution2)
             .Build();
@@ -438,8 +438,8 @@ public class JobSchedulerAdvancedConcurrencyTests : DomainTestBase
         var verifyUow = CreateMockUnitOfWork(false);
         uowManager.Begin(true).Returns(uow);
         uowManager.Begin(false).Returns(verifyUow);
-        uow.SaveChangesAsync(Arg.Any<CancellationToken>()).ThrowsAsync(new AbpDbConcurrencyException());
-        uow.SaveChangesAsync().ThrowsAsync(new AbpDbConcurrencyException());
+        uow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(Task.FromException(new AbpDbConcurrencyException()));
+        uow.SaveChangesAsync().Returns(Task.FromException(new AbpDbConcurrencyException()));
 
         var service = CreateTaskExecutionDomainService(
             taskRepository: taskRepository,

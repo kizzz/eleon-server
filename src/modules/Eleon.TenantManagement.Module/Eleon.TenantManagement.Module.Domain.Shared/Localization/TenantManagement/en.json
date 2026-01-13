@@ -772,6 +772,7 @@
     "SendErrors": "Send Errors",
     "EditSystemEmailTemplate": "Edit System Email Template",
     "EditTelegramTemplate": "Edit Telegram Template",
-    "TwoFactorEmailTemplate": "Two-Factor Authentication Email Template"
+    "TwoFactorEmailTemplate": "Two-Factor Authentication Email Template",
+    "ControlDelegation:SelectUser": "Select a User"
   }
 }

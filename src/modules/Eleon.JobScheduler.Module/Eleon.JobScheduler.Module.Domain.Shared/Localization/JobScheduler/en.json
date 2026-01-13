@@ -77,6 +77,7 @@
     "PeriodType:Daily": "Daily",
     "PeriodType:Weekly": "Weekly",
     "PeriodType:Monthly": "Monthly",
+    "None": "None",
     "5Minutes": "5 Minutes",
     "10Minutes": "10 Minutes",
     "15Minutes": "15 Minutes",

@@ -33,7 +33,6 @@ node_modules/
 output
 .devcontainer/codex-root-config/wsl
 
-appsettings.Debug.json
 Logs/
 
 .containers/telemetry/data

@@ -28,7 +28,7 @@ CTX (must consult when relevant):
 
 PD (consistency_over_cleverness):
 - default: consistent, not clever
-- if unsure: grep + codebase_search (semantic) → clone canonical → minimal delta
+- if unsure: `rg` + codebase_search (semantic) → clone canonical → minimal delta
 - ABP patterns: search existing modules first; NEVER invent new ABP architecture
 
 ## 1. BACKEND AGENT
@@ -48,7 +48,7 @@ ALWAYS:
   Domain.Shared → Infrastructure/EFCore → Domain → Application → Application.Contracts → HttpApi → HttpApi.Client → HttpApi.Host
 - run narrowest build/tests/lint that proves change (scoped/affected)
 - show concrete tool results (commands + output tail + exit codes)
-- search existing patterns first (grep + codebase_search) → clone canonical → adapt
+- search existing patterns first (`rg` + codebase_search) → clone canonical → adapt
 - verify after significant changes (MANDATORY after migrations/refactors)
 
 NEVER:
@@ -63,36 +63,41 @@ UNSURE:
   - workspace map: root .agents/workspace.manifest.json
   - playbooks: root .agents/AGENT_PLAYBOOKS.json
   - deps intel: dotnet list <proj>.csproj package --outdated --include-transitive OR Directory.Packages.props
-- pattern workflow: grep + codebase_search (semantic) → clone canonical → minimal delta
+- pattern workflow: `rg` + codebase_search (semantic) → clone canonical → minimal delta
 - if architecture remains unclear: ask human (state what was found + options + safest default)
 
 ## 3. MCP (Backend-Specific)
 
 QUICK:
-- code search: mcp.ripgrep.* (MANDATORY for text search) | codebase_search (semantic)
+- code search: `rg` (ripgrep command-line tool, MANDATORY for text search) | codebase_search (semantic)
 - dependency intel: dotnet list <proj>.csproj package --outdated --include-transitive + inspect Directory.Packages.props
-- csharp work: mcp.ripgrep.* + codebase_search + read_file → minimal manual edits → verify
+- csharp work: `rg` + codebase_search + read_file → minimal manual edits → verify
 - docs: microsoft_docs (Microsoft stack) + context7 (3rd-party: ABP/etc)
 
-RIPGREP PATTERNS (MANDATORY):
+RIPGREP PATTERNS (MANDATORY - use `rg` command):
 - Find symbol definition:
-  - Pattern: `\bMyTypeName\b`
+  - Pattern: `\bMyTypeName\b` (use `-w` for word boundaries)
   - Scope: `*.cs` files under `server/src/**`
-  - Example: `mcp.ripgrep.search(pattern="\\bTaskExecutionDomainService\\b", path="src/eleonsoft/server/src/", filePattern="*.cs")`
+  - Example: `rg -w "TaskExecutionDomainService" -t cs "src/eleonsoft/server/src/" -C 2 -m 50`
+  - Windows PowerShell: `rg -w "TaskExecutionDomainService" -t cs "src/eleonsoft/server/src/" -C 2 -m 50`
   - Use case: Finding class/interface/type definitions
 - Find string literal usage:
-  - Pattern: `"Permission.SystemLog.General"`
+  - Pattern: `"Permission.SystemLog.General"` (escape dots: `\.`)
   - Scope: `*.cs` files
-  - Example: `mcp.ripgrep.search(pattern="\"Permission\\.SystemLog\\.General\"", filePattern="*.cs")`
+  - Example: `rg "Permission\.SystemLog\.General" -t cs "src/eleonsoft/server/src/" -C 2 -m 50`
+  - Windows PowerShell: `rg "Permission\.SystemLog\.General" -t cs "src/eleonsoft/server/src/" -C 2 -m 50`
   - Use case: Finding permission strings, constants, magic strings
 - Find method calls:
-  - Pattern: `\bMethodName\s*\(`
+  - Pattern: `\bMethodName\s*\(` (use `-w` for word boundaries)
   - Scope: `*.cs` files under `server/src/**`
-  - Example: `mcp.ripgrep.search(pattern="\\bWithUnitOfWorkAsync\\s*\\(", path="src/eleonsoft/server/src/", filePattern="*.cs")`
+  - Example: `rg -w "WithUnitOfWorkAsync" -t cs "src/eleonsoft/server/src/" -C 2 -m 50`
+  - Windows PowerShell: `rg -w "WithUnitOfWorkAsync" -t cs "src/eleonsoft/server/src/" -C 2 -m 50`
 - Find namespace imports:
   - Pattern: `^using\s+Namespace\.Name`
   - Scope: `*.cs` files
-  - Example: `mcp.ripgrep.search(pattern="^using\\s+Eleon\\.", filePattern="*.cs")`
+  - Example: `rg "^using\s+Eleon\." -t cs "src/eleonsoft/server/src/" -C 1 -m 50`
+  - Windows PowerShell: `rg "^using\s+Eleon\." -t cs "src/eleonsoft/server/src/" -C 1 -m 50`
+- Find with exclusions: `rg "pattern" -t cs -g "!**/bin/**" -g "!**/obj/**" "server/src/" -C 2`
 
 DOCS (priority):
 - microsoft_docs: C#/.NET/ASP.NET Core/EF/Azure/Identity (canonical on conflicts)
@@ -110,13 +115,13 @@ mcp.context7:
 - selection: exact name match first; higher coverage/snippets; reputation High/Medium; prefer top-ranked
 - id format: /org/project OR /org/project/version
 
-ABP_QUESTIONS: (mcp.ripgrep.* + codebase_search) → mcp.context7 resolve-library-id abp → get-library-docs → mcp.microsoft_docs for .NET specifics → mcp.fetch for ABP docs URLs → search existing workspace modules; NEVER guess ABP patterns.
+ABP_QUESTIONS: (`rg` + codebase_search) → mcp.context7 resolve-library-id abp → get-library-docs → mcp.microsoft_docs for .NET specifics → mcp.fetch for ABP docs URLs → search existing workspace modules; NEVER guess ABP patterns.
 
 ## 4. EXPLORATION (Backend-Specific)
 
-C#: mcp.ripgrep.* → codebase_search → read_file → manual edit. sequence: single-repo: mcp.ripgrep.* + codebase_search → identify file/type → read_file → manual edit; 
-understanding: mcp.ripgrep.* → codebase_search → read_file → FindReferences (mcp.ripgrep.*); modifying: FindReferences (mcp.ripgrep.*) → manual edit → check errors/tests. 
-backend-heavy → mcp.ripgrep.* + codebase_search src/server.
+C#: `rg` → codebase_search → read_file → manual edit. sequence: single-repo: `rg` + codebase_search → identify file/type → read_file → manual edit; 
+understanding: `rg` → codebase_search → read_file → FindReferences (`rg`); modifying: FindReferences (`rg`) → manual edit → check errors/tests. 
+backend-heavy → `rg` + codebase_search src/server.
 
 ## 5. SHELL (Backend-Specific)
 

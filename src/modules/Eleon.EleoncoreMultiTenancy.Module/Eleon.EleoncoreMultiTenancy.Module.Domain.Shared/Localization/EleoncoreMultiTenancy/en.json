@@ -404,6 +404,7 @@
     "CustomSignInSettings": "Custom Sign In Setting",
     "SystemSignInSettings": "System Sign In Setting",
     "CustomSignInSettingsOption": "Custom Sign In Option",
-    "TenantSettings:General": "General"
+    "TenantSettings:General": "General",
+    "ControlDelegation:SelectUser": "Select a User"
   }
 }

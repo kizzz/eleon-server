@@ -1239,6 +1239,7 @@
     "Deny": "Deny",
     "SecurityLog:ExtraProperties": "Extra Properties",
     "AuditLog:ExtraProperties": "Extra Properties",
-    "EntityChange:ExtraProperties": "Extra Properties"
+    "EntityChange:ExtraProperties": "Extra Properties",
+    "ControlDelegation:SelectUser": "Select a User"
   }
 }

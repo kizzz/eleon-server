@@ -700,7 +700,8 @@
     "ApiKey:Secret": "Key Secret",
     "Permissions:IdentitySettingsManagement": "Identity Settings Management",
     "Permissions:ApiKey:Default": "Api Keys Management",
-    "TenantSettings:General": "General"
+    "TenantSettings:General": "General",
+    "ControlDelegation:SelectUser": "Select a User"
   }
 }
 

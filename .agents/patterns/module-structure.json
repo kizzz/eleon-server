@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "ABP Module Structure Pattern",
+  "desc": "Complete structure pattern for ABP modules with all layers",
+  "version": "1.0.0",
+  "layers": {
+    "required": [
+      {
+        "name": "Domain.Shared",
+        "namespace": "__NS__.__MOD_NAME__.Domain.Shared",
+        "type": "domain.shared",
+        "desc": "Shared constants, enums, DTOs, localization",
+        "dependencies": [],
+        "forbidden": [],
+        "files": [
+          "Abstractions/Contracts.cs"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.Domain.Shared.csproj"
+      },
+      {
+        "name": "Domain",
+        "namespace": "__NS__.__MOD_NAME__.Domain",
+        "type": "domain",
+        "desc": "Aggregates, entities, domain services",
+        "dependencies": ["Domain.Shared"],
+        "forbidden": ["Microsoft.EntityFrameworkCore", "Microsoft.AspNetCore", "Volo.Abp.EntityFrameworkCore"],
+        "files": [
+          "Domain/Aggregates/ExampleAggregate.cs",
+          "Domain/Services/ExampleDomainService.cs"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.Domain.csproj"
+      },
+      {
+        "name": "Application.Contracts",
+        "namespace": "__NS__.__MOD_NAME__.Application.Contracts",
+        "type": "app.contracts",
+        "desc": "DTOs, interfaces (NO Domain references)",
+        "dependencies": ["Domain.Shared"],
+        "forbidden": ["Domain types"],
+        "files": [
+          "Dtos/ExampleDto.cs",
+          "Services/IExampleAppService.cs",
+          "PublicAPI.Shipped.txt",
+          "PublicAPI.Unshipped.txt"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.Application.Contracts.csproj"
+      },
+      {
+        "name": "Application",
+        "namespace": "__NS__.__MOD_NAME__.Application",
+        "type": "app",
+        "desc": "Use cases, orchestration",
+        "dependencies": ["Domain", "Application.Contracts"],
+        "forbidden": ["EntityFrameworkCore", "HttpApi"],
+        "files": [
+          "Services/ExampleAppService.cs"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.Application.csproj"
+      },
+      {
+        "name": "EntityFrameworkCore",
+        "namespace": "__NS__.__MOD_NAME__.EntityFrameworkCore",
+        "type": "persistence",
+        "desc": "EF Core adapters, DbContext",
+        "dependencies": ["Domain", "Domain.Shared"],
+        "forbidden": [],
+        "files": [
+          "Persistence/ExampleDbContext.cs"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.EntityFrameworkCore.csproj"
+      },
+      {
+        "name": "HttpApi",
+        "namespace": "__NS__.__MOD_NAME__.HttpApi",
+        "type": "transport.http",
+        "desc": "Controllers, endpoints",
+        "dependencies": ["Application", "Application.Contracts"],
+        "forbidden": ["Domain types in return values"],
+        "files": [
+          "Controllers/ExampleController.cs",
+          "Health/*.cs (if health enabled)"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.HttpApi.csproj"
+      },
+      {
+        "name": "HttpApi.Client",
+        "namespace": "__NS__.__MOD_NAME__.HttpApi.Client",
+        "type": "transport.client",
+        "desc": "Typed HTTP clients",
+        "dependencies": ["Application.Contracts"],
+        "forbidden": [],
+        "files": [
+          "Client/ExampleClient.cs"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.HttpApi.Client.csproj"
+      },
+      {
+        "name": "Tests",
+        "namespace": "__NS__.__MOD_NAME__.Tests",
+        "type": "test",
+        "desc": "Unit and integration tests",
+        "dependencies": ["Domain", "Application", "EntityFrameworkCore", "HttpApi"],
+        "forbidden": [],
+        "files": [
+          "ExampleTests.cs"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.Tests.csproj"
+      }
+    ],
+    "optional": [
+      {
+        "name": "SignalR",
+        "namespace": "__NS__.__MOD_NAME__.SignalR",
+        "type": "transport.ws",
+        "desc": "SignalR hubs for real-time communication",
+        "flag": "--with-signalr",
+        "nukeParam": "WithSignalR",
+        "dependencies": ["Application.Contracts"],
+        "files": [
+          "Hubs/ExampleHub.cs"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.SignalR.csproj"
+      },
+      {
+        "name": "BackgroundWorkers",
+        "namespace": "__NS__.__MOD_NAME__.BackgroundWorkers",
+        "type": "background",
+        "desc": "Background workers and jobs",
+        "flag": "--with-workers",
+        "nukeParam": "WithWorkers",
+        "dependencies": ["Application"],
+        "files": [
+          "Jobs/ExampleJob.cs",
+          "Workers/ExampleWorker.cs",
+          "QuartzRegistration.cs"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.BackgroundWorkers.csproj"
+      },
+      {
+        "name": "IntegrationEvents",
+        "namespace": "__NS__.__MOD_NAME__.IntegrationEvents",
+        "type": "messaging",
+        "desc": "Integration events for event-driven architecture",
+        "flag": "--with-eventbus",
+        "nukeParam": "WithEventBus",
+        "dependencies": ["Domain.Shared"],
+        "files": [
+          "Events/ExampleCreated.cs"
+        ],
+        "projectFile": "__NS__.__MOD_NAME__.IntegrationEvents.csproj"
+      },
+      {
+        "name": "Health",
+        "namespace": "__NS__.__MOD_NAME__.HttpApi.Health",
+        "type": "health",
+        "desc": "Health checks (default: enabled)",
+        "default": true,
+        "flag": "--no-health (to exclude)",
+        "dependencies": ["HttpApi"],
+        "files": [
+          "ModuleHealthCheck.cs",
+          "DbContextHealthCheck.cs",
+          "RedisHealthCheck.cs",
+          "RabbitMqHealthCheck.cs",
+          "HttpDependencyHealthCheck.cs",
+          "HealthRegistrationExtensions.cs",
+          "DependencyHealthRegistrationExtensions.cs",
+          "TcpProbe.cs"
+        ],
+        "location": "__NS__.__MOD_NAME__.HttpApi/Health"
+      }
+    ]
+  },
+  "dependencyOrder": [
+    "Domain.Shared",
+    "Domain",
+    "Application.Contracts",
+    "Application",
+    "EntityFrameworkCore",
+    "HttpApi",
+    "HttpApi.Client",
+    "HttpApi.Host"
+  ],
+  "templateLocation": "src/eleonsoft/server/templates/module",
+  "generation": {
+    "script": "scripts/module-gen/generate-module.sh",
+    "nukeTarget": "GenerateModule",
+    "tokens": {
+      "__MOD_NAME__": "Module name (e.g., Sales)",
+      "__NS__": "Namespace (e.g., Eleon.Modules)",
+      "__mod_name__": "Lowercase module name for routes"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "Culture": "ru",
+  "Texts": {
+    "SamplePageMessage": "Пример страницы для модуля Module",
+    "Menu:Module": "Уведомитель",
+    "ModuleDescription": "Описание модуля уведомления...",
+    "Menu:Top": "Управление шаблонами сообщений",
+    "Menu:MessageTemplates": "Шаблоны сообщений",
+    "Menu:MessageTemplateTypes": "Типы шаблонов сообщений",
+    "MessageTemplateTypes": "Типы шаблонов сообщений",
+    "MessageTemplates": "Шаблоны сообщений",
+    "MessageTemplateCategories:Selection": "Выберите категорию",
+    "Header:Type": "Тип",
+    "Header:Name": "Имя",
+    "Header:Key": "Ключ",
+    "Header:Description": "Описание",
+    "Header:Template": "Шаблон"
+  }
+}

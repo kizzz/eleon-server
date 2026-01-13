@@ -1,0 +1,19 @@
+{
+  "Culture": "fr",
+  "Texts": {
+    "SamplePageMessage": "Un exemple de page pour le module Module",
+    "Menu:Module": "Notificateur",
+    "ModuleDescription": "Description du module de notification...",
+    "Menu:Top": "Gestion des modèles de messages",
+    "Menu:MessageTemplates": "Modèles de messages",
+    "Menu:MessageTemplateTypes": "Types de modèles de messages",
+    "MessageTemplateTypes": "Types de modèles de messages",
+    "MessageTemplates": "Modèles de messages",
+    "MessageTemplateCategories:Selection": "Choisissez la catégorie",
+    "Header:Type": "Taper",
+    "Header:Name": "Nom",
+    "Header:Key": "Clé",
+    "Header:Description": "Description",
+    "Header:Template": "Modèle"
+  }
+}

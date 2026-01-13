@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		 
+		<UserSecretsId>454fd01e-04f9-4a2d-974f-72832e550bd3</UserSecretsId>
+		
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Castle.Windsor" Version="6.0.0" />
+		<PackageReference Include="MassTransit" Version="8.2.3" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+	</ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="test\**\*.resx" />
+    <None Include="test\**\*.json" />
+    <None Include="test\**\*.config" />
+  </ItemGroup>
+</Project>
+

@@ -1,0 +1,10 @@
+# <SYMBOL> ; <message>
+P:System.DateTime.Now;Use TimeProvider/IClock or DateTime.UtcNow instead
+M:System.Threading.Tasks.Task get_Result();Await instead of blocking
+M:System.Threading.Tasks.Task Wait();Await instead of blocking
+M:System.Threading.Tasks.Task`1 get_Result();Await instead of blocking
+M:System.Threading.Tasks.Task`1 GetAwaiter().GetResult();Await instead of blocking
+M:System.Threading.Thread.Sleep(System.Int32);Use Task.Delay or timers
+M:System.Net.Http.HttpClient.#ctor;Use IHttpClientFactory
+T:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions;Keep EF in Infrastructure
+M:System.GC.Collect();Do not force GC.Collect

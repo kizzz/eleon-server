@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		 
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		
+	</PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="**/obj/**" />
+	</ItemGroup>
+	<ItemGroup>
+		<!-- Universal localization resource inclusion -->
+		<EmbeddedResource Include="**/*.Domain.Shared/Localization/**/*.json">
+			<Link>Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[2])/%(Filename)%(Extension)</Link>
+			<LogicalName>/Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[2])/%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="**/*.Domain.Shared/Templates/*.cshtml">
+			<Link>Templates/%(Filename)%(Extension)</Link>
+			<LogicalName>/Templates/%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		<Content Remove="**/*.Domain.Shared/Localization/**/*.json" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" />
+		<PackageReference Include="Volo.Abp.AutoMapper" />
+		<PackageReference Include="Volo.Abp.TextTemplating.Razor" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+<ItemGroup>
+	     <ProjectReference Include="..\..\shared\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+       <ProjectReference Include="..\..\shared\libs\Eleon.Abp.Lib\Eleon.Abp.Lib.Full.csproj" />
+	    <ProjectReference Include="..\..\libs\Eleon.InternalCommons.Lib\Eleon.InternalCommons.Lib.Full.csproj" />
+		</ItemGroup>
+
+	<ItemGroup>
+
+<PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" />
+	</ItemGroup>
+  <ItemGroup><EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+
+</Project>
+
+
+

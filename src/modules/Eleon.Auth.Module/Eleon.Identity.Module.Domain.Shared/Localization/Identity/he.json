@@ -1,0 +1,11 @@
+{
+  "Culture": "he",
+  "Texts": {
+    "OtpMessage": " ignore this message. Do not tell this code to anyone!",
+    "SamplePageMessage": "עמוד לדוגמא ",
+    "DriverMobile": "טלפון נייד",
+    "Menu:Identity": "זהות",
+    "VehicleNumber": "מספר רכב",
+    "OtpValue": "קוד"
+  }
+}

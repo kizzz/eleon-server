@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!-- Explicitly mark all projects in tests folder as test projects for VS2026 -->
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+</Project>

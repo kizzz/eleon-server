@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <MaxCpuCount>0</MaxCpuCount>
+  </RunConfiguration>
+  <!-- Default test filter: exclude Manual tests unless RUN_MANUAL_TESTS environment variable is set -->
+  <TestCaseFilter Condition="'$(RUN_MANUAL_TESTS)' != '1' AND '$(RUN_MANUAL_TESTS)' != 'true'">Category!=Manual</TestCaseFilter>
+</RunSettings>

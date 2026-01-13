@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		 
+		
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.EventBus" />
+		<ProjectReference Include="..\..\..\..\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+		<ProjectReference Include="..\EventBus.LocalBus.Module\EventBus.LocalBus.Module.csproj" />
+		<!-- Optional EventBus implementations - commented out to unblock tests -->
+		<!-- <ProjectReference Include="..\EventBus.MassTransit.Module\EventBus.MassTransit.Module.csproj" /> -->
+		<!-- <ProjectReference Include="..\EventBus.MassTransit.RabbitMq.Module\EventBus.MassTransit.RabbitMq.Module.csproj" /> -->
+		<!-- <ProjectReference Include="..\EventBus.Nats\EventBus.Nats.Module.csproj" /> -->
+		<!-- <ProjectReference Include="..\EventBus.RabbitMq.Module\EventBus.RabbitMq.Module.csproj" /> -->
+	</ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="test\**\*.resx" />
+    <None Include="test\**\*.json" />
+    <None Include="test\**\*.config" />
+  </ItemGroup>
+</Project>
+

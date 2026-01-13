@@ -1,0 +1,9 @@
+{
+  "Culture": "he",
+  "Texts": {
+    "SamplePageMessage": "עמוד לדוגמא ",
+    "Features:Google.Optimization.Key": "Optimization API Key (JSON)",
+    "Features:Google.Maps.Key": "Maps Key",
+    "Menu:Google": "Google "
+  }
+}

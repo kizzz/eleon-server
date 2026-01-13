@@ -1,0 +1,26 @@
+{
+  "profiles": {
+    "IIS": {
+      "commandName": "IIS",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      }
+    },
+    "VPortal.HttpApi.Host": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "applicationUrl": "https://localhost:50511;http://localhost:50512"
+    }
+  },
+  "iisSettings": {
+    "iis": {
+      "applicationUrl": "https://localhost",
+      "sslPort": 443
+    }
+  }
+}

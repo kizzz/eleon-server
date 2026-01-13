@@ -1,0 +1,1 @@
+using Microsoft.Extensions.Hosting; using System.Threading; using System.Threading.Tasks; namespace __NS__.__MOD_NAME__.BackgroundWorkers; public class ExampleWorker:BackgroundService{ protected override async Task ExecuteAsync(CancellationToken ct){ while(!ct.IsCancellationRequested){ await Task.Delay(60000,ct); } } }

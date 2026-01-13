@@ -1,0 +1,40 @@
+﻿namespace ModuleCollector.JobScheduler.Module.JobScheduler.Module.Domain.Shared.Constants
+{
+  [Flags]
+  public enum DaysOfMonthMasks : long
+  {
+    None = 0,
+    Day1 = 1 << 0,
+    Day2 = 1 << 1,
+    Day3 = 1 << 2,
+    Day4 = 1 << 3,
+    Day5 = 1 << 4,
+    Day6 = 1 << 5,
+    Day7 = 1 << 6,
+    Day8 = 1 << 7,
+    Day9 = 1 << 8,
+    Day10 = 1 << 9,
+    Day11 = 1 << 10,
+    Day12 = 1 << 11,
+    Day13 = 1 << 12,
+    Day14 = 1 << 13,
+    Day15 = 1 << 14,
+    Day16 = 1 << 15,
+    Day17 = 1 << 16,
+    Day18 = 1 << 17,
+    Day19 = 1 << 18,
+    Day20 = 1 << 19,
+    Day21 = 1 << 20,
+    Day22 = 1 << 21,
+    Day23 = 1 << 22,
+    Day24 = 1 << 23,
+    Day25 = 1 << 24,
+    Day26 = 1 << 25,
+    Day27 = 1 << 26,
+    Day28 = 1 << 27,
+    Day29 = 1 << 28,
+    Day30 = 1 << 29,
+    Day31 = 1 << 30,
+    Last = 1 << 31,
+  }
+}

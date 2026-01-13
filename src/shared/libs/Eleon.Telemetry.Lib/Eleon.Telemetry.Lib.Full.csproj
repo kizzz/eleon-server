@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	   
+	  <Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+    
+  </PropertyGroup>
+
+	  <ItemGroup>
+    <Compile Remove="tests\**" />
+    <Compile Remove="test\**" />
+  </ItemGroup>
+<ItemGroup>
+		<!-- SDK inclusion -->
+		<Compile Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+		<None Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+		<Content Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+	</ItemGroup>
+    <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+	<Compile Remove="**/bin/**/*;**/obj/**/*" />
+	<None Remove="**/bin/**/*;**/obj/**/*" />
+	<Content Remove="**/bin/**/*;**/obj/**/*" />
+	<PackageReference Include="AspNetCore.HealthChecks.UI" />
+	<PackageReference Include="MassTransit" />
+	<PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" />
+	<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+	<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.Process" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" />
+	<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+    <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+    <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+    <ProjectReference Include="..\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+    <ProjectReference Include="..\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+</Project>
+
+
+

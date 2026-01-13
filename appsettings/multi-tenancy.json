@@ -1,0 +1,39 @@
+{
+	"MultiTenancySettings": {
+		"Enabled": true,
+		"SuppressUnresolvedTenant": false,
+		"TenantDomains": {
+		  "Host": [
+			  "https://localhost",
+			  "https://localhost:1010",
+			  "https://localhost:4040",
+			  "https://localhost:4140",
+			  "https://localhost:5050",
+			  "https://localhost:5150",
+			  "https://localhost:6060",
+			  "https://localhost:8080",
+			  "https://localhost:8082",
+			  "https://localhost:9090",
+			  "https://localhost:5001",
+			  "https://localhost:5002",
+			  "https://localhost:5003",
+			  "https://localhost:5004",
+			  "https://localhost:5005",
+			  "https://localhost:5011",
+			  "https://localhost:5012",
+			  "https://localhost:5013",
+			  "https://localhost:5014",
+			  "https://localhost:5015",
+			  "https://network-protected.com",
+			  "https://local.network-protected.com",
+			  "https://local-immu.network-protected.com",
+			  "https://es-proxy.network-protected.com",
+			  "https://local.new.network-protected.com",
+			  "https://local-immu.new.network-protected.com",
+			  "https://es-proxy.new.network-protected.com",
+			  "https://new.network-protected.com",
+			  "https://dm.network-protected.com"
+		  ]
+		}
+	}
+}

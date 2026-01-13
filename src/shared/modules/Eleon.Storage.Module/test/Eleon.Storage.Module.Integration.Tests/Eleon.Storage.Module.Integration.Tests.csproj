@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Volo.Abp.TestBase" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Testcontainers" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Eleon.Storage.Module.Full.csproj" />
+    <ProjectReference Include="..\..\..\..\libs\Eleon.TestsBase.Lib\Eleon.TestsBase.Lib.Full.Lib.csproj" />
+    <ProjectReference Include="..\..\..\..\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

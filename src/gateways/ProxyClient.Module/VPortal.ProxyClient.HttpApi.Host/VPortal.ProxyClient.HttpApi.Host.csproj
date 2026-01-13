@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+     
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Library</OutputType>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="devcert.pfx" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" />
+		<PackageReference Include="Sentry" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Serilog.Sinks.Async" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.AspNetCore.Serilog" />
+		<PackageReference Include="Volo.Abp.Identity.AspNetCore" />
+		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" />
+		<PackageReference Include="Volo.Abp.Swashbuckle" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="$(ModulesDir)\Identity\Server\Eleon.Identity.Module\Eleon.Identity.Module.HttpApi.Client\Eleon.Identity.Module.HttpApi.Client.csproj" />
+	  <ProjectReference Include="$(ModulesDir)\Common\Eleon.Authorization.Module\Eleon.Authorization.Module.csproj" />
+	  <ProjectReference Include="..\..\..\shared\libs\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+	  <ProjectReference Include="..\VPortal.ProxyClient.Host.Collector\VPortal.ProxyClient.Host.Collector.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="localhostcert.pfx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="proxydevcert.pfx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+</Project>

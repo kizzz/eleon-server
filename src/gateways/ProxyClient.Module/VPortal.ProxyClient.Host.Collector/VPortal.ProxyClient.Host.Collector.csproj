@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+
+  </PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="$(ModulesDir)\Host\Server\Eleon.Auditor.Module\Eleon.Auditor.Module.HttpApi.Client\Eleon.Auditor.Module.HttpApi.Client.csproj" />
+	  <ProjectReference Include="$(ModulesDir)\Host\Server\Eleon.Infrastructure.Module\Eleon.Infrastructure.Utils.HttpApi.Module\Eleon.Infrastructure.Utils.HttpApi.Module.csproj" />
+	  <ProjectReference Include="$(ModulesDir)\Host\Server\Eleon.Storage.Module\Eleon.Storage.Module.Remote.HttpApi\Eleon.Storage.Module.Remote.HttpApi.csproj" />
+	  <ProjectReference Include="..\ProxyClientCollector\VPortal.ProxyClient.Collector.csproj" />
+	</ItemGroup>
+
+
+  <ItemGroup>
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+  </ItemGroup>
+</Project>

@@ -1,0 +1,32 @@
+{
+  "Telemetry": {
+    "Enabled": false,
+    "ServiceName": "",
+    "ServiceDescription": "Your service description",
+    "Traces": {
+      "Endpoint": "http://localhost:4318/v1/traces",
+      "Protocol": "http",
+      "UseBatch": true,
+      "UseAspNetCoreInstrumentation": true,
+      "UseHttpClientInstrumentation": true,
+      "UseSqlClientInstrumentation": true,
+      "UseMassTransitInstrumentation": true
+    },
+    "Metrics": {
+      "Endpoint": "http://localhost:4318/v1/metrics",
+      "Protocol": "http",
+      "UseBatch": true,
+      "UseRuntimeInstrumentation": true,
+      "UseProcessInstrumentation": true,
+      "UseAspNetCoreInstrumentation": true,
+      "UseHttpClientInstrumentation": true
+    },
+    "Logs": {
+      "Endpoint": "http://localhost:4318/v1/logs",
+      "Protocol": "http",
+      "UseBatch": true,
+      "IncludeScopes": true,
+      "IncludeFormattedMessage": true
+    }
+  }
+}

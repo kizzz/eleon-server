@@ -1,0 +1,49 @@
+{
+	"Logger": {
+	  "Level": "Information",
+	  "Sinks": {
+	    "Console": "Information",
+	    "All": "Information",
+	    "Error": "Critical"
+	  }
+	},
+	"Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Eleon.Logging.Lib.VportalLogging": "Debug",
+      "System": "Warning",
+      "Microsoft": "Error",
+      "Microsoft.AspNetCore": "Error",
+      "Microsoft.EntityFrameworkCore": "Warning",
+      "Volo.Abp": "Error",
+      "Volo.Abp.Identity": "Error",
+      "Volo.Abp.IdentityServer": "Error",
+      "IdentityServer4": "Error",
+      "Yarp": "Error"
+		}
+	},
+	"Sentry": {
+	  "Enable": false,
+	  "Debug": true,
+	  "Performance": true,
+	  "Environment": "Development",
+	  "Dsn": "https://71f89de7d3e54a0eabe9eacc3fb2c765@o1130065.ingest.sentry.io/6174367"
+	},
+  "VportalLogging": {
+    "Request": {
+      "Enable": true,
+      "PreferRouteTemplateOverPath": true,
+      "ExcludedPathPrefixes": ["/health", "/metrics", "/swagger"]
+    },
+    "Exceptions": {
+      "CaptureBusinessExceptionsToSentry": false,
+      "CaptureCancellationToSentry": false,
+      "PreferRouteTemplateOverPath": true
+    },
+    "Host": {
+      "EnableHttpRequestLogging": true,
+      "EnableSignalRLogging": true,
+      "EnableCompatVportalLogger": true
+    }
+  }
+}

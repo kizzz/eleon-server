@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+     
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Library</OutputType>
+
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" />
+		<PackageReference Include="Sentry" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Serilog.Sinks.Async" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.AspNetCore.Serilog" />
+		<PackageReference Include="Volo.Abp.Identity.AspNetCore" />
+		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" />
+		<PackageReference Include="Volo.Abp.Swashbuckle" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="$(ModulesDir)\Identity\Server\Eleon.Identity.Module\Eleon.Identity.Module.HttpApi.Client\Eleon.Identity.Module.HttpApi.Client.csproj" />
+	  <ProjectReference Include="$(SharedDeprecatedDir)\Eleon.Common.HttpApi.Module\Eleon.Common.HttpApi.Module.csproj" />
+	  <ProjectReference Include="$(SharedDir)\EventBus\Eleon.Common.EventBus.Module\Eleon.Common.EventBus.Module.csproj" />
+	  <ProjectReference Include="$(SharedDir)\EventBus\Eleon.EventBus.MassTransit.Module\Eleon.EventBus.MassTransit.Module.csproj" />
+	  <ProjectReference Include="$(SharedDir)\EventBus\Eleon.EventBus.MassTransit.RabbitMq.Module\Eleon.EventBus.MassTransit.RabbitMq.Module.csproj" />
+	  <ProjectReference Include="$(SharedDir)\EventBus\EventBus.Nats\EventBus.Nats.csproj" />
+	  <ProjectReference Include="..\..\..\shared\libs\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+	  <ProjectReference Include="$(CommonsDir)\Eleon.WireGuard.Module\Eleon.WireGuard.Module.csproj" />
+	  <ProjectReference Include="..\VPortal.GatewayClient.Host.Collector\VPortal.GatewayClient.Host.Collector.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="devcert.pfx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+</Project>

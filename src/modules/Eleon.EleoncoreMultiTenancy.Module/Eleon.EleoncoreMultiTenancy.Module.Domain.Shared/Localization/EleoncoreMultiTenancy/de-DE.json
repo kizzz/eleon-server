@@ -1,0 +1,7 @@
+{
+  "culture": "de-DE",
+  "texts": {
+    "SamplePageMessage": "Eine Beispielseite für das TenantManagement-Modul",
+    "Menu:TenantManagement": "TenantManagement"
+  }
+}

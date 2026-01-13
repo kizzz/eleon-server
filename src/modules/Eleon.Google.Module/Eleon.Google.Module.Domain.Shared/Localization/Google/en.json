@@ -1,0 +1,10 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "SamplePageMessage": "A sample page for the Google module",
+    "Menu:Google": "Google",
+    "Features:Google.Maps.Key": "Maps Key",
+    "Features:Google.Optimization.Key": "Optimization API Key (JSON)",
+    "Features:Google.Drive.Key": "Drive Key"
+  }
+}

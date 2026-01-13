@@ -1,0 +1,1 @@
+using System.Net.Http.Json; namespace __NS__.__MOD_NAME__.HttpApi.Client; public class ExampleClient{ private readonly HttpClient _http; public ExampleClient(HttpClient h)=>_http=h; public Task<ExampleResponse?> GetAsync()=>_http.GetFromJsonAsync<ExampleResponse>("api/__mod_name__/example"); public record ExampleResponse(Guid Id,string Name);} 

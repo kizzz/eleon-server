@@ -1,0 +1,208 @@
+{{>partial_header}}
+{{#nrt}}
+#nullable enable
+
+{{/nrt}}
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Net.Http;
+using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using SharedModule.HttpApi.Helpers;
+using {{packageName}}.{{clientPackage}};
+
+namespace {{packageName}}.Extensions;
+
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddApi(this IServiceCollection services, Action<ApiClientOptions> configure)
+    {
+        if (services == null)
+        {
+            throw new ArgumentNullException(nameof(services));
+        }
+
+        if (configure == null)
+        {
+            throw new ArgumentNullException(nameof(configure));
+        }
+
+        var options = new ApiClientOptions();
+        configure(options);
+
+        ApplyOptions(services, options);
+
+        return services;
+    }
+
+    private static void ApplyOptions(IServiceCollection services, ApiClientOptions options)
+    {
+        var jsonOptions = HostConfiguration.ConfigureApiJsonOptions();
+        options.JsonOptionsConfigurator?.Invoke(jsonOptions);
+
+        var sdkConfig = options.SdkConfig;
+        var configuredBaseAddress = ResolveBaseAddress(options);
+
+        if (string.IsNullOrWhiteSpace(sdkConfig.BaseHost))
+        {
+            if (configuredBaseAddress != null)
+            {
+                ApplyBaseAddress(sdkConfig, configuredBaseAddress);
+            }
+            else
+            {
+                sdkConfig.BaseHost = ClientUtils.BASE_ADDRESS;
+            }
+        }
+
+        if (options.Tokens.Count > 0 && !sdkConfig.UseApiAuthorization && !sdkConfig.UseOAuthAuthorization)
+        {
+            sdkConfig.UseOAuthAuthorization = true;
+        }
+
+        ApiConfigurator.Initialize("{{packageName}}", new ApiConfigurator(sdkConfig, NullLoggerFactory.Instance, jsonOptions));
+        services.Add{{packageName}}Api();
+        services.AddHttpContextInitializator();
+
+        RegisterHttpClients(services, options, configuredBaseAddress);
+    }
+
+    private static Uri? ResolveBaseAddress(ApiClientOptions options)
+    {
+        if (options.HttpClientConfigurators.Count == 0)
+        {
+            return null;
+        }
+
+        using var client = new HttpClient
+        {
+            BaseAddress = new Uri(ClientUtils.BASE_ADDRESS)
+        };
+
+        foreach (var configure in options.HttpClientConfigurators)
+        {
+            configure(client);
+        }
+
+        return client.BaseAddress;
+    }
+
+    private static void ApplyBaseAddress(EleoncoreSdkConfig sdkConfig, Uri baseAddress)
+    {
+        sdkConfig.BaseHost = baseAddress.GetLeftPart(UriPartial.Authority);
+        var path = baseAddress.AbsolutePath;
+        sdkConfig.BasePath = path == "/" ? string.Empty : path.TrimEnd('/');
+    }
+
+    private static void RegisterHttpClients(IServiceCollection services, ApiClientOptions options, Uri? baseAddress)
+    {
+        if (options.HttpClientConfigurators.Count == 0 && options.HttpClientBuilderConfigurators.Count == 0)
+        {
+            return;
+        }
+
+        var builder = services.AddHttpClient("{{packageName}}", client =>
+        {
+            if (baseAddress != null)
+            {
+                client.BaseAddress = baseAddress;
+            }
+
+            foreach (var configure in options.HttpClientConfigurators)
+            {
+                configure(client);
+            }
+        });
+
+        foreach (var configure in options.HttpClientBuilderConfigurators)
+        {
+            configure(builder);
+        }
+    }
+}
+
+public sealed class ApiClientOptions
+{
+    private readonly List<TokenBase> _tokens = new();
+    private readonly List<Action<HttpClient>> _httpClientConfigurators = new();
+    private readonly List<Action<IHttpClientBuilder>> _httpClientBuilderConfigurators = new();
+    private Action<JsonSerializerOptions>? _jsonOptionsConfigurator;
+    private Type? _tokenProviderType;
+
+    public EleoncoreSdkConfig SdkConfig { get; } = new();
+
+    public IReadOnlyList<TokenBase> Tokens => _tokens;
+    internal IReadOnlyList<Action<HttpClient>> HttpClientConfigurators => _httpClientConfigurators;
+    internal IReadOnlyList<Action<IHttpClientBuilder>> HttpClientBuilderConfigurators => _httpClientBuilderConfigurators;
+    internal Action<JsonSerializerOptions>? JsonOptionsConfigurator => _jsonOptionsConfigurator;
+    internal Type? TokenProviderType => _tokenProviderType;
+
+    public void AddTokens(params TokenBase[] tokens)
+    {
+        if (tokens == null)
+        {
+            throw new ArgumentNullException(nameof(tokens));
+        }
+
+        _tokens.AddRange(tokens);
+    }
+
+    public void AddTokens(IEnumerable<TokenBase> tokens)
+    {
+        if (tokens == null)
+        {
+            throw new ArgumentNullException(nameof(tokens));
+        }
+
+        _tokens.AddRange(tokens);
+    }
+
+    public void UseProvider<TProvider, TToken>()
+        where TProvider : TokenProvider<TToken>
+        where TToken : TokenBase
+    {
+        _tokenProviderType = typeof(TProvider);
+    }
+
+    public void ConfigureJsonOptions(Action<JsonSerializerOptions> configure)
+    {
+        if (configure == null)
+        {
+            throw new ArgumentNullException(nameof(configure));
+        }
+
+        _jsonOptionsConfigurator = configure;
+    }
+
+    public void AddApiHttpClients(Action<HttpClient> configure)
+    {
+        if (configure == null)
+        {
+            throw new ArgumentNullException(nameof(configure));
+        }
+
+        _httpClientConfigurators.Add(configure);
+    }
+
+    public void AddApiHttpClients(Action<IHttpClientBuilder> configure)
+    {
+        if (configure == null)
+        {
+            throw new ArgumentNullException(nameof(configure));
+        }
+
+        _httpClientBuilderConfigurators.Add(configure);
+    }
+
+    public void ConfigureSdk(Action<EleoncoreSdkConfig> configure)
+    {
+        if (configure == null)
+        {
+            throw new ArgumentNullException(nameof(configure));
+        }
+
+        configure(SdkConfig);
+    }
+}

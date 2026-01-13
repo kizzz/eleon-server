@@ -1,0 +1,1 @@
+& "$PSScriptRoot\add-proxy.ps1" -SwaggerUrl "https://localhost:5001/swagger/v1/swagger.json" -DestFolder "..\..\..\libs\Eleoncore.CSharpSdk.Lib\proxy\eleonsoft-csharp-proxy" -ProxyName "EleonsoftProxy"

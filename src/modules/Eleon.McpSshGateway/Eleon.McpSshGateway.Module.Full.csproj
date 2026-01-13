@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests\**" />
+    <EmbeddedResource Remove="tests\**" />
+    <None Remove="tests\**" />
+  </ItemGroup>
+  <Target Name="ExcludeGeneratedAssemblyFiles" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <Compile Remove="obj\**\*.AssemblyInfo.cs" />
+      <Compile Remove="obj\**\*.AssemblyAttributes.cs" />
+    </ItemGroup>
+  </Target>
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Core" />
+    <PackageReference Include="Volo.Abp.Ddd.Domain" />
+    <PackageReference Include="Volo.Abp.Ddd.Application" />
+    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" />
+    <PackageReference Include="Volo.Abp.Authorization.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\Eleon.Mcp.Abstractions\Eleon.Mcp.Abstractions.csproj" />
+    <ProjectReference Include="..\..\libs\Eleon.Ssh\Eleon.Ssh.csproj" />
+  </ItemGroup>
+
+</Project>
+

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.EventBus.RabbitMQ" />
+	</ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+</Project>
+
+

@@ -1,0 +1,14 @@
+{
+  "Culture": "he",
+  "Texts": {
+    "Notifications": "התראות",
+    "NotificationsCount": "{0} לא נקרא",
+    "NotificationsDashboard:Title": "התראות",
+    "Notification:Date": "תאריך",
+    "Notification:Content": "הודעה",
+    "NoNotifications": "אין התראות",
+    "Reload": "לטעון מחדש",
+    "Date": "תאריך",
+    "NotificationViewer:RedirectTo": "לך ל..."
+  }
+}

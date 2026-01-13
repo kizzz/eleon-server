@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS": {
+      "commandName": "IIS",
+      "launchBrowser": false,
+      "launchUrl": "https://remote.network-protected.com",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  },
+  "iisSettings": {
+    "iis": {
+      "applicationUrl": "https://remote.network-protected.com",
+      "sslPort": 443
+    }
+  }
+}

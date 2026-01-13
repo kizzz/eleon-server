@@ -1,0 +1,7 @@
+{
+  "ErrorHandling": {
+    "IsFriendlyErrors": false,
+    "DefaultErrorStatusCode": 600,
+    "DefaultErrorPageTitle": "Error Page"
+  }
+}

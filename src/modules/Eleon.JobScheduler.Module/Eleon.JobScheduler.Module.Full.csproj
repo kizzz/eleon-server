@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		 
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		
+	</PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="test\**" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <EmbeddedResource Remove="test\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+    <None Remove="test\**" />
+  </ItemGroup>
+	<Target Name="ExcludeGeneratedAssemblyFiles" BeforeTargets="CoreCompile">
+		<ItemGroup>
+			<Compile Remove="obj\**\*.AssemblyInfo.cs" />
+			<Compile Remove="obj\**\*.AssemblyAttributes.cs" />
+		</ItemGroup>
+	</Target>
+	<ItemGroup>
+		<!-- Universal localization resource inclusion -->
+		<EmbeddedResource Include="**/*.Domain.Shared/Localization/**/*.json">
+			<Link>Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[2])/%(Filename)%(Extension)</Link>
+			<LogicalName>/Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[2])/%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="**/*.Domain.Shared/Templates/*.cshtml">
+			<Link>Templates/%(Filename)%(Extension)</Link>
+			<LogicalName>/Templates/%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		<Content Remove="**/*.Domain.Shared/Localization/**/*.json" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" />
+    <PackageReference Include="Volo.Abp.AspNetCore.SignalR" />
+		<PackageReference Include="Volo.Abp.AutoMapper" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+<ItemGroup>
+    <ProjectReference Include="..\..\shared\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Abp.Lib\Eleon.Abp.Lib.Full.csproj" />
+	    <ProjectReference Include="..\..\libs\Eleon.InternalCommons.Lib\Eleon.InternalCommons.Lib.Full.csproj" />
+	    <ProjectReference Include="..\..\shared\libs\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+		</ItemGroup>
+
+	<ItemGroup>
+
+<PackageReference Include="Microsoft.Data.Sqlite" />
+
+</ItemGroup>
+  <ItemGroup><EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+
+</Project>
+
+
+

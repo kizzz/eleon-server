@@ -1,0 +1,19 @@
+{
+  "Culture": "cs",
+  "Texts": {
+    "SamplePageMessage": "Ukázková stránka modulu Module",
+    "ModuleDescription": "Popis modulu notifikátoru...",
+    "Menu:Module": "Notifikátor",
+    "Menu:Top": "Správa šablon zpráv",
+    "Menu:MessageTemplates": "Šablony zpráv",
+    "Menu:MessageTemplateTypes": "Typy šablon zpráv",
+    "MessageTemplateTypes": "Typy šablon zpráv",
+    "MessageTemplates": "Šablony zpráv",
+    "MessageTemplateCategories:Selection": "Vyberte kategorii",
+    "Header:Type": "Typ",
+    "Header:Name": "název",
+    "Header:Key": "Klíč",
+    "Header:Description": "Popis",
+    "Header:Template": "Šablona"
+  }
+}

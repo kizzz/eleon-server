@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    <Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+    
+  </PropertyGroup>
+
+	<ItemGroup>
+		<!-- SDK inclusion -->
+		<Compile Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+		<None Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+		<Content Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="**/bin/**/*;**/obj/**/*" />
+		<None Remove="**/bin/**/*;**/obj/**/*" />
+		<Content Remove="**/bin/**/*;**/obj/**/*" />
+		<None Remove="packages.lock.json" />
+		<PackageReference Include="Mnt.Microsoft.Exchange.WebServices.Data" />
+		<PackageReference Include="Volo.Abp.Http.Client" />
+		<PackageReference Include="Volo.Abp.PermissionManagement.Domain" />
+		<PackageReference Include="Volo.Abp.Identity.Domain" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+		<PackageReference Include="Volo.Abp.TenantManagement.EntityFrameworkCore" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="MassTransit.RabbitMQ" />
+		<PackageReference Include="NATS.Net" />
+		<PackageReference Include="Volo.Abp.EventBus.RabbitMQ" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+		<PackageReference Include="DeviceDetector.NET" />
+
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+	  <ProjectReference Include="..\Eleon.HealthChecks.Lib\Eleon.HealthChecks.Lib.Full.csproj" />
+	  <ProjectReference Include="..\Eleon.Migration.Lib\Eleon.Migration.Lib.Full.csproj" />
+	  <ProjectReference Include="..\Eleon.Telemetry.Lib\Eleon.Telemetry.Lib.Full.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="modules\StorageProvider.Module\" />
+	</ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="test\**\*.resx" />
+    <None Include="test\**\*.json" />
+    <None Include="test\**\*.config" />
+  </ItemGroup>
+</Project>
+

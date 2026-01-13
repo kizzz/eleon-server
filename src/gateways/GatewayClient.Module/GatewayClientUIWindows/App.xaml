@@ -1,0 +1,71 @@
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:VPortal.GatewayClient.UI.Windows"
+             xmlns:page="clr-namespace:VPortal.GatewayClient.UI.Windows.Pages"
+             x:Class="VPortal.GatewayClient.UI.Windows.App">
+    <Application.Resources>
+        <ResourceDictionary Source="Resources/Styles/DefaultTheme.xaml"/>
+        <ResourceDictionary Source="Resources/Styles/MenuStyles.xaml"/>
+    </Application.Resources>
+
+    <Application.MainPage>
+        <Shell 
+            FlyoutBehavior="Disabled">
+            <!--FlyoutBackgroundColor="{StaticResource Background_Mid}"-->
+
+            <!--<Shell.FlyoutFooterTemplate>
+                <DataTemplate>
+                    <Grid RowDefinitions="45">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                        </Grid.GestureRecognizers>
+                        <Image Source="tab_settings.png"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               WidthRequest="25"
+                               HeightRequest="25"/>
+                    </Grid>
+                </DataTemplate>
+            </Shell.FlyoutFooterTemplate>-->
+
+            <!--<FlyoutItem Title="Home" Style="{StaticResource HomeFlyout}" Route="home"  FlyoutItemIsVisible="False">
+                <ShellContent ContentTemplate="{DataTemplate page:HomePage}"/>
+            </FlyoutItem>
+            <FlyoutItem Title="Weather" Style="{StaticResource HomeFlyout}">
+                <ShellContent ContentTemplate="{DataTemplate page:WeatherPage}"/>
+            </FlyoutItem>
+            <FlyoutItem Title="Favorites" Style="{StaticResource FavFlyout}">
+                <ShellContent ContentTemplate="{DataTemplate page:FavoritesPage}"/>
+            </FlyoutItem>
+            <FlyoutItem Title="Map" Style="{StaticResource MapFlyout}">
+                <ShellContent ContentTemplate="{DataTemplate page:MapPage}"/>
+            </FlyoutItem>
+            <FlyoutItem Title="Settings" Route="settings" FlyoutItemIsVisible="False">
+                <ShellContent ContentTemplate="{DataTemplate page:SettingsPage}"/>
+            </FlyoutItem--><!-->-->
+
+            <TabBar>
+                <ShellContent ContentTemplate="{DataTemplate page:HomePage}" Route="home" FlyoutItemIsVisible="False"/>
+            </TabBar>
+            <TabBar>
+                <ShellContent ContentTemplate="{DataTemplate page:RegistrationPage}" Route="registration" FlyoutItemIsVisible="False"/>
+            </TabBar>
+            <TabBar>
+                <ShellContent ContentTemplate="{DataTemplate page:HostPage}" Route="host" FlyoutItemIsVisible="False"/>
+            </TabBar>
+
+            <!--<Shell.ItemTemplate>
+                <DataTemplate>
+                    <Grid WidthRequest="35" HeightRequest="45"
+                          ColumnDefinitions="35" RowDefinitions="45">
+                        <Image Source="{Binding FlyoutIcon}"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"                               
+                               HeightRequest="25"
+                               WidthRequest="25"/>
+                    </Grid>
+                </DataTemplate>
+            </Shell.ItemTemplate>-->
+        </Shell>
+    </Application.MainPage>
+</Application>

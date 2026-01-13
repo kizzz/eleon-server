@@ -1,0 +1,117 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+
+	<PropertyGroup>
+		<!--<TargetFrameworks>net6.0-ios;net6.0-maccatalyst;net6.0-android</TargetFrameworks>-->
+		<TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+
+
+		<OutputType>Exe</OutputType>
+		<SingleProject>true</SingleProject>
+		<UseMaui>true</UseMaui>
+		<RootNamespace>VPortal.GatewayClient.UI.Windows</RootNamespace>
+		<ApplicationTitle>VPortal.GatewayClient.UI.Windows</ApplicationTitle>
+		<ApplicationId>com.companyname.VPortal.GatewayClient.UI.Windows</ApplicationId>
+		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+		<SingleProject>true</SingleProject>
+		<ApplicationVersion>1</ApplicationVersion>
+
+		<!-- (Optional) Pin to a specific version -->
+		<!--<MauiVersion>6.0.101-preview.11.2349</MauiVersion>-->
+
+		<!-- Required for C# Hot Reload -->
+		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
+		<UseInterpreter Condition="'$(Configuration)'=='Test'">True</UseInterpreter>
+
+		<!--<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-ios'">14.2</SupportedOSPlatformVersion>-->
+		<!--<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">14.0</SupportedOSPlatformVersion>-->
+		<!--<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21.0</SupportedOSPlatformVersion>-->
+		<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.19041.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.19041.0</TargetPlatformMinVersion>
+		<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+		<WindowsAppSDKSelfContained Condition="'$(IsUnpackaged)' == 'true'">true</WindowsAppSDKSelfContained>
+		<SelfContained Condition="'$(IsUnpackaged)' == 'true'">true</SelfContained>
+
+	</PropertyGroup>
+
+	<!-- To generate MSIX as part of dotnet publish -->
+	<PropertyGroup Condition="$(TargetFramework.Contains('-windows')) and '$(Configuration)' == 'Release'">
+		<GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+		<!-- <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled> -->
+	</PropertyGroup>
+
+	<!-- For iOS publish-->
+	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
+		<RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+		<!-- <CodesignKey>iPhone Distribution: John Smith (AY2GDE9QM7)</CodesignKey>
+		<CodesignProvision>MyMauiApp</CodesignProvision> -->
+		<ArchiveOnBuild>true</ArchiveOnBuild>
+	</PropertyGroup>
+	<ItemGroup>
+		<MauiIcon Include="Resources\appicon.svg" ForegroundFile="Resources\appiconfg.svg" Color="#081B25" />
+		<MauiSplashScreen Include="Resources\appiconfg.svg" Color="#081B25" />
+		<MauiImage Include="Resources\Images\*" />
+		<MauiFont Include="Resources\Fonts\*" />
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\VPortal.GatewayClient.Domain.Windows\VPortal.GatewayClient.Domain.Windows.csproj" />
+		<ProjectReference Include="..\VPortal.GatewayClient.UI.Shared\VPortal.GatewayClient.UI.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="Microsoft.Extensions.Logging" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
+		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" />
+		<PackageReference Include="PInvoke.User32" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="Platforms\Windows\trayicon.ico" />
+		<None Remove="Platforms\MacCatalyst\trayicon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Platforms\Windows\trayicon.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Pages\Samples\WeatherPage.xaml.cs">
+			<DependentUpon>WeatherPage.xaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<MauiXaml Update="Pages\HostPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Resources\Styles\MenuStyles.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\ExceptionHandling\MenuBar.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="ViewModels\ExceptionHandling\" />
+	</ItemGroup>
+
+	<ProjectExtensions>
+		<VisualStudio>
+			<UserProperties XamarinHotReloadGenericExceptionInfoBarVPortal.GatewayClient.UI.WindowsHideInfoBar="True" />
+		</VisualStudio>
+	</ProjectExtensions>
+
+</Project>

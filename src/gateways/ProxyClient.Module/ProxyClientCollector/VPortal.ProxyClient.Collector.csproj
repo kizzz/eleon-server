@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Autofac" />
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(ModulesDir)\Host\Server\Eleon.CoreInfrastructure.Module\Eleon.Core.Infrastructure.Module.HttpApi.Client\Eleon.Core.Infrastructure.Module.HttpApi.Client.csproj" />
+    <ProjectReference Include="$(ModulesDir)\Host\Server\Eleon.DataSource.Module\Eleon.DataSource.Module.HttpApi.Client\Eleon.DataSource.Module.HttpApi.Client.csproj" />
+    <ProjectReference Include="$(ModulesDir)\Host\Server\Eleon.Storage.Module\Eleon.Storage.Module.HttpApi.Client\Eleon.Storage.Module.HttpApi.Client.csproj" />
+    <ProjectReference Include="..\VPortal.ProxyClient.Domain\VPortal.ProxyClient.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,15 @@
+{
+  "Culture": "it",
+  "Texts": {
+    "SamplePageMessage": "Una pagina di esempio per il modulo Modulo",
+    "Menu:Module": "Modulo",
+    "DocumentVersion:Version": "Versione",
+    "DocumentVersion:CreatedByUserName": "Autore",
+    "DocumentVersion:CreatedAt": "Data",
+    "LastModifiedBy": "Ultima modifica di {0} alle {1}",
+    "DocumentVersion:CreatedByNobody": "Sistema",
+    "ArchiveMessage": "Stai visualizzando una versione di archivio {0} creata da {1} alle {2}",
+    "History:Title": "Cronologia dell'audit del documento",
+    "History:Tooltip": "Storia del documento"
+  }
+}

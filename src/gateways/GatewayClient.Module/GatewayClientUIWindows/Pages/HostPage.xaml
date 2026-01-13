@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:styles="clr-namespace:VPortal.GatewayClient.UI.Windows.Resources.Styles"
+             xmlns:ex="clr-namespace:VPortal.GatewayClient.UI.Windows.Views.ExceptionHandling"
+             x:Name="this"
+             x:Class="VPortal.GatewayClient.UI.Windows.Pages.HostPage">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing"
+                                        Command="{Binding Init}" />
+    </ContentPage.Behaviors>
+
+    <ContentPage.MenuBarItems>
+        <MenuBarItem
+                Text="File"
+                BindingContext="{Binding Path=BindingContext, Source={x:Reference this}}">
+            <MenuFlyoutItem
+                Text="Host Logs"
+                Command="{Binding OpenHostLogs}"/>
+            <MenuFlyoutItem
+                Text="Refresh"
+                Command="{Binding Init}"/>
+            <MenuFlyoutItem
+                Text="Quit"
+                Command="{Binding Quit}"/>
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
+
+    <VerticalStackLayout>
+        <ScrollView
+                VerticalOptions="FillAndExpand"
+                IsVisible="{Binding HostExecutablePresent}"
+                Margin="25">
+            <VerticalStackLayout Spacing="8">
+                <!--General-->
+                <VerticalStackLayout Spacing="8">
+                    <Label
+                            Text="Host configuration"
+                            class="SectionTitle"/>
+
+                    <!--Service or process selection-->
+                    <Grid RowDefinitions="30,30">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectHostRuntimeType}"
+                                                  CommandParameter="Service"/>
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Row="0" Text="Service" class="Subhead"/>
+                        <Label Grid.Row="1"
+                            Text="Configure and run host as a Windows Service" class="SubContent"/>
+                        <Image
+                            x:Name="Service"
+                            Grid.RowSpan="2"
+                            Aspect="Center"
+                            IsVisible="{Binding IsService}"
+                            Source="checkmark_icon.png"
+                            HorizontalOptions="End"
+                            VerticalOptions="Center"/>
+                    </Grid>
+                    <BoxView class="HRule"/>
+
+                    <Grid RowDefinitions="30,30">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectHostRuntimeType}"
+                                                  CommandParameter="Process"/>
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Row="0" Text="Process" class="Subhead"/>
+                        <Label Grid.Row="1"
+                            Text="Configure and run host as a regular console process" class="SubContent"/>
+                        <Image
+                            x:Name="Process"
+                            Grid.RowSpan="2"
+                            Aspect="Center"
+                            IsVisible="{Binding IsProcess}"
+                            Source="checkmark_icon.png"
+                            HorizontalOptions="End"
+                            VerticalOptions="Center"/>
+                    </Grid>
+                    <BoxView class="HRule"/>
+                </VerticalStackLayout>
+
+                <!--Process-->
+                <VerticalStackLayout
+                        Spacing="8"
+                        IsVisible="{Binding IsProcess}">
+                    <Label
+                            Text="Process Configuration"
+                            class="SectionTitle"/>
+
+                    <Grid
+                            RowDefinitions="30,30"
+                            ColumnDefinitions="1*,1*">
+                        <Label Grid.Row="0" Text="Process State" class="Subhead"/>
+                        <Label
+                            Grid.Row="1"
+                            Text="{Binding ProcessInfo}"
+                            class="SubContent"/>
+
+                        <HorizontalStackLayout
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Grid.RowSpan="2"
+                                Spacing="8"
+                                VerticalOptions="Center">
+                            <Button
+                                MaximumWidthRequest="100"
+                                Text="Start"
+                                IsEnabled="{Binding IsProcessNotRunning}"
+                                Margin="10,5,10,5"
+                                Command="{Binding StartProcess}"/>
+                            <Button
+                                MaximumWidthRequest="100"
+                                Text="Stop"
+                                IsEnabled="{Binding IsProcessRunning}"
+                                Margin="10,5,10,5"
+                                Command="{Binding StopProcess}"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+                    <BoxView class="HRule"/>
+                </VerticalStackLayout>
+
+                <!--Service-->
+                <VerticalStackLayout
+                        Spacing="8"
+                        IsVisible="{Binding IsService}">
+                    <Label
+                            Text="Service Configuration"
+                            class="SectionTitle"/>
+
+                    <Grid
+                            RowDefinitions="30,30"
+                            ColumnDefinitions="1*,1*">
+                        <Label Grid.Row="0" Text="Service Installation" class="Subhead"/>
+                        <Label
+                            Grid.Row="1"
+                            Text="{Binding ServiceInstallationInfo}"
+                            class="SubContent"/>
+                        <HorizontalStackLayout
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Grid.RowSpan="2"
+                                Spacing="8"
+                                VerticalOptions="Center">
+                            <Button
+                                MaximumWidthRequest="100"
+                                Text="Install"
+                                IsEnabled="{Binding IsServiceInstalled}"
+                                Margin="10,5,10,5"
+                                Command="{Binding InstallService}"/>
+                            <Button
+                                MaximumWidthRequest="100"
+                                Text="Uninstall"
+                                IsEnabled="{Binding IsServiceNotInstalled}"
+                                Margin="10,5,10,5"
+                                Command="{Binding UninstallService}"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+                    <BoxView class="HRule"/>
+
+                    <Grid
+                            RowDefinitions="30,30"
+                            ColumnDefinitions="1*,1*">
+                        <Label Grid.Row="0" Text="Service State" class="Subhead"/>
+                        <Label
+                            Grid.Row="1"
+                            Text="{Binding ServiceInfo}"
+                            class="SubContent"/>
+                        <HorizontalStackLayout
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Grid.RowSpan="2"
+                                Spacing="8"
+                                VerticalOptions="Center">
+                            <Button
+                                MaximumWidthRequest="100"
+                                Text="Start"
+                                IsEnabled="{Binding IsServiceNotRunning}"
+                                Margin="10,5,10,5"
+                                Command="{Binding StartService}"/>
+                            <Button
+                                MaximumWidthRequest="100"
+                                Text="Stop"
+                                IsEnabled="{Binding IsServiceRunning}"
+                                Margin="10,5,10,5"
+                                Command="{Binding StopService}"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+                    <BoxView class="HRule"/>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </VerticalStackLayout>
+</ContentPage>

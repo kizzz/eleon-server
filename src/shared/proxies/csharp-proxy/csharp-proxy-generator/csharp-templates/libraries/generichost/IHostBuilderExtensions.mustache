@@ -1,0 +1,68 @@
+{{>partial_header}}
+{{#nrt}}
+#nullable enable
+
+{{/nrt}}
+using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using {{packageName}}.{{clientPackage}};
+
+namespace {{packageName}}.Extensions;
+
+public static class HostBuilderExtensions
+{
+    public static IHostBuilder ConfigureApi(this IHostBuilder builder, Action<HostBuilderContext, IServiceCollection, ApiClientOptions> configure)
+    {
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        if (configure == null)
+        {
+            throw new ArgumentNullException(nameof(configure));
+        }
+
+        return builder.ConfigureServices((context, services) =>
+        {
+            services.AddApi(options => configure(context, services, options));
+        });
+    }
+
+    public static IHostBuilder ConfigureApi(this IHostBuilder builder, Action<HostBuilderContext, ApiClientOptions> configure)
+    {
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        if (configure == null)
+        {
+            throw new ArgumentNullException(nameof(configure));
+        }
+
+        return builder.ConfigureServices((context, services) =>
+        {
+            services.AddApi(options => configure(context, options));
+        });
+    }
+
+    public static IHostBuilder ConfigureApi(this IHostBuilder builder, Action<ApiClientOptions> configure)
+    {
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        if (configure == null)
+        {
+            throw new ArgumentNullException(nameof(configure));
+        }
+
+        return builder.ConfigureServices((_, services) =>
+        {
+            services.AddApi(configure);
+        });
+    }
+}

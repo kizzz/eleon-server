@@ -1,0 +1,8 @@
+﻿@page
+@model VPortal.Pages.Account.PostLoginInPopupModel
+@{
+}
+
+<script>
+    window.opener.postMessage('vportal-popup-logged-in', location.origin);
+</script>

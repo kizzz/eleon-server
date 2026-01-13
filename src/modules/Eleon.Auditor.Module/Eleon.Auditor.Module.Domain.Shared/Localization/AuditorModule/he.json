@@ -1,0 +1,20 @@
+{
+  "Culture": "he",
+  "Texts": {
+    "SamplePageMessage": "עמוד לדוגמא ",
+    "Menu:Module": "מודול",
+    "DocumentVersion:Version": "גרסה",
+    "DocumentVersion:CreatedByUserName": "מחבר",
+    "DocumentVersion:CreatedAt": "תאריך",
+    "LastModifiedBy": "שונה לאחרונה על ידי {0} בשעה {1}",
+    "DocumentVersion:CreatedByNobody": "מערכת",
+    "ArchiveMessage": "אתה צופה בגרסת ארכיון {0} שנוצרה על ידי {1} ב-{2}",
+    "History:Title": "היסטוריית ביקורת מסמכים",
+    "History:Tooltip": "היסטוריית מסמכים",
+    "VersionOutdatedMessage": "הגרסה שאתה צופה בו מיושנת. גרסה חדשה {0} נוצרה על ידי {1} בשעה {2}.",
+    "VersionOutdatedWarningUser": "המסמך עודכן על ידי {0}.",
+    "VersionOutdatedWarningSystem": "המסמך עודכן.",
+    "VersionOutdatedCaution": "זהירות: נתונים שלא נשמרו יאבדו!",
+    "VersionOutdatedReloadConfirm": "האם אתה רוצה לטעון מחדש את הדף הזה?"
+  }
+}

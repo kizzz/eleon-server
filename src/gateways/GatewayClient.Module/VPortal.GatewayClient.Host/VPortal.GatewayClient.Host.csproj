@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	
+	
+	<PropertyGroup>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		 
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
+	  <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="$(SharedDir)\EventBus\Eleon.Common.EventBus.Module\Eleon.Common.EventBus.Module.csproj" />
+		<ProjectReference Include="$(SharedDir)\EventBus\EventBus.Nats\EventBus.Nats.csproj" />
+		<ProjectReference Include="..\VPortal.GatewayClient.Config\VPortal.GatewayClient.Config.csproj" />
+		<ProjectReference Include="..\VPortal.GatewayClient.Host.Cli\VPortal.GatewayClient.Host.Cli.csproj" />
+		<ProjectReference Include="..\VPortal.GatewayClient.HttpApi.Host\VPortal.GatewayClient.HttpApi.Host.csproj" />
+	</ItemGroup>
+	
+	<PropertyGroup>
+		<PlatformTarget>x64</PlatformTarget>
+		<!-- This bundles the .NET Core libraries (Uncomment for packaged builds)  -->
+		<SelfContained>true</SelfContained>
+		<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+		<DefineConstants>_WINDOWS</DefineConstants>
+	</PropertyGroup>
+
+</Project>

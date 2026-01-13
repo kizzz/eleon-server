@@ -1,0 +1,152 @@
+C:\Workspace\eleonsoft\server\hosts\eleons3\EleonS3.Test
+├── .gitignore
+├── appsettings.json
+├── EleonS3.Test.csproj
+├── bin
+│   └── Debug
+│       └── net9.0
+│           ├── appsettings.json
+│           ├── AWSSDK.Core.dll
+│           ├── AWSSDK.S3.dll
+│           ├── EleonS3.Test.deps.json
+│           ├── EleonS3.Test.dll
+│           ├── EleonS3.Test.pdb
+│           ├── EleonS3.Test.runtimeconfig.json
+│           ├── Microsoft.Extensions.Configuration.Abstractions.dll
+│           ├── Microsoft.Extensions.Configuration.dll
+│           ├── Microsoft.Extensions.Configuration.FileExtensions.dll
+│           ├── Microsoft.Extensions.Configuration.Json.dll
+│           ├── Microsoft.Extensions.FileProviders.Abstractions.dll
+│           ├── Microsoft.Extensions.FileProviders.Physical.dll
+│           ├── Microsoft.Extensions.FileSystemGlobbing.dll
+│           ├── Microsoft.Extensions.Primitives.dll
+│           ├── Microsoft.TestPlatform.CommunicationUtilities.dll
+│           ├── Microsoft.TestPlatform.CoreUtilities.dll
+│           ├── Microsoft.TestPlatform.CrossPlatEngine.dll
+│           ├── Microsoft.TestPlatform.PlatformAbstractions.dll
+│           ├── Microsoft.TestPlatform.Utilities.dll
+│           ├── Microsoft.VisualStudio.CodeCoverage.Shim.dll
+│           ├── Microsoft.VisualStudio.TestPlatform.Common.dll
+│           ├── Microsoft.VisualStudio.TestPlatform.ObjectModel.dll
+│           ├── Newtonsoft.Json.dll
+│           ├── testhost.dll
+│           ├── testhost.exe
+│           ├── xunit.abstractions.dll
+│           ├── xunit.assert.dll
+│           ├── xunit.core.dll
+│           ├── xunit.execution.dotnet.dll
+│           ├── xunit.runner.visualstudio.testadapter.dll
+│           ├── cs
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── de
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── es
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── fr
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── it
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── ja
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── ko
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── pl
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── pt-BR
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── ru
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── tr
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           ├── zh-Hans
+│           │   ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│           │   ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│           │   ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│           │   └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+│           └── zh-Hant
+│               ├── Microsoft.TestPlatform.CommunicationUtilities.resources.dll
+│               ├── Microsoft.TestPlatform.CoreUtilities.resources.dll
+│               ├── Microsoft.TestPlatform.CrossPlatEngine.resources.dll
+│               ├── Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+│               └── Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+├── concat_output
+│   ├── concatted_001.txt
+│   └── filestree.txt
+├── obj
+│   ├── EleonS3.Test.csproj.nuget.dgspec.json
+│   ├── EleonS3.Test.csproj.nuget.g.props
+│   ├── EleonS3.Test.csproj.nuget.g.targets
+│   ├── project.assets.json
+│   ├── project.nuget.cache
+│   └── Debug
+│       └── net9.0
+│           ├── .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+│           ├── EleonS3..A42DABE8.Up2Date
+│           ├── EleonS3.Test.AssemblyInfo.cs
+│           ├── EleonS3.Test.AssemblyInfoInputs.cache
+│           ├── EleonS3.Test.assets.cache
+│           ├── EleonS3.Test.csproj.AssemblyReference.cache
+│           ├── EleonS3.Test.csproj.BuildWithSkipAnalyzers
+│           ├── EleonS3.Test.csproj.CoreCompileInputs.cache
+│           ├── EleonS3.Test.csproj.FileListAbsolute.txt
+│           ├── EleonS3.Test.dll
+│           ├── EleonS3.Test.GeneratedMSBuildEditorConfig.editorconfig
+│           ├── EleonS3.Test.genruntimeconfig.cache
+│           ├── EleonS3.Test.GlobalUsings.g.cs
+│           ├── EleonS3.Test.pdb
+│           ├── EleonS3.Test.sourcelink.json
+│           ├── ref
+│           │   └── EleonS3.Test.dll
+│           └── refint
+│               └── EleonS3.Test.dll
+└── Tests
+    ├── S3AuthTests.cs
+    ├── S3BasicTests.cs
+    ├── S3BucketTests.cs
+    ├── S3MultipartTests.cs
+    └── S3TestClient.cs

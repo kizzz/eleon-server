@@ -1,0 +1,10 @@
+@inherits Volo.Abp.TextTemplating.Razor.RazorTemplatePageBase<string[]>
+
+<div style="font-family: Arial, sans-serif; color: #333;">
+    <p>Hi,</p>
+
+    <p>Please use the following One-Time Password (OTP) to proceed:</p>
+    <p>User @Model[1], code @Model[0]</p>
+    <p>Session information</p>
+    <pre>@(Model[2])</pre>
+</div>

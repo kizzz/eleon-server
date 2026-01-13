@@ -1,0 +1,83 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		
+	</PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog.Sinks.Async" />
+		<PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Volo.Abp.Autofac" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+<ItemGroup>
+		<Compile Remove="Logs\**" />
+		<Content Remove="Logs\**" />
+
+		<EmbeddedResource Remove="Logs\**" />
+		<None Remove="Logs\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="appsettings.Debug.json" />
+		<None Include="appsettings.Debug.json" Condition="Exists('appsettings.Debug.json')">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+
+		<Content Remove="appsettings.Release.json" />
+		<None Include="appsettings.Release.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+
+		<Content Remove="appsettings.Test.json" />
+		<None Include="appsettings.Test.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+
+		<None Include="appsettings.$(Configuration).json" Condition="Exists('appsettings.$(Configuration).json')" CopyToOutputDirectory="Always" Link="appsettings.json" />
+
+		<Content Remove="wwwroot\**\*.*" />
+		<Content Include="wwwroot\**\*.*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<!-- ModuleCollector aggregator project removed; db migrator builds against individual modules via Full container -->
+
+<ItemGroup><EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\modules\Eleon.WireGuard.Module\Eleon.WireGuard.Module.Full.csproj" />
+    <ProjectReference Include="..\..\libs\Eleon.UnifiedMigrations.Lib\Eleon.UnifiedMigrations.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Migration.Lib\Eleon.Migration.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Startup.Lib\Eleon.Startup.Lib.Full.csproj" />
+  </ItemGroup>
+
+</Project>

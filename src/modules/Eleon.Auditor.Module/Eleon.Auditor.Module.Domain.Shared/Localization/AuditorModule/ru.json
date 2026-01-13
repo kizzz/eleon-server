@@ -1,0 +1,15 @@
+{
+  "Culture": "ru",
+  "Texts": {
+    "SamplePageMessage": "Пример страницы для модуля Module",
+    "Menu:Module": "Модуль",
+    "DocumentVersion:Version": "Версия",
+    "DocumentVersion:CreatedByUserName": "Автор",
+    "DocumentVersion:CreatedAt": "Дата",
+    "LastModifiedBy": "Последнее изменение {0} в {1}",
+    "DocumentVersion:CreatedByNobody": "Система",
+    "ArchiveMessage": "Вы просматриваете архивную версию {0}, созданную {1} в {2}.",
+    "History:Title": "История аудита документов",
+    "History:Tooltip": "История документа"
+  }
+}

@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+    <Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.EventBus" />
+		<PackageReference Include="Volo.Abp.Identity.Domain" />
+		<PackageReference Include="Volo.Abp.PermissionManagement.Domain" />
+		<PackageReference Include="Volo.Abp.TenantManagement.Domain" />
+		<PackageReference Include="NUglify" />
+		<ProjectReference Include="..\..\..\..\libs\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+		<ProjectReference Include="..\..\..\..\libs\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+		<ProjectReference Include="..\Common.EventBus.Abstractions.Module\Common.EventBus.Abstractions.Module.Full.csproj" />
+	</ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+</Project>
+
+
+

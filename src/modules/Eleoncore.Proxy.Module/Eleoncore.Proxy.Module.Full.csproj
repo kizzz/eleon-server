@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<TargetFramework>net10.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<ImplicitUsings>enable</ImplicitUsings>
+		 
+		
+	</PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AutoMapper" />
+
+  </ItemGroup>
+  
+	<ItemGroup>
+		<ProjectReference Include="..\..\modules\Eleon.ProxyRouter.Module\Eleon.ProxyRouter.Module.Full.csproj" />
+		<ProjectReference Include="..\..\shared\libs\Eleoncore.AbpSdk.Lib\Eleoncore.AbpSdk.Lib.Full.csproj" />
+		</ItemGroup>
+
+<ItemGroup><EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+
+</Project>
+
+
+

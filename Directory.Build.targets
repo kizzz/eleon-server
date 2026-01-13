@@ -1,0 +1,48 @@
+<Project>
+  <!--
+    This file ensures test packages are only referenced in actual test projects.
+    It also provides guardrails to prevent non-test projects from accidentally becoming test projects.
+  -->
+
+  <PropertyGroup>
+    <!-- Ensure test projects have proper configuration -->
+    <IsPackable Condition="'$(IsTestProject)' == 'true' AND '$(IsPackable)' == ''">false</IsPackable>
+  </PropertyGroup>
+
+  <!-- Remove test packages from non-test projects if they were accidentally included -->
+  <Target Name="RemoveTestPackagesFromNonTestProjects" BeforeTargets="CollectPackageReferences">
+    <ItemGroup>
+      <!-- Remove test packages if this is NOT a test project -->
+      <PackageReference Remove="Microsoft.NET.Test.Sdk" Condition="'$(IsTestProject)' != 'true'" />
+      <PackageReference Remove="xunit" Condition="'$(IsTestProject)' != 'true'" />
+      <PackageReference Remove="xunit.runner.visualstudio" Condition="'$(IsTestProject)' != 'true'" />
+      <PackageReference Remove="xunit.extensibility.execution" Condition="'$(IsTestProject)' != 'true'" />
+      <PackageReference Remove="MSTest.TestAdapter" Condition="'$(IsTestProject)' != 'true'" />
+      <PackageReference Remove="MSTest.TestFramework" Condition="'$(IsTestProject)' != 'true'" />
+      <PackageReference Remove="NUnit" Condition="'$(IsTestProject)' != 'true'" />
+      <PackageReference Remove="NUnit3TestAdapter" Condition="'$(IsTestProject)' != 'true'" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Explicitly force Full projects to NOT be test projects -->
+  <!-- This ensures VS2026 doesn't try to discover tests from Full project DLLs -->
+  <PropertyGroup>
+    <IsTestProject Condition="$(MSBuildProjectName.Contains('.Full.'))">false</IsTestProject>
+  </PropertyGroup>
+
+  <!-- Warn if a "Full" project is marked as a test project (shouldn't happen after above) -->
+  <Target Name="WarnFullProjectAsTest" BeforeTargets="Build">
+    <Warning
+      Text="Project '$(MSBuildProjectName)' is a 'Full' container project and should NOT be marked as IsTestProject=true. Remove IsTestProject property and test package references from this project."
+      Condition="$(MSBuildProjectName.Contains('.Full.')) AND '$(IsTestProject)' == 'true'" />
+  </Target>
+
+  <!-- Prevent VS from treating Full project outputs as test containers -->
+  <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Full.'))">
+    <!-- Explicitly tell VS this is NOT a test project -->
+    <IsTestProject>false</IsTestProject>
+    <!-- Prevent test adapter from scanning this assembly -->
+    <EnableDefaultTestItems>false</EnableDefaultTestItems>
+  </PropertyGroup>
+
+</Project>

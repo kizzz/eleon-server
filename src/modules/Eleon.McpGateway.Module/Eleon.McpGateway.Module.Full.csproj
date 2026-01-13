@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <Compile Remove="tests\**" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+  <Target Name="ExcludeGeneratedAssemblyFiles" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <Compile Remove="obj\**\*.AssemblyInfo.cs" />
+      <Compile Remove="obj\**\*.AssemblyAttributes.cs" />
+    </ItemGroup>
+  </Target>
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Core" />
+    <PackageReference Include="Volo.Abp.Ddd.Domain" />
+    <PackageReference Include="Volo.Abp.Ddd.Application" />
+    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" />
+    <PackageReference Include="Volo.Abp.Authorization.Abstractions" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\Eleon.Mcp.Infrastructure\Eleon.Mcp.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Eleon.McpGateway.Module.Tests" />
+  </ItemGroup>
+</Project>

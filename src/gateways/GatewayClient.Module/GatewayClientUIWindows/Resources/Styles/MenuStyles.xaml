@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VPortal.GatewayClient.UI.Windows.Resources.Styles.MenuStyles">
+    <Style TargetType="FlyoutItem" x:Key="HomeFlyout">
+        <Style.Triggers>
+            <Trigger TargetType="FlyoutItem"
+                        Property="IsChecked" Value="False">
+                <Setter Property="FlyoutIcon" Value="tab_home.png"/>
+            </Trigger>
+            <Trigger TargetType="FlyoutItem"
+                        Property="IsChecked" Value="True">
+                <Setter Property="FlyoutIcon" Value="tab_home_on.png"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="FlyoutItem" x:Key="FavFlyout">
+        <Style.Triggers>
+            <Trigger TargetType="FlyoutItem"
+                        Property="IsChecked" Value="False">
+                <Setter Property="FlyoutIcon" Value="tab_favorites.png"/>
+            </Trigger>
+            <Trigger TargetType="FlyoutItem"
+                        Property="IsChecked" Value="True">
+                <Setter Property="FlyoutIcon" Value="tab_favorites_on.png"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="FlyoutItem" x:Key="MapFlyout">
+        <Style.Triggers>
+            <Trigger TargetType="FlyoutItem"
+                        Property="IsChecked" Value="False">
+                <Setter Property="FlyoutIcon" Value="tab_map.png"/>
+            </Trigger>
+            <Trigger TargetType="FlyoutItem"
+                        Property="IsChecked" Value="True">
+                <Setter Property="FlyoutIcon" Value="tab_map_on.png"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

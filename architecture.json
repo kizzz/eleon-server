@@ -1,0 +1,124 @@
+{
+  "name": "Core.Server",
+  "modules": [
+    {
+      "name": "Core.Domain.Shared",
+      "type": "domain.shared",
+      "depends": []
+    },
+    {
+      "name": "Core.Domain",
+      "type": "domain",
+      "depends": [
+        "Core.Domain.Shared"
+      ]
+    },
+    {
+      "name": "Core.Application.Contracts",
+      "type": "app.contracts",
+      "depends": [
+        "Core.Domain.Shared"
+      ]
+    },
+    {
+      "name": "Core.Application",
+      "type": "app",
+      "depends": [
+        "Core.Domain",
+        "Core.Application.Contracts",
+        "Core.Persistence.Abstractions",
+        "Core.Messaging",
+        "Core.Messaging.Contracts"
+      ]
+    },
+    {
+      "name": "Core.Persistence.Abstractions",
+      "type": "persistence.port",
+      "depends": []
+    },
+    {
+      "name": "Core.Persistence.EfCore",
+      "type": "persistence.adapter",
+      "depends": [
+        "Core.Domain",
+        "Core.Domain.Shared",
+        "Core.Persistence.Abstractions"
+      ]
+    },
+    {
+      "name": "Core.Messaging.Contracts",
+      "type": "messaging.contracts",
+      "depends": []
+    },
+    {
+      "name": "Core.Messaging",
+      "type": "messaging.adapter",
+      "depends": [
+        "Core.Messaging.Contracts"
+      ]
+    },
+    {
+      "name": "Core.Messaging.Outbox.EfCore",
+      "type": "messaging.outbox.adapter",
+      "depends": [
+        "Core.Messaging",
+        "Core.Persistence.EfCore"
+      ]
+    },
+    {
+      "name": "Core.HttpApi",
+      "type": "transport.http",
+      "depends": [
+        "Core.Application",
+        "Core.Application.Contracts"
+      ]
+    },
+    {
+      "name": "Core.SignalR",
+      "type": "transport.ws",
+      "depends": []
+    },
+    {
+      "name": "Core.Mcp",
+      "type": "transport.mcp",
+      "depends": []
+    },
+    {
+      "name": "Core.HttpApi.Host",
+      "type": "host",
+      "depends": [
+        "Core.HttpApi",
+        "Core.Persistence.EfCore",
+        "Core.Messaging",
+        "Core.Messaging.Contracts",
+        "Core.SignalR",
+        "Core.Mcp",
+        "Core.Messaging.Outbox.EfCore"
+      ]
+    },
+    {
+      "name": "Core.DbMigrator",
+      "type": "migration",
+      "depends": [
+        "Core.Persistence.EfCore"
+      ]
+    },
+    {
+      "name": "Core.Arch.Analyzers",
+      "type": "analyzers",
+      "depends": []
+    }
+  ],
+  "rules": {
+    "forbiddenNamespacesInDomain": [
+      "Microsoft.EntityFrameworkCore",
+      "Microsoft.AspNetCore",
+      "Volo.Abp.EntityFrameworkCore"
+    ],
+    "applicationServiceConventions": {
+      "requireCancellationToken": true,
+      "requireTaskReturn": true,
+      "classNameSuffix": "AppService"
+    }
+  }
+}

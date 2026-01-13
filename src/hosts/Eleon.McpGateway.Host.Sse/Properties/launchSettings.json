@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Eleon.McpGateway.Host.Sse": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:8001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "MCP_GATEWAY_PORT": "8001",
+        "MCP_GATEWAY_BASE_PATH": "/sse"
+      }
+    }
+  }
+}

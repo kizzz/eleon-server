@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+  </PropertyGroup>
+  <Import Project="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\..\Directory.Build.props'))" />
+</Project>

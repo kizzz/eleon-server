@@ -1,0 +1,8 @@
+<Project>
+  <ItemGroup>
+    <GlobalAnalyzerConfigFiles
+      Include="$(MSBuildThisFileDirectory)..\contentFiles\any\any\Workspace.globalconfig" />
+    <AdditionalFiles
+      Include="$(MSBuildThisFileDirectory)..\contentFiles\any\any\BannedSymbols.txt" />
+  </ItemGroup>
+</Project>

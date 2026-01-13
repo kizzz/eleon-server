@@ -1,0 +1,12 @@
+{
+  "IISSettings": {
+    "Undefined": {
+      "Site": "VPortalServer",
+      "SecureSite": "VPortalSecureServer"
+    },
+    "Certificate": {
+      "Thumbprint": "18229e7aacea487cb856fed6f0641c2a63777b07",
+      "Store": "My"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "Culture": "ar",
+  "Texts": {
+    "SamplePageMessage": "نموذج لصفحة الوحدة النمطية",
+    "Menu:Module": "وحدة",
+    "DocumentVersion:Version": "إصدار",
+    "DocumentVersion:CreatedByUserName": "مؤلف",
+    "DocumentVersion:CreatedAt": "تاريخ",
+    "LastModifiedBy": "آخر تعديل بواسطة {0} في {1}",
+    "DocumentVersion:CreatedByNobody": "نظام",
+    "ArchiveMessage": "أنت تشاهد إصدار أرشيف {0} تم إنشاؤه بواسطة {1} في {2}",
+    "History:Title": "سجل مراجعة الوثيقة",
+    "History:Tooltip": "تاريخ الوثيقة"
+  }
+}

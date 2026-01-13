@@ -1,0 +1,30 @@
+{
+  "Culture": "fr",
+  "Texts": {
+    "Menu:Home": "Maison",
+    "Menu:ContactUs": "Contactez-nous",
+    "Menu:ArticleSample": "Exemple d'articles",
+    "Home": "Maison",
+    "Welcome": "Accueillir",
+    "LongWelcomeMessage": "Bienvenue dans l'application. Il s'agit d'un projet de startup basé sur le framework ABP. Pour plus d'informations, visitez abp.io.",
+    "EndDate": "Date de fin",
+    "StartDate": "Date de début",
+    "Permission:Dashboard": "Tableau de bord",
+    "Menu:Dashboard": "Tableau de bord",
+    "Menu:HomePage": "Page d'accueil",
+    "Dashboard": "Tableau de bord",
+    "ExternalProvider:Google": "Google",
+    "ExternalProvider:Google:ClientId": "identité du client",
+    "ExternalProvider:Google:ClientSecret": "Clé secrète du client",
+    "ExternalProvider:Microsoft": "Microsoft",
+    "ExternalProvider:Microsoft:ClientId": "identité du client",
+    "ExternalProvider:Microsoft:ClientSecret": "Clé secrète du client",
+    "ExternalProvider:Twitter": "Twitter",
+    "ExternalProvider:Twitter:ConsumerKey": "La clé du consommateur",
+    "ExternalProvider:Twitter:ConsumerSecret": "Secret du consommateur",
+    "NewsletterHeader": "Abonnez-vous à la newsletter!",
+    "NewsletterInfo": "Obtenez des informations sur les derniers événements.",
+    "NewsletterPreference_Default": "Bulletin par défaut",
+    "NewsletterPrivacyAcceptMessage": "J'accepte la <a href='/privacy-policy'>Politique de confidentialité</a>."
+  }
+}

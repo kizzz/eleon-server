@@ -1,0 +1,19 @@
+{
+  "Culture": "de-DE",
+  "Texts": {
+    "SamplePageMessage": "Eine Musterseite für das Module-Modul",
+    "Menu:Module": "Melder",
+    "ModuleDescription": "Beschreibung des Benachrichtigungsmoduls...",
+    "Menu:Top": "Verwaltung von Nachrichtenvorlagen",
+    "Menu:MessageTemplates": "Nachrichtenvorlagen",
+    "Menu:MessageTemplateTypes": "Arten von Nachrichtenvorlagen",
+    "MessageTemplateTypes": "Arten von Nachrichtenvorlagen",
+    "MessageTemplates": "Nachrichtenvorlagen",
+    "MessageTemplateCategories:Selection": "Kategorie auswählen",
+    "Header:Type": "Typ",
+    "Header:Name": "Name",
+    "Header:Key": "Taste",
+    "Header:Description": "Beschreibung",
+    "Header:Template": "Vorlage"
+  }
+}

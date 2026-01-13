@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+  <Target Name="ExcludeGeneratedAssemblyFiles" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <Compile Remove="obj\**\*.AssemblyInfo.cs" />
+      <Compile Remove="obj\**\*.AssemblyAttributes.cs" />
+      <Compile Remove="**\obj\**\*.AssemblyInfo.cs" />
+      <Compile Remove="**\obj\**\*.AssemblyAttributes.cs" />
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <!-- Universal localization resource inclusion -->
+    <EmbeddedResource Include="**/*.Domain.Shared/Localization/**/*.json">
+      <Link>Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[3])/%(Filename)%(Extension)</Link>
+      <LogicalName>/Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[3])/%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="**/*.Domain.Shared/Templates/*.cshtml">
+      <Link>Templates/%(Filename)%(Extension)</Link>
+      <LogicalName>/Templates/%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <Content Remove="**/*.Domain.Shared/Localization/**/*.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Ddd.Application" />
+    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" />
+    <PackageReference Include="Volo.Abp.Ddd.Domain" />
+    <PackageReference Include="Volo.Abp.AutoMapper" />
+    <PackageReference Include="Volo.Abp.Authorization" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.Http.Client" />
+    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel" />
+    <PackageReference Include="Scriban" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\libs\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Migration.Lib\Eleon.Migration.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.EventBus.Lib\EventBus\Common.EventBus.Abstractions.Module\Common.EventBus.Abstractions.Module.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.EventBus.Lib\EventBus\Common.EventBus.Module\Common.EventBus.Module.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+  </ItemGroup>
+  <ItemGroup><EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+
+</Project>
+
+

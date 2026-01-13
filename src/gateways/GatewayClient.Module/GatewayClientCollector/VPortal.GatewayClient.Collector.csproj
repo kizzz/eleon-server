@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Autofac" />
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VPortal.GatewayClient.Domain\VPortal.GatewayClient.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

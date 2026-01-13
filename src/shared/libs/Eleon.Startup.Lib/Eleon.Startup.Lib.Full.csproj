@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+
+
+  </PropertyGroup>
+
+	  <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+    
+    <PackageReference Include="Volo.Abp.Swashbuckle" />
+    <PackageReference Include="Serilog.Settings.Configuration" />
+
+  </ItemGroup>
+
+    <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+    <Compile Remove="**/bin/**/*;**/obj/**/*" />
+    <None Remove="**/bin/**/*;**/obj/**/*" />
+    <Content Remove="**/bin/**/*;**/obj/**/*" />
+  </ItemGroup>
+
+    <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+    <ProjectReference Include="..\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+</Project>
+
+
+

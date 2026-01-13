@@ -1,0 +1,1 @@
+using System; using System.Threading.Tasks; using Quartz; namespace __NS__.__MOD_NAME__.BackgroundWorkers.Jobs { public sealed class ExampleJob : IJob { public Task Execute(IJobExecutionContext ctx) { Console.WriteLine($"[ExampleJob] {DateTime.UtcNow:o}"); return Task.CompletedTask; } } }

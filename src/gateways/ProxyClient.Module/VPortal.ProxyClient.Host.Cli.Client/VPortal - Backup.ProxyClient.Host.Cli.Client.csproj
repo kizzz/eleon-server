@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="$(SolutionDir)/common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Core" />
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SharedModules\Eleon.Infrastructure.Module\src\Eleon.Infrastructure.Module.Domain\Eleon.Infrastructure.Module.Domain.csproj" />
+    <ProjectReference Include="..\VPortal.ProxyClient.Domain.Shared\VPortal.ProxyClient.Domain.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

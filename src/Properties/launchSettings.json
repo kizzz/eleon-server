@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Eleonsoft.Tests": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "sqlDebugging": true,
+      "jsWebView2Debugging": true
+    }
+  }
+}

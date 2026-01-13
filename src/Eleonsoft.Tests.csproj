@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		 
+		 
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+		<EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+		<TestItemExcludes>**/obj/**;**/bin/**</TestItemExcludes>
+		<IsTestProject>true</IsTestProject>
+		<!-- Default test filter: exclude Manual tests unless RUN_MANUAL_TESTS is set -->
+		<DefaultTestFilter Condition="'$(RUN_MANUAL_TESTS)' != '1' AND '$(RUN_MANUAL_TESTS)' != 'true'">Category!=Manual</DefaultTestFilter>
+	</PropertyGroup>
+
+	<!-- Automatically apply test filter to exclude Manual tests by default -->
+	<Target Name="SetDefaultTestFilter" BeforeTargets="VSTest">
+		<PropertyGroup Condition="'$(VSTestTestCaseFilter)' == '' AND '$(RUN_MANUAL_TESTS)' != '1' AND '$(RUN_MANUAL_TESTS)' != 'true'">
+			<VSTestTestCaseFilter>Category!=Manual</VSTestTestCaseFilter>
+		</PropertyGroup>
+	</Target>
+
+	<ItemGroup>
+		<Compile Remove="**\bin\**" />
+		<Compile Remove="**\obj\**" />
+		<Compile Remove="**\*.AssemblyInfo.cs" />
+		<EmbeddedResource Remove="**\bin\**" />
+		<EmbeddedResource Remove="**\obj\**" />
+		<None Remove="**\bin\**" />
+		<None Remove="**\obj\**" />
+	</ItemGroup>
+
+  <!-- Shared Libs -->
+  <ItemGroup>
+    <ProjectReference Include="shared\libs\Eleon.Abp.Lib\Eleon.Abp.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.Authorization.Lib\Eleon.Authorization.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.ErrorHandling.Lib\Eleon.ErrorHandling.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.HealthChecks.Lib\Eleon.HealthChecks.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.Migration.Lib\Eleon.Migration.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.Startup.Lib\Eleon.Startup.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.Telemetry.Lib\Eleon.Telemetry.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.TenantSettings.Lib\Eleon.TenantSettings.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.TestsBase.Lib\Eleon.TestsBase.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleoncore.AbpSdk.Lib\Eleoncore.AbpSdk.Lib.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleoncore.CSharpSdk.Lib\Eleoncore.CSharpSdk.Lib.Full.csproj" />
+  </ItemGroup>
+
+  <!-- Shared Modules -->
+  <ItemGroup>
+    <ProjectReference Include="shared\modules\Eleon.Host.Module\Eleon.Host.Module.Full.csproj" />
+    <ProjectReference Include="shared\modules\Eleon.Storage.Module\Eleon.Storage.Module.Full.csproj" />
+    <ProjectReference Include="shared\modules\Eleoncore.Host.Module\Eleoncore.Host.Module.Full.csproj" />
+  </ItemGroup>
+
+  <!-- EventBus Modules (from shared/libs/Eleon.AbpSdk.Lib) -->
+  <ItemGroup>
+    <ProjectReference Include="shared\libs\Eleon.EventBus.Lib\EventBus\Common.EventBus.Abstractions.Module\Common.EventBus.Abstractions.Module.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.EventBus.Lib\EventBus\Common.EventBus.Module\Common.EventBus.Module.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.EventBus.Lib\EventBus\EventBus.LocalBus.Module\EventBus.LocalBus.Module.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.EventBus.Lib\EventBus\EventBus.MassTransit.Module\EventBus.MassTransit.Module.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.EventBus.Lib\EventBus\EventBus.MassTransit.RabbitMq.Module\EventBus.MassTransit.RabbitMq.Module.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.EventBus.Lib\EventBus\EventBus.Nats\EventBus.Nats.Module.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.EventBus.Lib\EventBus\EventBus.RabbitMq.Module\EventBus.RabbitMq.Module.Full.csproj" />
+    <ProjectReference Include="shared\libs\Eleon.EventBus.Lib\EventBus\EventBus.RabbitMqOverrides.Module\EventBus.RabbitMqOverrides.Module.Full.csproj" />
+  </ItemGroup>
+
+  <!-- Other Modules from shared/libs/Eleon.AbpSdk.Lib -->
+
+  <!-- Local Libs (added to match Eleonsoft.Full.NoTests.csproj) -->
+  <ItemGroup>
+    <ProjectReference Include="libs\Eleon.InternalCommons.Lib\Eleon.InternalCommons.Lib.Full.csproj" />
+    <ProjectReference Include="libs\Eleon.JsonRpc.Stdio\Eleon.JsonRpc.Stdio.csproj" />
+    <ProjectReference Include="libs\Eleon.Mcp.Infrastructure\Eleon.Mcp.Infrastructure.csproj" />
+    <ProjectReference Include="libs\Eleon.Ssh\Eleon.Ssh.csproj" />
+    <ProjectReference Include="libs\Eleon.UnifiedMigrations.Lib\Eleon.UnifiedMigrations.Lib.Full.csproj" />
+  </ItemGroup>
+
+  <!-- Local Modules (added to match Eleonsoft.Full.NoTests.csproj) -->
+  <ItemGroup>
+    <ProjectReference Include="modules\Eleon.AbpEf.Module\Eleon.AbpEf.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Accounting.Module\Eleon.Accounting.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.ApplicationConfiguration.Module\Eleon.ApplicationConfiguration.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Auditor.Module\Eleon.Auditor.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Auth.Module\Eleon.Auth.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.AuthMvc.Module\Eleon.AuthMvc.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.BackgroundJobs.Module\Eleon.BackgroundJobs.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Collaboration.Module\Eleon.Collaboration.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.EleoncoreMultiTenancy.Module\Eleon.EleoncoreMultiTenancy.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.EventManagement.Module\Eleon.EventManagement.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.ExternalLink.Module\Eleon.ExternalLink.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.FileManager.Module\Eleon.FileManager.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.GatewayManagement.Module\Eleon.GatewayManagement.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Google.Module\Eleon.Google.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.HealthCheck.Module\Eleon.HealthCheck.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Infrastructure.Module\Eleon.Infrastructure.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.JobScheduler.Module\Eleon.JobScheduler.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.InteralProxy.Module\Eleon.InteralProxy.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.LanguageManagement.Module\Eleon.LanguageManagement.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.LifecycleFeature.Module\Eleon.Lifecycle.Feature.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.McpCodexGateway.Module\Eleon.McpCodexGateway.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.McpGateway.Module\Eleon.McpGateway.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.McpSshGateway\Eleon.McpSshGateway.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Notificator.Module\Eleon.Notificator.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Orchestrator.Module\Eleon.Orchestrator.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Otp.Module\Eleon.Otp.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Providers.Module\Eleon.Providers.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.ProxyRouter.Module\Eleon.ProxyRouter.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.S3.Module\Eleon.S3.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.SitesManagement.Module\Eleon.SitesManagement.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.SystemLog.Module\Eleon.SystemLog.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.Templating.Module\Eleon.Templating.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.TenantManagement.Module\Eleon.TenantManagement.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleon.WireGuard.Module\Eleon.WireGuard.Module.Full.csproj" />
+    <ProjectReference Include="modules\Eleoncore.Proxy.Module\Eleoncore.Proxy.Module.Full.csproj" />
+  </ItemGroup>
+
+  <!-- Local Hosts (added to match Eleonsoft.Full.NoTests.csproj) -->
+  <ItemGroup>
+    <ProjectReference Include="hosts\db-migrator\VPortal.DbMigrator.Host.Full.csproj" />
+    <ProjectReference Include="hosts\Eleon.Admin.Host\Eleon.Admin.Host.Full.csproj" />
+    <ProjectReference Include="hosts\Eleon.Auth.Host\Eleon.Auth.Host.Full.csproj" />
+    <ProjectReference Include="hosts\Eleon.Eleoncore.Host\Eleon.Eleoncore.Host.Full.csproj" />
+    <ProjectReference Include="hosts\Eleon.Maximal.Host\Eleon.Maximal.Host.Full.csproj" />
+    <ProjectReference Include="hosts\Eleon.McpGateway.Host.Sse\Eleon.McpGateway.Host.Sse.csproj" />
+    <ProjectReference Include="hosts\Eleon.McpSshGateway.Host.Stdio\Eleon.McpSshGateway.Host.Stdio.csproj" />
+    <ProjectReference Include="hosts\Eleon.Minimal.Host\Eleon.Minimal.Host.Full.csproj" />
+    <ProjectReference Include="hosts\Eleon.Proxy.Host\Eleon.Proxy.Host.Full.csproj" />
+    <ProjectReference Include="hosts\Eleon.ServiceManager.Host\Eleon.ServiceManager.Host.Full.csproj" />
+    <ProjectReference Include="hosts\Eleoncore.Proxy.Host\Eleoncore.Proxy.Host.Full.csproj" />
+  </ItemGroup>
+
+  <!-- Include all test files from modules, hosts, and libs -->
+  <ItemGroup>
+    <Compile Include="modules\**\tests\**\*.cs" Exclude="$(TestItemExcludes);modules\Eleon.FileManager.Module\tests\**\*.cs" />
+    <Compile Include="hosts\**\tests\**\*.cs" Exclude="$(TestItemExcludes)" />
+    <Compile Include="libs\**\tests\**\*.cs" Exclude="$(TestItemExcludes)" />
+    <Compile Include="shared\modules\**\test\**\*.cs" Exclude="$(TestItemExcludes)" />
+    <Compile Include="shared\libs\**\test\**\*.cs;shared\libs\**\*.Test\**\*.cs" Exclude="$(TestItemExcludes)" />
+  </ItemGroup>
+
+  <!-- Include test resources -->
+  <ItemGroup>
+    <EmbeddedResource Include="modules\**\*.json" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="modules\**\*.xml" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="modules\**\*.txt" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="modules\**\*.sql" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="hosts\**\*.json" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="hosts\**\*.xml" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="hosts\**\*.txt" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="hosts\**\*.sql" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="libs\**\*.json" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="libs\**\*.xml" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="libs\**\*.txt" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="libs\**\*.sql" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="shared\modules\**\*.json" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="shared\modules\**\*.xml" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="shared\modules\**\*.txt" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="shared\modules\**\*.sql" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="shared\libs\**\*.json" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="shared\libs\**\*.xml" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="shared\libs\**\*.txt" Exclude="$(TestItemExcludes)" />
+    <EmbeddedResource Include="shared\libs\**\*.sql" Exclude="$(TestItemExcludes)" />
+  </ItemGroup>
+
+
+  <!-- Test framework packages -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="Shouldly" />
+    <PackageReference Include="Volo.Abp.TestBase" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Xunit.SkippableFact" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

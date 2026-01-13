@@ -1,0 +1,61 @@
+{
+  "HealthChecks": {
+    "Enabled": true,
+    "ApplicationName": "<ApplicationName>",
+    "CheckTimeout": 5,
+    "EnableDiagnostics": false,
+    "RestartEnabled": false,
+    "RestartRequiresAuth": true,
+    "PublishOnFailure": true,
+    "PublishOnChange": false,
+    "PublishIntervalMinutes": 5,
+    "SqlServer": {
+      "EnableDiagnostics": false,
+      "DiagnosticsCacheMinutes": 10,
+      "MaxTablesInDiagnostics": 100
+    },
+    "Publishing": {
+      "PublishOnFailure": true,
+      "PublishOnChange": false,
+      "PublishIntervalMinutes": 5,
+      "MaxPublishesPerMinute": 1
+    },
+    "ConfigurationCheck": {
+      "Enabled": true,
+      "ThrowExceptionOnInvalid": false,
+      "Configurations": {
+        "ConnectionStrings.Default": "required"
+      }
+    },
+    "HttpCheck": {
+      "Timeout": 40,
+      "IgnoreSsl": false,
+      "Urls": [
+        {
+          "Name": "SelfUrl",
+          "Url": "https://localhost:5001/api/health/health-checks",
+          "GoodStatusCodes": [ 200 ]
+        }
+      ]
+    },
+    "EnvironmentCheck": {
+      "CpuThresholdPercent": 90,
+      "MemoryThresholdPercent": 90
+    },
+    "CurrentProcessCheck": {
+      "CpuThresholdPercent": 95,
+      "MemoryThresholdPercent": 95
+    },
+    "DiskSpaceCheck": {
+      "Items": [
+        {
+          "Path": "Logs",
+          "MaxSizeBytes": "1000000"
+        }
+      ]
+    },
+    "SystemCheck": {
+      "Enabled": true
+    }
+  }
+}

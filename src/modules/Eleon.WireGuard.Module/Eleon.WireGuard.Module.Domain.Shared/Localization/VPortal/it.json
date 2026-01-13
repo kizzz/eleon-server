@@ -1,0 +1,30 @@
+{
+  "Culture": "it",
+  "Texts": {
+    "Menu:Home": "Casa",
+    "Menu:ContactUs": "Contattaci",
+    "Menu:ArticleSample": "Esempio di articolo",
+    "Home": "Casa",
+    "Welcome": "Benvenuto",
+    "LongWelcomeMessage": "Benvenuti nell'applicazione. Questo è un progetto di avvio basato sul framework ABP. Per maggiori informazioni visita abp.io.",
+    "EndDate": "Data di fine",
+    "StartDate": "Data d'inizio",
+    "Permission:Dashboard": "Pannello di controllo",
+    "Menu:Dashboard": "Pannello di controllo",
+    "Menu:HomePage": "Pagina iniziale",
+    "Dashboard": "Pannello di controllo",
+    "ExternalProvider:Google": "Google",
+    "ExternalProvider:Google:ClientId": "Identificativo cliente",
+    "ExternalProvider:Google:ClientSecret": "Segreto del cliente",
+    "ExternalProvider:Microsoft": "Microsoft",
+    "ExternalProvider:Microsoft:ClientId": "Identificativo cliente",
+    "ExternalProvider:Microsoft:ClientSecret": "Segreto del cliente",
+    "ExternalProvider:Twitter": "Cinguettio",
+    "ExternalProvider:Twitter:ConsumerKey": "Chiave del consumatore",
+    "ExternalProvider:Twitter:ConsumerSecret": "Segreto del consumatore",
+    "NewsletterHeader": "Iscriviti alla newsletter!",
+    "NewsletterInfo": "Ottieni informazioni sugli ultimi avvenimenti.",
+    "NewsletterPreference_Default": "Notiziario predefinito",
+    "NewsletterPrivacyAcceptMessage": "Accetto l'<a href='/privacy-policy'>Informativa sulla privacy</a>."
+  }
+}

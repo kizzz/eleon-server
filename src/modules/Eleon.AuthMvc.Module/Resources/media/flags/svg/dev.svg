@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<svg width="3" height="2" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <g class="layer">
+  <title>Layer 1</title>
+  <path d="m0,0l3,0l0,2l-3,0l0,-2z" fill="#1e1e2d" id="svg_1">&lt; /&gt;</path>
+  <path d="m0.01,1l3,0l0,1l-3,0l0,-1z" fill="#1e1e2d" id="svg_2" transform="matrix(1 0 0 1 0 0)">&lt; /&gt;</path>
+  <text fill="#ffffff" font-family="Serif" font-size="2" font-weight="bold" id="svg_3" stroke-width="0" text-anchor="middle" transform="matrix(0.894174 0 0 0.893769 0.0012052 0.601582)" x="1.68" xml:space="preserve" y="1.12">&lt;/&gt;</text>
+ </g>
+</svg>

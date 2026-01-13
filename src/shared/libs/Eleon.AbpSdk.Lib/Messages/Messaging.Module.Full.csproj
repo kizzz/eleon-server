@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.Ddd.Domain" />
+		<PackageReference Include="Volo.Abp.EventBus" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+		<ProjectReference Include="..\..\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+		<ProjectReference Include="..\..\Eleon.HealthChecks.Lib\Eleon.HealthChecks.Lib.Full.csproj" />
+		<ProjectReference Include="..\..\Eleon.EventBus.Lib\EventBus\Common.EventBus.Abstractions.Module\Common.EventBus.Abstractions.Module.Full.csproj" />
+		<ProjectReference Include="..\..\Eleon.TenantSettings.Lib\Eleon.TenantSettings.Lib.Full.csproj" />
+	</ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+</Project>
+
+
+
+

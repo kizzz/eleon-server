@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>abp_sdk</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <Configurations>Debug;Release;ImmuRelease;QA</Configurations>
+    
+  </PropertyGroup>
+
+	<ItemGroup>
+    <Compile Remove="tests\**" />
+    <Compile Remove="test\**" />
+  </ItemGroup>
+<ItemGroup>
+    <PackageReference Include="Volo.Abp.Identity.Domain" />
+    <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" />
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+
+    <ItemGroup>
+    <Compile Remove="tests\**" />
+    <Compile Remove="test\**" />
+  </ItemGroup>
+<ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+  </ItemGroup>
+
+    <ItemGroup>
+    <Compile Remove="tests\**" />
+    <Compile Remove="test\**" />
+  </ItemGroup>
+<ItemGroup>
+    <ProjectReference Include="..\Eleon.Migration.Lib\Eleon.Migration.Lib.Full.csproj" />
+    <ProjectReference Include="..\Eleon.Startup.Lib\Eleon.Startup.Lib.Full.csproj" />
+    <ProjectReference Include="..\Eleoncore.CSharpSdk.Lib\Eleoncore.CSharpSdk.Lib.Full.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests\**" />
+    <Compile Remove="test\**" />
+  </ItemGroup>
+<ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+    <EmbeddedResource Include="test\**\*.resx" />
+    <None Include="test\**\*.json" />
+    <None Include="test\**\*.config" />
+  </ItemGroup>
+</Project>
+
+

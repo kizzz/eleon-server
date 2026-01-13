@@ -1,0 +1,8 @@
+{
+  "$schema": "https://stryker-mutator.io/stryker.schema.json",
+  "logLevel": "info",
+  "project": "tests/Smoke.Tests/Smoke.Tests.csproj",
+  "mutate": [ "**/*.cs" ],
+  "reporters": [ "html", "json", "progress" ],
+  "ignoreMethods": [ "ToString" ]
+}

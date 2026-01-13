@@ -1,0 +1,1 @@
+using Microsoft.AspNetCore.Mvc; using __NS__.__MOD_NAME__.Application.Contracts; namespace __NS__.__MOD_NAME__.HttpApi; [ApiController][Route("api/__mod_name__/example")] public class ExampleController:ControllerBase{ private readonly IExampleAppService _svc; public ExampleController(IExampleAppService s)=>_svc=s; [HttpGet] public ActionResult<ExampleDto> Get()=>_svc.Get(); }

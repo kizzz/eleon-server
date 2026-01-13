@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+     
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <!-- Debug-like settings -->
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="AutoMapper" />
+	  <PackageReference Include="Newtonsoft.Json.Bson" />
+	  <PackageReference Include="Serilog.AspNetCore" />
+	  <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+
+  <ItemGroup>
+       <ProjectReference Include="..\..\modules\\Eleoncore.Proxy.Module\\Eleoncore.Proxy.Module.Full.csproj" />
+       <ProjectReference Include="..\..\shared\libs\Eleon.Startup.Lib\Eleon.Startup.Lib.Full.csproj" />
+       <ProjectReference Include="..\..\shared\modules\\Eleoncore.Host.Module\\Eleoncore.Host.Module.Full.csproj" />
+		</ItemGroup>
+
+<ItemGroup>
+		<None Include="appsettings.$(Configuration).json" Condition="Exists('appsettings.$(Configuration).json')" CopyToOutputDirectory="Always" Link="appsettings.json" />
+    <None Include="appsettings.app.json" CopyToOutputDirectory="Always" />
+    <None Include="appsettings.Debug.json" Condition="Exists('appsettings.Debug.json')" />
+		<None Include="appsettings.Release.json" />
+		<None Include="appsettings.ImmuRelease.json" />
+		<None Include="appsettings.QA.json" />
+    <None Include="web.config" CopyToOutputDirectory="Always"/>
+
+</ItemGroup>
+
+	<Target Name="WipeMergedSettings_BeforeClean" BeforeTargets="Clean">
+		<ItemGroup>
+			<_MergedToDelete Include="$(TargetDir)appsettings.*Merged.json" />
+		</ItemGroup>
+		<Delete Files="@(_MergedToDelete)" ContinueOnError="true" />
+	</Target>
+
+	<Target Name="WipeMergedSettings_BeforeBuild" BeforeTargets="Build">
+		<ItemGroup>
+			<_MergedToDelete Include="$(TargetDir)appsettings.*Merged.json" />
+		</ItemGroup>
+		<Delete Files="@(_MergedToDelete)" ContinueOnError="true" />
+	</Target>
+
+	<Target Name="WipeMergedSettings_BeforePublish" BeforeTargets="Publish">
+		<ItemGroup>
+			<_MergedToDeletePub Include="$(PublishDir)appsettings.*Merged.json" />
+		</ItemGroup>
+		<Delete Files="@(_MergedToDeletePub)" ContinueOnError="true" />
+	</Target>
+  <ItemGroup><EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+</Project>
+
+
+

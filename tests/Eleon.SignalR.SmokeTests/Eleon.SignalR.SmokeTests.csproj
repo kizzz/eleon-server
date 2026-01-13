@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Verify.Xunit" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Argon" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\**\*.cs" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\shared\libs\Eleon.TestsBase.Lib\Eleon.TestsBase.Lib.Full.csproj" />
+  </ItemGroup>
+</Project>
+

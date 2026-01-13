@@ -1,0 +1,30 @@
+{
+  "Culture": "es",
+  "Texts": {
+    "Menu:Home": "Hogar",
+    "Menu:ContactUs": "Contáctenos",
+    "Menu:ArticleSample": "Muestra de artículo",
+    "Home": "Hogar",
+    "Welcome": "Bienvenido",
+    "LongWelcomeMessage": "Bienvenido a la aplicación. Este es un proyecto de inicio basado en el marco ABP. Para obtener más información, visite abp.io.",
+    "EndDate": "Fecha final",
+    "StartDate": "Fecha de inicio",
+    "Permission:Dashboard": "Panel",
+    "Menu:Dashboard": "Panel",
+    "Menu:HomePage": "página de inicio",
+    "Dashboard": "Panel",
+    "ExternalProvider:Google": "Google",
+    "ExternalProvider:Google:ClientId": "Identificación del cliente",
+    "ExternalProvider:Google:ClientSecret": "Secreto del cliente",
+    "ExternalProvider:Microsoft": "microsoft",
+    "ExternalProvider:Microsoft:ClientId": "Identificación del cliente",
+    "ExternalProvider:Microsoft:ClientSecret": "Secreto del cliente",
+    "ExternalProvider:Twitter": "Gorjeo",
+    "ExternalProvider:Twitter:ConsumerKey": "Clave de consumidor",
+    "ExternalProvider:Twitter:ConsumerSecret": "secreto del consumidor",
+    "NewsletterHeader": "¡Suscríbete al boletín!",
+    "NewsletterInfo": "Obtenga información sobre los últimos acontecimientos.",
+    "NewsletterPreference_Default": "Boletín predeterminado",
+    "NewsletterPrivacyAcceptMessage": "Acepto la <a href='/privacy-policy'>Política de Privacidad</a>."
+  }
+}

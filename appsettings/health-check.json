@@ -1,0 +1,52 @@
+{
+  "WarmupEveryMinutes": 10,
+  "HealthChecks": {
+    "Enabled": true,
+    "EnabledChecks": [ "*" ],
+    "HealthStatusPath": "/api/health/health-checks",
+    "RestartEnabled": true,
+    "UI": {
+      "Enabled": true,
+      "Path": "/",
+      "Navigates": [
+        {
+          "Name": "Swagger",
+          "Path": "/swagger"
+        },
+        {
+          "Name": "Profiler",
+          "Path": "/profiler",
+          "Enabled": true
+        }
+      ]
+    },
+    "ConfigurationCheck": {
+      "Enabled": true,
+      "ThrowExceptionOnInvalid": false,
+      "Configurations": {
+        
+      }
+    },
+    "HttpCheck": {
+      "ClientName": "HealthCheckClient",
+      "Timeout": 60,
+      "IgnoreSsl": true,
+      "Urls": [
+
+      ]
+    },
+    "DatabaseMaxTablesSizeCheck": {
+      "Connections": [
+
+      ]
+    },
+    "DiskSpaceCheck": {
+      "Items": [
+        {
+          "Path": "Logs",
+          "MaxSizeBytes": "1000000"
+        }
+      ]
+    }
+  }
+}

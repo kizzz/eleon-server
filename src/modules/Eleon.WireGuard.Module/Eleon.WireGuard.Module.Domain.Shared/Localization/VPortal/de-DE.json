@@ -1,0 +1,30 @@
+{
+  "Culture": "de-DE",
+  "Texts": {
+    "Menu:Home": "Heim",
+    "Menu:ContactUs": "Kontaktiere uns",
+    "Menu:ArticleSample": "Artikelbeispiel",
+    "Home": "Heim",
+    "Welcome": "Willkommen",
+    "LongWelcomeMessage": "Willkommen bei der Anwendung. Dies ist ein Startup-Projekt, das auf dem ABP-Framework basiert. Weitere Informationen finden Sie unter abp.io.",
+    "EndDate": "Endtermin",
+    "StartDate": "Startdatum",
+    "Permission:Dashboard": "Armaturenbrett",
+    "Menu:Dashboard": "Armaturenbrett",
+    "Menu:HomePage": "Startseite",
+    "Dashboard": "Armaturenbrett",
+    "ExternalProvider:Google": "Google",
+    "ExternalProvider:Google:ClientId": "Kunden ID",
+    "ExternalProvider:Google:ClientSecret": "Client-Geheimnis",
+    "ExternalProvider:Microsoft": "Microsoft",
+    "ExternalProvider:Microsoft:ClientId": "Kunden ID",
+    "ExternalProvider:Microsoft:ClientSecret": "Client-Geheimnis",
+    "ExternalProvider:Twitter": "Twitter",
+    "ExternalProvider:Twitter:ConsumerKey": "Verbraucherschlüssel",
+    "ExternalProvider:Twitter:ConsumerSecret": "Verbrauchergeheimnis",
+    "NewsletterHeader": "Abonnieren Sie den Newsletter!",
+    "NewsletterInfo": "Informieren Sie sich über die neusten Geschehnisse.",
+    "NewsletterPreference_Default": "Standard-Newsletter",
+    "NewsletterPrivacyAcceptMessage": "Ich akzeptiere die <a href='/privacy-policy'>Datenschutzerklärung</a>."
+  }
+}

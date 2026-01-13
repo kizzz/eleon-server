@@ -1,0 +1,30 @@
+{
+  "Culture": "he",
+  "Texts": {
+    "Menu:Module": "מודול",
+    "LogList:Title": "יומנים",
+    "LogList:Message": "הודעה",
+    "LogList:MessageType": "סוג",
+    "LogList:MessageTypeFilter": "סוג",
+    "LogList:CreationTime": "תאריך",
+    "LogList:RefKey": "תעודת זהות",
+    "LogDetails:Title": "פרטי יומן",
+    "LogDetails:MessageType": "סוג",
+    "LogDetails:RefKey": "Ref Key",
+    "LogDetails:CreationTime": "תאריך",
+    "LogDetails:Message": "הודעה",
+    "RetryJob:Success": "התבקש ניסיון חוזר לעבודה בהצלחה",
+    "RetryJob:Failed": "לא ניתן לבקש לנסות שוב את העבודה הזו",
+    "Retry": "נסה שוב",
+    "JobDetails": "פרטי עבודה",
+    "Close": "סגור",
+    "LogList:Reload": "לטעון מחדש",
+    "LogList:Retry": "נסה שוב",
+    "LogDetails:IsJob": "האם איוב",
+    "LogDetails:ActionName": "פעולה",
+    "LogDetails:DocumentObjectType": "סוג מסמך",
+    "SystemLogs:Title": "יומני מערכת",
+    "SystemLogs:Subject:Tag": "נתוני הטבלה עודכנו",
+    "Error:LogOutdated": "יומן זה מיושן!"
+  }
+}

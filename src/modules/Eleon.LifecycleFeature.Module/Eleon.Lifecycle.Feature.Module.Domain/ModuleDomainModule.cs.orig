@@ -1,0 +1,42 @@
+﻿using Volo.Abp.Domain;
+using Volo.Abp.Modularity;
+
+namespace VPortal.Lifecycle.Feature.Module;
+
+[DependsOn(
+    typeof(AbpDddDomainModule),
+    typeof(ModuleDomainSharedModule),
+    typeof(Infrastructure.Module.InfrastructureDomainModule))]
+public class ModuleDomainModule : AbpModule
+{
+    public override void PreConfigureServices(ServiceConfigurationContext context)
+    {
+        base.PreConfigureServices(context);
+<<<<<<< HEAD
+=======
+        PreConfigure<MassTransitRabbitMqOptions>(options =>
+        {
+            ConfigureConsumers(options);
+        });
+    }
+
+    private void ConfigureConsumers(MassTransitRabbitMqOptions o)
+    {
+        o.Consumers.Add(RabbitMqConsumerConfiguration
+            .GenerateBasicOptions<AddLifecycleEventService, AddLifecycleMsg>(
+                LifecycleMessagingConsts.AddLifecycle));
+        o.Consumers.Add(RabbitMqConsumerConfiguration
+            .GenerateBasicOptions<RequestLifecycleViewPermissionEventService, RequestLifecycleViewPermissionMsg>(
+                LifecycleMessagingConsts.RequestLifecyclePermission));
+        o.Consumers.Add(RabbitMqConsumerConfiguration
+            .GenerateBasicOptions<StartLifecycleEventService, StartLifecycleMsg>(
+                LifecycleMessagingConsts.StartLifecycle));
+        o.Consumers.Add(RabbitMqConsumerConfiguration
+            .GenerateBasicOptions<CancelLifecycleEventService, CancelLifecycleMsg>(
+            LifecycleMessagingConsts.CancelLifecycle));;
+        o.Consumers.Add(RabbitMqConsumerConfiguration
+            .GenerateBasicOptions<GetDocumentIdsByFilterEventService, GetDocumentIdsByFilterMsg>(
+            LifecycleMessagingConsts.GetDocumentIdsByFilter));
+>>>>>>> master
+    }
+}

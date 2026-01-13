@@ -1,0 +1,16 @@
+{
+  "EleoncoreSdk": {
+	  "BaseHost": "https://localhost:6060",
+	  "BaseEleonsoftHost": "https://localhost:5050",
+	  "BasePath": "/",
+	  "OAuthUrl": "https://localhost:4040/auth",
+	  "UseOAuthAuthorization": true,
+	  "ApiAuthUrl": "https://localhost:4040/auth",
+	  "ApiKey": "AE104191CF88FC84CB72D09D9E0872F63F24FC756E6084997BFA55B0FF8D2FD9E2BE90A88442FE337193E582A1FB89BD0D4B5A5B8B479C6011BDBE3D30525CA0",
+	  "ApiKeySecret": "0E05C07C1FBA9E7BD5520F7BB6F3832405AECA4EACD94FDD33485DFB367E2177D00E58022BB00A3F2B88F9AB96CE135CE9457649ED30F063C2ED3CC09B4DE34A",
+	  "UseApiAuthorization": true,
+	  "SecretKey": "1q2w3e*",
+	  "AppKey": "VPortal_SDK_Api",
+	  "IgnoreSslValidation": true
+	},
+}

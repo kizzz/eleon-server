@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	   
+	  <Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+    
+  </PropertyGroup>
+
+	<ItemGroup>
+		<!-- SDK inclusion -->
+		<Compile Remove="**/bin/**/*;**/obj/**/*;sdk/**/*;tests/**/*" />
+		<None Remove="**/bin/**/*;**/obj/**/*;sdk/**/*;tests/**/*" />
+		<Content Remove="**/bin/**/*;**/obj/**/*;sdk/**/*;tests/**/*" />
+	</ItemGroup>
+  <ItemGroup>
+	<Compile Remove="**/bin/**/*;**/obj/**/*;tests/**/*" />
+	<None Remove="**/bin/**/*;**/obj/**/*;tests/**/*" />
+	<Content Remove="**/bin/**/*;**/obj/**/*;tests/**/*" />
+	<PackageReference Include="AspNetCore.HealthChecks.UI" />
+	<PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" />
+	<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+  </ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="test\**\*.resx" />
+    <None Include="test\**\*.json" />
+    <None Include="test\**\*.config" />
+  </ItemGroup>
+</Project>

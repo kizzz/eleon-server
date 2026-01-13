@@ -1,0 +1,7 @@
+{
+  "Migrate": true,
+  "Seed": true,
+  "SqlServer": {
+    "CompatibilityLevel": 120
+  }
+}

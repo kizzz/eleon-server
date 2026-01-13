@@ -1,0 +1,227 @@
+﻿@page "{handler?}"
+@using Microsoft.AspNetCore.Mvc.Localization
+@using VPortal.Identity.Module.Localization;
+@using Common.Module.Constants;
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Themes.Basic.Components.PageAlerts;
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Themes.Basic.Components.Toolbar.LanguageSwitch;
+@using Volo.Abp.Settings
+@using Volo.Abp.Localization
+@model VPortal.Pages.Account.VportalLoginModel
+@inject IHtmlLocalizer<AccountResource> L
+@inject IHtmlLocalizer<IdentityResource> IdentityL
+@inject Volo.Abp.Settings.ISettingProvider SettingProvider
+
+
+<script>
+    const AUTH_LOCKER = "ng:auth:lock";
+    let windowRef = null;
+    let authTimer = null;
+
+    const calculatePopupFeatures = (options) => {
+        const height = options.height || 520;
+        const width = options.width || 700;
+        const left = window.screenLeft + (window.outerWidth - width) / 2;
+        const top = window.screenTop + (window.outerHeight - height) / 2;
+        return `location=no,toolbar=no,width=${width},height=${height},top=${top},left=${left}`;
+    }
+
+    const redirectToPostLogin = () => {
+        location.href = '@Html.Raw(Model.GetHandlerUrl("AfterLoggedInPopup"))';
+    }
+
+    const popupLoginListener = (e) => {
+        if (e.data === 'vportal-popup-logged-in') {
+            redirectToPostLogin();
+            resolve();
+        }
+    }
+
+    const cleanup = () => {
+        windowRef?.close();
+        window.removeEventListener('message', popupLoginListener);
+        if (!!authTimer) {
+            clearInterval(authTimer);
+        }
+    }
+
+    const listenForRetry = () => {
+        authTimer = setInterval(() => {
+            navigator.locks.request(AUTH_LOCKER, () => {
+                const authState = sessionStorage.getItem(AUTH_LOCKER);
+                if (authState !== "in_process") {
+                    cleanup();
+                    location.href = '@Html.Raw(Model.GetHandlerUrl("ReturnWithoutLogin"))';
+                }
+            });
+        }, 400);
+    }
+
+    const listenForLoginInPopup = () => new Promise((resolve) => {
+        window.addEventListener('message', popupLoginListener);
+
+        listenForRetry();
+    });
+
+    const loginWithPopup = async () => {
+        windowRef = window.open(
+            '@Html.Raw(Model.GetHandlerUrl("Iframe"))',
+            'vportal-modal-login',
+            calculatePopupFeatures({})
+        );
+
+        if (windowRef == null) {
+            alert('Popup blocker is enabled! Please add this site to your exception list and reload.');
+        }
+        else {
+            windowRef.focus();
+            await listenForLoginInPopup();
+        }
+    }
+
+    const retryAuth = () => {
+        cleanup();
+        loginWithPopup();
+    }
+
+    const amInsideIframe = window.parent && window.parent !== window;
+    const amInsidePopup = window.opener && window.opener !== window;
+    if (amInsideIframe && @(Model.InsideIframe != true ? "true" : "false")) {
+        location.href = '@Html.Raw(Model.GetHandlerUrl("Iframe"))';
+    }
+    else if (amInsidePopup && @(Model.InsidePopup != true ? "true" : "false")) {
+        location.href = '@Html.Raw(Model.GetHandlerUrl("Popup"))';
+    }
+    else if (!amInsideIframe && !amInsidePopup && @(Model.InsideIframe != false ? "true" : "false")) {
+        location.href = '@Html.Raw(Model.GetHandlerUrl("Default"))';
+    }
+    else if (amInsideIframe) {
+        loginWithPopup();
+    }
+</script>
+
+@if (Model.InsideIframe == false)
+{
+    @await Html.PartialAsync("LoginForm", Model);
+}
+else 
+{
+    <style type="text/css">
+        body {
+          margin: 0;
+          padding: 0;
+        }
+        #splash-screen {
+          position: absolute;
+          z-index: 1000;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          background-color: #f2f3f8;
+        }
+
+        #splash-screen img {
+          margin-left: calc(100vw - 100%);
+          margin-bottom: 30px;
+        }
+
+        #splash-screen.hidden {
+          opacity: 0;
+          visibility: hidden;
+        }
+
+        .splash-spinner {
+          animation: rotate 2s linear infinite;
+          margin-left: calc(100vw - 100%);
+          width: 50px;
+          height: 50px;
+        }
+
+        .splash-spinner .path {
+          stroke: #5d78ff;
+          stroke-linecap: round;
+          animation: dash 1.5s ease-in-out infinite;
+        }
+
+        @Html.Raw("@")keyframes rotate {
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        @Html.Raw("@")keyframes dash {
+          0% {
+            stroke-dasharray: 1, 150;
+            stroke-dashoffset: 0;
+          }
+
+          50% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -35;
+          }
+
+          100% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -124;
+          }
+        }
+
+        [data-bs-theme="dark"] .splash-screen {
+          background-color: #151521;
+          color: #92929F;
+        }
+
+        [data-bs-theme="dark"] .splash-screen span {
+          color: #92929F;
+        }
+
+        button {
+            margin: 0;
+            display: inline-flex;
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            align-items: center;
+            vertical-align: bottom;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            transition: background-color .2s,color .2s,border-color .2s,box-shadow .2s;
+            border-radius: 6px;
+            font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+            line-height: normal !important;
+            text-transform: none;
+            background-color: transparent;
+            color: #3b82f6;
+            border-color: transparent;
+            cursor: pointer;
+            box-sizing: border-box;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        #root {
+          opacity: 1;
+          transition: opacity 1s ease-in-out;
+        }
+    </style>
+    <div id="splash-screen" class="splash-screen">
+        <img src="/srv/core/images/logo/logo-tree-gray.png" alt="Eleonsoft logo" />
+        <svg class="splash-spinner" viewBox="0 0 50 50">
+            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        </svg>
+        <div class="d-flex align-items-center flex-column gap-2 mt-3">
+          <span style="font-size: 1.25rem">@IdentityL["LoginInProcess"]</span>
+          <div style="font-size: 13px" class="d-flex align-items-center gap-2">
+            <span>@IdentityL["LoginInProcess:AllowPopups"]</span>
+            <button onclick="retryAuth()">@IdentityL["LoginInProcess:Retry"]</button>
+          </div>
+        </div>
+    </div>
+}

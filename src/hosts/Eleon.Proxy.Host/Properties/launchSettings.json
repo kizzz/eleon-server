@@ -1,0 +1,27 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS": {
+      "commandName": "IIS",
+      "launchBrowser": false,
+      "launchUrl": "https://es-proxy.network-protected.com",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "VPortal.HttpApi.Host": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50513;http://localhost:50514"
+    }
+  },
+  "iisSettings": {
+    "iis": {
+      "applicationUrl": "https://es-proxy.network-protected.com",
+      "sslPort": 443
+    }
+  }
+}

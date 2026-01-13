@@ -1,0 +1,987 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@using VPortal.Identity.Module.Localization;
+@using Common.Module.Constants;
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Themes.Basic.Components.PageAlerts;
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Themes.Basic.Components.Toolbar.LanguageSwitch;
+@using Volo.Abp.Settings
+@using Volo.Abp.Localization
+@model VPortal.Pages.Account.VportalLoginModel
+@inject IHtmlLocalizer<AccountResource> L
+@inject IHtmlLocalizer<IdentityResource> IdentityL
+@inject Volo.Abp.Settings.ISettingProvider SettingProvider
+@inject IHtmlLocalizer<VPortal.Identity.Module.Localization.IdentityResource> CustomIdentityL
+
+
+@functions{
+    public string GetUserName()
+    {
+        var username = Context.Request.Query["username"].FirstOrDefault();
+        if (username != null)
+        {
+            return username;
+        }
+
+        var returnUrl = Context.Request.Query["ReturnUrl"].FirstOrDefault();
+        if (returnUrl != null)
+        {
+            try
+            {
+                // Try to parse as absolute or relative URI
+                Uri uri;
+                if (returnUrl.StartsWith('/'))
+                {
+                    uri = new Uri("http://localhost" + returnUrl);
+                    var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+                    var usernameFromReturnUrl = query["username"];
+                    if (!string.IsNullOrEmpty(usernameFromReturnUrl))
+                    {
+                        return usernameFromReturnUrl;
+                    }
+                }
+                else if (Uri.TryCreate(returnUrl, UriKind.Absolute, out uri))
+                {
+                    var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+                    var usernameFromReturnUrl = query["username"];
+                    if (!string.IsNullOrEmpty(usernameFromReturnUrl))
+                    {
+                        return usernameFromReturnUrl;
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore parsing errors and fallback to empty
+            }
+        }
+
+        return string.Empty;
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<!--begin::Head-->
+<head>
+    <base href="~/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="article" />
+    <!--begin::Fonts(mandatory for all pages)-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
+    <!--end::Fonts-->
+    <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
+    <link href="~/files/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="~/files/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!--end::Global Stylesheets Bundle-->
+    <script>// Frame-busting to prevent site from being loaded within a frame without permission (click-jacking) if (window.top != window.self) { window.top.location.replace(window.self.location.href); }</script>
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+<body id="kt_body" class="app-blank bgi-size-cover bgi-attachment-fixed bgi-position-center bgi-no-repeat">
+    <!--begin::Theme mode setup on page load-->
+    <script>var defaultThemeMode = "light"; var themeMode; if (document.documentElement) { if (document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if (localStorage.getItem("data-bs-theme") !== null) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }</script>
+    <!--end::Theme mode setup on page load-->
+    <!--begin::Root-->
+    <div class="d-flex flex-column flex-root" id="kt_app_root">
+        <!--begin::Page bg image-->
+        <style>
+            body {
+                background-image: url('@Url.Content("~/files/assets/media/auth/bg4.jpg")');
+            }
+
+            [data-bs-theme="dark"] body {
+                background-image: url('@Url.Content("~/files/assets/media/auth/bg4-dark.jpg")');
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            .block {
+                display: block;
+            }
+        </style>
+        <!--end::Page bg image-->
+        <!--begin::Authentication - Sign-in -->
+        <div class="d-flex flex-column flex-column-fluid flex-lg-row">
+            @await Html.PartialAsync("Partials/PortalLogo")
+            <!--begin::Body-->
+            <div class="d-flex flex-column-fluid flex-lg-row-auto justify-content-center justify-content-lg-end px-7 py-10 md:p-12 p-lg-20">
+                <!--begin::Card-->
+                <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-100 w-md-600px p-10 md:p-20">
+                    <div class="d-flex w-full justify-content-end">
+                        <nav class="navbar navbar-expand p-0 pt-1 float-right">
+                            <ul class="navbar-nav ml-auto toolbar-nav">
+                                <li class="nav-item">
+                                    @(await Component.InvokeAsync<LanguageSwitchViewComponent>())
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <!--begin::Wrapper-->
+                    <div class="d-flex flex-center flex-column flex-column-fluid px-lg-10 pb-15 pb-lg-20">
+                        <!--begin::Form-->
+                        <div id="loginForm" class="w-100">
+                            <form id="login_form" class="form w-100" method="post">
+                                @Html.AntiForgeryToken()
+                                <input asp-for="InsidePopup" type="hidden">
+                                <input asp-for="InsideIframe" type="hidden">
+                                @if (Model.EnableLocalLogin)
+                                {
+                                    @if (Model.IsTwoFactorSecondStep)
+                                    {
+                                        <!--begin::Icon-->
+                                        <div class="text-center mb-10">
+                                            <img alt="Logo" class="mh-125px" src="/files/assets/media/svg/misc/smartphone-2.svg" />
+                                        </div>
+                                        <!--end::Icon-->
+                                        <!--begin::Heading-->
+                                        <div class="text-center mb-10">
+                                            <!--begin::Title-->
+                                            <h1 class="text-gray-900 mb-3">@IdentityL["2FA:Title"]</h1>
+                                            <!--end::Title-->
+                                            <!--begin::Sub-title-->
+                                            <div class="text-muted fw-semibold fs-5 mb-5">@IdentityL["2FA:Subtitle"]</div>
+                                            <!--end::Sub-title-->
+                                            <!--begin::Mobile no-->
+                                            <div class="fw-bold text-gray-900 fs-3">@Model.OtpSuccessMessage</div>
+                                            <!--end::Mobile no-->
+                                        </div>
+                                        <!--end::Heading-->
+                                        @(await Component.InvokeAsync<PageAlertsViewComponent>())
+                                        <!--begin::Section-->
+                                        <div class="mb-10">
+                                            <!--begin::Label-->
+                                            <div class="fw-bold text-start text-gray-900 fs-6 mb-1 ms-1">@IdentityL["2FA:EnterOtp"]</div>
+                                            <!--end::Label-->
+                                            <!--begin::Input group-->
+                                            <div class="d-none d-md-flex flex-wrap flex-stack">
+                                                <style>
+                                                    .otp-code-input-box:focus {
+                                                        border-color: #3b82f6;
+                                                        box-shadow: 0 0 5px 2px rgba(59, 130, 246, 0.5);
+                                                    }
+                                                </style>
+                                            
+                                                @for (int i = 1; i <= 6; i++)
+                                                {
+                                                    <input type="text"
+                                                           id="@("code_" + i)"
+                                                           class="form-control bg-transparent h-60px w-60px fs-2qx text-center mx-1 my-2 otp-code-input-box"
+                                                           value="" style="caret-color: transparent;" />
+                                                }
+                                            </div>
+                                            <input id="otp_input" type="text"
+                                                   asp-for="OtpInput.OtpValue"
+                                                   value="@ViewData["prevCode"]"
+                                                   placeholder="999999"
+                                                   maxlength="6"
+                                                   minlength="6"
+                                                   class="form-control bg-transparent d-block d-md-none" />
+                                            <input asp-for="IsTwoFactorSecondStep" type="hidden">
+                                            <input id="otp_input" asp-for="OtpInput.OtpValue" type="hidden" class="d-none d-md-block">
+                                            <span asp-validation-for="OtpInput.OtpValue" class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></span>
+                                            <!--begin::Input group-->
+
+
+                                            <a href="javascript:void(0)" 
+                                                onclick="resendOtp()"
+                                               class="link-primary text-center w-100 d-block @(ViewData["ResendAllowed"] == null || (ViewData["ResendAllowed"] is DateTimeOffset resendAllowed1 && resendAllowed1 <= DateTimeOffset.Now) ? "" : "d-none")">
+                                                @CustomIdentityL.GetString("SendPasswordAgain")
+                                            </a>
+                                            <span id="sendAgainInContainer" class="text-center w-100 d-block @(ViewData["ResendAllowed"] is DateTimeOffset resendAllowed2 && resendAllowed2 > DateTimeOffset.Now ? "" : "d-none")">
+                                                @CustomIdentityL.GetString("SendAgainIn")
+                                                <span id="sendAgainInSeconds"></span>
+                                            </span>
+
+                                            <script>
+                                                function resendOtp() {
+                                                    const url = new URL(window.location.href);
+                                                    url.searchParams.set('resendOtp', 'true');
+                                                    window.location.href = url.toString();
+                                                }
+
+                                                const url = new URL(window.location.href);
+                                                url.searchParams.delete('resendOtp');
+                                                window.history.replaceState({}, '', url);
+
+                                                // Countdown for SendAgainIn
+                                                @if (ViewData["ResendAllowed"] is DateTimeOffset allowed && allowed > DateTimeOffset.Now)
+                                                {
+                                                    var seconds = (int)(allowed - DateTimeOffset.Now).TotalSeconds;
+                                                <text>
+                                                // Store resend time in sessionStorage
+                                                var resendSeconds = @seconds;
+                                                var now = Math.floor(Date.now() / 1000);
+                                                var resendUntil = now + resendSeconds;
+                                                sessionStorage.setItem('otpResendUntil', resendUntil);
+
+                                                var sendAgainInSeconds = document.getElementById('sendAgainInSeconds');
+                                                var sendAgainInContainer = document.getElementById('sendAgainInContainer');
+                                                var resendLink = document.querySelector('a[onclick="resendOtp()"]');
+                                                if (sendAgainInSeconds) {
+                                                    sendAgainInSeconds.textContent = resendSeconds;
+                                                    var interval = setInterval(function () {
+                                                        resendSeconds--;
+                                                        if (resendSeconds > 0) {
+                                                            sendAgainInSeconds.textContent = resendSeconds;
+                                                        } else {
+                                                            clearInterval(interval);
+                                                            if (sendAgainInContainer) sendAgainInContainer.classList.add('d-none');
+                                                            if (resendLink) resendLink.classList.remove('d-none');
+                                                            sessionStorage.removeItem('otpResendUntil');
+                                                        }
+                                                    }, 1000);
+                                                }
+                                                </text>
+                                                }
+                                                else
+                                                {
+                                                <text>
+                                                // Try to get resend time from sessionStorage if not provided by server
+                                                var sendAgainInSeconds = document.getElementById('sendAgainInSeconds');
+                                                var sendAgainInContainer = document.getElementById('sendAgainInContainer');
+                                                var resendLink = document.querySelector('a[onclick="resendOtp()"]');
+                                                var otpResendUntil = sessionStorage.getItem('otpResendUntil');
+                                                if (otpResendUntil) {
+                                                    var now = Math.floor(Date.now() / 1000);
+                                                    var resendSeconds = parseInt(otpResendUntil, 10) - now;
+                                                    if (resendSeconds > 0) {
+                                                        if (sendAgainInContainer) sendAgainInContainer.classList.remove('d-none');
+                                                        if (resendLink) resendLink.classList.add('d-none');
+                                                        if (sendAgainInSeconds) {
+                                                            sendAgainInSeconds.textContent = resendSeconds;
+                                                            var interval = setInterval(function () {
+                                                                resendSeconds--;
+                                                                if (resendSeconds > 0) {
+                                                                    sendAgainInSeconds.textContent = resendSeconds;
+                                                                } else {
+                                                                    clearInterval(interval);
+                                                                    if (sendAgainInContainer) sendAgainInContainer.classList.add('d-none');
+                                                                    if (resendLink) resendLink.classList.remove('d-none');
+                                                                    sessionStorage.removeItem('otpResendUntil');
+                                                                }
+                                                            }, 1000);
+                                                        }
+                                                    } else {
+                                                        sessionStorage.removeItem('otpResendUntil');
+                                                    }
+                                                }
+                                                </text>
+                                                }
+                                            </script>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <!--begin::Heading-->
+                                        <div class="text-center mb-11">
+                                            <!--begin::Title-->
+                                            <h1 class="text-gray-900 fw-bolder mb-3">@IdentityL["Login:Title"]</h1>
+                                            <!--end::Title-->
+                                            <!--begin::Subtitle-->
+                                            <div class="text-gray-500 fw-semibold fs-6">@IdentityL["Login:Subtitle"]</div>
+                                            <!--end::Subtitle=-->
+                                        </div>
+                                        <!--end::Heading-->
+                                        @(await Component.InvokeAsync<PageAlertsViewComponent>())
+
+                                        <!--begin::Input group=-->
+                                        <div class="fv-row my-8">
+                                            <!--begin::Email-->
+                                            <input asp-for="LoginInput.UserNameOrEmailAddress" value="@GetUserName()" class="form-control bg-transparent" />
+                                            <span asp-validation-for="LoginInput.UserNameOrEmailAddress" class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></span>
+                                            <!--end::Email-->
+                                        </div>
+                                        @if (Model.Settings.EnablePassword)
+                                        {
+                                            <!--end::Input group=-->
+                                            <div class="fv-row mb-3" id="passwordField">
+                                                <!--begin::Password-->
+                                                <input asp-for="LoginInput.Password" class="form-control bg-transparent" autocomplete="off" />
+                                                <span asp-validation-for="LoginInput.Password" class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></span>
+                                                <!--end::Password-->
+                                            </div>
+                                            <!--end::Input group=-->
+                                            <!--begin::Wrapper-->
+                                            <div class="d-flex flex-wrap gap-3 fs-base fw-semibold mb-8" style="align-items:center; justify-content: space-between">
+                                                <!--begin::Link-->
+                                                <div>
+                                                    <a href="javascript:void(0);" id="forgotPasswordLink" class="link-primary">@IdentityL["ForgotPassword"]</a>
+                                                </div>
+                                                <div id="registrationLink">
+                                                    @if (Model.Settings.EnableSelfRegistration)
+                                                    {
+                                                        <a href="javascript:void(0);" id="registerLink" class="link-primary">@IdentityL["Registration"]</a>
+                                                    }
+                                                </div>
+                                                <!--end::Link-->
+                                            </div>
+                                            <!--end::Wrapper-->
+                                        }
+                                    }
+                                }
+                                @if (Model.IsTwoFactorSecondStep)
+                                {
+                                    <!--begin::Submit button-->
+                                    <div class="d-flex align-items-center gap-2 justify-content-center mb-10">
+                                        <button type="button"
+                                                class="btn btn-secondary w-50"
+                                                onclick="location.href = '@Html.Raw(Model.GetHandlerUrl("Cancel"))'">
+                                            @L["Cancel"]
+                                        </button>
+                                        <button id="form_submit_btn" type="submit" class="btn btn-primary w-50" name="submit" formmethod="post">
+                                            @L["Login"]
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <span id="otp_input_status"
+                                              class="fw-semibold d-flex align-items-center gap-2 p-1"
+                                              style="display: none; min-height: 2.5rem; border-radius: 0.375rem;">
+                                            <span class="spinner-border spinner-border-sm align-middle me-2"
+                                                  role="status"
+                                                  aria-hidden="true"
+                                                  style="display:none"
+                                                  id="otp_input_spinner"></span>
+                                            <span id="otp_input_status_message"></span>
+                                        </span>
+                                        <script>
+                                            // Helper to show/hide status (info or error) and set message
+                                            function showOtpInfo(message, showSpinner) {
+                                                var status = document.getElementById('otp_input_status');
+                                                var spinner = document.getElementById('otp_input_spinner');
+                                                var msg = document.getElementById('otp_input_status_message');
+                                                status.style.display = "flex";
+                                                status.className = "text-primary fw-semibold fs-5 d-flex align-items-center gap-2 p-1";
+                                                msg.textContent = message || "";
+                                                spinner.style.display = showSpinner ? "inline-block" : "none";
+                                            }
+                                            function hideOtpInfo() {
+                                                var status = document.getElementById('otp_input_status');
+                                                if (status) status.style.display = "none";
+                                            }
+                                            function showOtpError(errorMessage) {
+                                                var status = document.getElementById('otp_input_status');
+                                                var msg = document.getElementById('otp_input_status_message');
+                                                var spinner = document.getElementById('otp_input_spinner');
+                                                status.style.display = "flex";
+                                                status.className = "text-danger fw-semibold fs-6 d-flex align-items-center gap-2 p-1";
+                                                msg.textContent = errorMessage || "Invalid code. Please try again.";
+                                                spinner.style.display = "none";
+                                            }
+                                            function hideOtpError() {
+                                                hideOtpInfo();
+                                            }
+                                        </script>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-grid mb-10">
+                                        <button type="submit" name="submit" formmethod="post" class="btn btn-primary">
+                                            @L["Login"]
+                                        </button>
+                                    </div>
+                                }
+                                <!--end::Submit button-->
+
+                            </form>
+                        </div>
+
+                        <div id="registrationContainer" class="w-100" style="display: none">
+                            <form class="form w-100" method="post">
+                                @Html.AntiForgeryToken()
+                                <div>
+                                    <div class="text-center mb-10">
+                                        <!--begin::Title-->
+                                        <h1 class="text-gray-900 fw-bolder mb-3">@L["Registration"]</h1>
+                                    </div>
+                                    <div id="AbpPageAlerts" style="display: none">
+                                        <div role="alert" class="alert alert-danger alert-dismissible fade show">
+                                            <div id="message">
+                                            </div>
+                                            <button type="button" class="btn-close btn-close-reg" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                    <!--end::Heading-->
+                                    <!--begin:: UserName Input group-->
+                                    <div class="fv-row mb-8">
+                                        <div class="d-flex align-items-center row">
+                                            <span>
+                                                @IdentityL["Registration:Username"]
+                                            </span>
+                                            <div>
+                                                @if (!Model.Settings.AllowChangeUserName)
+                                                {
+                                                    <input asp-for="UserRegistrationData.Username" name="UserRegistrationData.Username" type="text" class="form-control bg-transparent" id="usernameSelfReg" disabled />
+                                                }
+                                                else
+                                                {
+                                                    <input asp-for="UserRegistrationData.Username" name="UserRegistrationData.Username" type="text" class="form-control bg-transparent">
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end:: UserName Input group-->
+                                    <!--begin:: Name Surname Input group-->
+                                    <div class="fv-row mb-8 row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <span>
+                                                @IdentityL["Registration:Name"]
+                                            </span>
+                                            <div>
+                                                <input asp-for="UserRegistrationData.Name" name="UserRegistrationData.Name" type="text" class="form-control bg-transparent">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <span>
+                                                @IdentityL["Registration:Surname"]
+                                            </span>
+                                            <div>
+                                                <input asp-for="UserRegistrationData.Surname" name="UserRegistrationData.Surname" type="text" class="form-control bg-transparent" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end:: Name Surname Input group-->
+                                    <!--begin:: Email Input group-->
+                                    @if (Model.Settings.AllowChangeEmail)
+                                    {
+                                        <div class="fv-row mb-8">
+                                            <div class="d-flex align-items-center row">
+                                                <span>
+                                                    @IdentityL["Registration:Email"]
+                                                </span>
+                                                <div>
+                                                    <input asp-for="UserRegistrationData.Email" name="UserRegistrationData.Email" type="text" id="emailSelfReg" class="form-control bg-transparent" />
+                                                    <span asp-validation-for="UserRegistrationData.Email" class="error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    <!--end:: Email Input group-->
+                                    <!--begin:: PhoneNumber Input group-->
+                                    <div class="fv-row mb-8">
+                                        <div class="d-flex align-items-center row">
+                                            <span>
+                                                @IdentityL["Registration:PhoneNumber"]
+                                            </span>
+                                            <div>
+                                                <input asp-for="UserRegistrationData.PhoneNumber" name="UserRegistrationData.PhoneNumber" maxlength="16" placeholder="999999999999" class="form-control bg-transparent" />
+                                                <span asp-validation-for="UserRegistrationData.PhoneNumber" class="error"></span>
+                                                <div class="text-muted">@CustomIdentityL["Registration:PhoneNumberLength:Error"]</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end:: PhoneNumber Input group-->
+                                    @if (Model.Settings.EnablePassword)
+                                    {
+                                        <!--begin:: First Password group-->
+                                        <div class="fv-row mb-8">
+                                            <div class="d-flex align-items-center row">
+                                                <div class="col-12">
+                                                    <div data-kt-password-meter="true">
+                                                        <!--begin::Wrapper-->
+                                                        <div class="mb-1">
+                                                            <!--begin::Input wrapper-->
+                                                            <div class="position-relative mb-3 row d-flex align-items-center">
+                                                                <span>
+                                                                    @IdentityL["Registration:Password"]
+                                                                </span>
+                                                                <div>
+                                                                    <input asp-for="UserRegistrationData.Password" name="UserRegistrationData.Password" class="form-control bg-transparent" type="password" placeholder="@IdentityL["Password"]" autocomplete="on" />
+                                                                    <span asp-validation-for="UserRegistrationData.Password" class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></span>
+                                                                    <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2" data-kt-password-meter-control="visibility">
+                                                                        <i class="fa-solid fa-eye"></i>
+                                                                        <i class="fa-solid fa-eye-slash d-none"></i>
+                                                                    </span>
+                                                                    <!--begin::Meter-->
+                                                                    <div class="d-flex align-items-center mb-3" data-kt-password-meter-control="highlight">
+                                                                        <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
+                                                                        <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
+                                                                        <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"></div>
+                                                                        <div class="flex-grow-1 bg-secondary bg-active-success rounded h-5px"></div>
+                                                                    </div>
+                                                                    <!--end::Meter-->
+                                                                </div>
+                                                            </div>
+                                                            <!--end::Input wrapper-->
+                                                        </div>
+                                                        <!--end::Wrapper-->
+                                                        <!--begin::Hint-->
+                                                        <div class="text-muted" id="passwordRules">
+                                                        
+                                                        </div>
+                                                        <!--end::Hint-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--end:: First Password Input group-->
+                                        <!--begin:: Confirm Password Input group-->
+                                        <div class="fv-row mb-8">
+                                            <div class="d-flex align-items-center row">
+                                                <span>
+                                                    @IdentityL["Registration:ConfirmPassword"]
+                                                </span>
+                                                <div>
+                                                    <input asp-for="UserRegistrationData.RepeatPassword" name="UserRegistrationData.RepeatPassword" type="password" class="form-control bg-transparent" placeholder="@IdentityL["RepeatPassword"]" autocomplete="on" />
+                                                    <span asp-validation-for="UserRegistrationData.RepeatPassword" class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--end:: Confirm Password Input group-->
+                                    }
+                                    <!--begin::Action-->
+                                    <div class="d-flex align-items-center gap-2 justify-content-center mb-10">
+                                        <button type="button"
+                                                class="btn btn-secondary w-50"
+                                                onclick="location.href = '@Html.Raw(Model.GetHandlerUrl("Cancel"))'">
+                                            @L["Cancel"]
+                                        </button>
+                                        <button  type="button" class="btn btn-primary w-50" id="registerButton">
+                                            <span class="indicator-label">@IdentityL["Registration:Register"]</span>
+                                        </button>
+                                    </div>
+                                    <!--end::Action-->
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="forgotPasswordContainer" class="w-100" style="display: none">
+                            <form class="form w-100" method="post">
+                                <div id="forgotPasswordProcessContainer">
+                                    <!--begin::Heading-->
+                                    <div class="text-center mb-10">
+                                        <!--begin::Title-->
+                                        <h1 class="text-gray-900 fw-bolder mb-3">@IdentityL["ForgotPassword:Title"]</h1>
+                                        <!--end::Title-->
+                                        <!--begin::Link-->
+                                        <div class="text-gray-500 fw-semibold fs-6">@IdentityL["ForgotPassword:Subtitle"]</div>
+                                        <!--end::Link-->
+                                    </div>
+                                    <div id="AbpPageAlertsPsw" class="hidden">
+                                        <div role="alert" class="alert alert-danger alert-dismissible fade show">
+                                            <div id="pswErrMessage">
+                                            </div>
+                                            <button type="button" class="btn-close btn-close-forgot-psw" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                    <!--begin::Heading-->
+                                    <!--begin::Input group=-->
+                                    <div class="fv-row mb-8">
+                                        <!--begin::Email-->
+                                        <input asp-for="RestorePasswordInputData.Email" name="RestorePasswordInputData.Email" type="text" id="forgotPswEmail" placeholder="@IdentityL["ForgotPassword:Email"]" class="form-control bg-transparent" />
+                                        <span asp-validation-for="RestorePasswordInputData.Email" class="error"></span>
+                                        <!--end::Email-->
+                                    </div>
+                                    <!--begin::Input group=-->
+                                    <div class="fv-row mb-8">
+                                        <!--begin::Login-->
+                                        <input asp-for="RestorePasswordInputData.Username" id="forgotPswUsername" placeholder="@IdentityL["ForgotPassword:Username"]" class="form-control bg-transparent" />
+                                        <span asp-validation-for="RestorePasswordInputData.Username" class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></span>
+                                        <!--end::Login-->
+                                    </div>
+                                    <!--begin::Actions-->
+                                    <div class="d-flex align-items-center gap-2 justify-content-center mb-10">
+                                        <button type="button"
+                                                class="btn btn-secondary w-50"
+                                                onclick="location.href = '@Html.Raw(Model.GetHandlerUrl("Cancel"))'">
+                                            @L["Cancel"]
+                                        </button>
+                                        <button type="button" class="btn btn-primary w-50" id="forgotPasswordButton">
+                                            <span class="indicator-label">@IdentityL["ForgotPassword:Submit"]</span>
+                                        </button>
+                                    </div>
+                                    <!--end::Actions-->
+                                </div>
+                                <div id="restoreLinkContainer" style="display:none">
+                                    <div class="d-flex flex-column flex-center text-center">
+                                        <h1 class="fw-bolder text-gray-900 mb-5">@IdentityL["RestoreLinkSent:Title"]</h1>
+                                        <!--end::Title-->
+                                        <!--begin::Action-->
+                                        <div class="fs-6 mb-8">
+                                            <span class="fw-semibold text-gray-500">@IdentityL["RestoreLinkSent:Subtitle"]</span>
+                                        </div>
+                                        <div class="fs-6 mb-8">
+                                            <span class="fw-semibold text-gray-500">@IdentityL["RestoreLinkSent:DidNotReceive"]</span>
+
+                                            <a href="javascript:void(0);" id="tryAgainLink" class="link-primary">@IdentityL["RestoreLinkSent:TryAgain"]</a>
+                                        </div>
+                                        <!--end::Action-->
+                                        <!--begin::Link-->
+                                        <div>
+                                            <a href="javascript:void(0);" id="backToLoginLink" class="link-primary">@IdentityL["RestoreLinkSent:BackToLogin"]</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!--end::Form-->
+                    </div>
+                    <!--end::Wrapper-->
+                    <!--begin::Footer-->
+                    <div class="d-flex flex-stack px-lg-10">
+                        <div></div>
+                        <!--begin::Links-->
+                        <div class="d-flex fw-semibold text-primary fs-base gap-5">
+                            <a href="https://www.eleonsphere.com/" target="_blank">@IdentityL["Terms"]</a>
+                            <a href="https://eleonsoft.com/#contact" target="_blank">@IdentityL["ContactUs"]</a>
+                        </div>
+                        <!--end::Links-->
+                    </div>
+                    <!--end::Footer-->
+                </div>
+                <!--end::Card-->
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Authentication - Sign-in-->
+    </div>
+
+    <!--end::Root-->
+    <!--begin::Javascript-->
+    <script>var hostUrl = "assets/";</script>
+    <!--begin::Global Javascript Bundle(mandatory for all pages)-->
+    <script src="~/files/assets/plugins/global/plugins.bundle.js"></script>
+    <script src="~/files/assets/js/scripts.bundle.js"></script>
+    <!--end::Global Javascript Bundle-->
+    <!--begin::Custom Javascript(used for this page only)-->
+    <script src="~/files/assets/js/custom/srv/coreentication/sign-in/general.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+            $.ajaxSetup({
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken
+                }
+            });
+
+
+            $('#registerLink').click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'GET',
+                    url: 'auth/Account/Login?handler=Registration',
+                    data: {},
+                    success: function (response) {
+                        if (response.success) {
+                            $('#registrationContainer').show();
+                            $('#loginForm').hide();
+                            $('#passwordRules').text(response.passwordRules);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var msg = error || 'Something went wrong. Please try again later.'
+                        $('#AbpPageAlerts').show();
+                        $('#message').text(msg);
+                    }
+                });
+            });
+
+            $('#registerButton').click(function (e) {
+                e.preventDefault();
+                var registrationData = {
+                    Username: $('#usernameSelfReg').val() || $('input[name="UserRegistrationData.Username"]').val() || '',
+                    Name: $('input[name="UserRegistrationData.Name"]').val() || '',
+                    Surname: $('input[name="UserRegistrationData.Surname"]').val() || '',
+                    Email: $('#emailSelfReg').val() || '',
+                    PhoneNumber: $('input[name="UserRegistrationData.PhoneNumber"]').val() || '',
+                    Password: $('input[name="UserRegistrationData.Password"]').val() || '',
+                    RepeatPassword: $('input[name="UserRegistrationData.RepeatPassword"]').val() || ''
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: 'auth/Account/Login?handler=Registration',
+                    contentType: 'application/json',
+                    data: JSON.stringify(registrationData),
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            $('#loginForm').show();
+                            $('#registrationLink').hide();
+                            $('#registrationContainer').hide();
+                            if (!response.enablePassword){
+                                $('#passwordField').hide();
+                            }
+                        }
+                        else{
+                            $('#AbpPageAlerts').show();
+                            $('#message').text(response.errorMessage);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var msg = error || 'Something went wrong. Please try again later.'
+                        $('#AbpPageAlerts').show();
+                        $('#message').text(msg);
+                    }
+                });
+            });
+
+            $('#forgotPasswordLink').click(function (e) {
+                e.preventDefault();
+                $('#forgotPasswordContainer').show();
+                $('#forgotPasswordProcessContainer').show();
+                $('#loginForm').hide();
+                $('#restoreLinkContainer').hide();
+            });
+
+            $('#forgotPasswordButton').click(function (e) {
+                e.preventDefault();
+                var forgotPasswordData = {
+                    Username: $('#forgotPswUsername').val() || '',
+                    Email: $('#forgotPswEmail').val() || '',
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'auth/Account/Login?handler=RestorePassword',
+                    contentType: 'application/json',
+                    data: JSON.stringify(forgotPasswordData),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#forgotPasswordProcessContainer').hide();
+                            $('#restoreLinkContainer').show();
+                            document.getElementById('AbpPageAlertsPsw').classList.add('hidden');
+                        } else {
+                            document.getElementById('AbpPageAlertsPsw').classList.remove('hidden');
+                            document.getElementById('AbpPageAlertsPsw').classList.add('block');
+                            var pswErrMessage = document.getElementById('pswErrMessage');
+                            if (pswErrMessage) {
+                                pswErrMessage.textContent = response.errorMessage;
+                            }
+                            else {
+                                var $newContent = $(`
+                                            <div role="alert" class="alert alert-danger alert-dismissible fade show">
+                                                <div id="pswErrMessage">${response.errorMessage}</div>
+                                                <button type="button" class="btn-close btn-close-forgot-psw" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                `);
+                                $("#AbpPageAlertsPsw").append($newContent);
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var msg = error || 'Something went wrong. Please try again later.';
+                        document.getElementById('AbpPageAlertsPsw').classList.remove('hidden');
+                        document.getElementById('AbpPageAlertsPsw').classList.add('block');
+                        var pswErrMessage = document.getElementById('pswErrMessage');
+                        if (pswErrMessage) {
+                            pswErrMessage.textContent = msg;
+                        }
+                        else{
+                            var $newContent = $(`
+                                    <div role="alert" class="alert alert-danger alert-dismissible fade show">
+                                                <div id="pswErrMessage">${msg}</div>
+                                        <button type="button" class="btn-close btn-close-forgot-psw" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    `);
+                            $("#AbpPageAlertsPsw").append($newContent);
+                        }
+                    }
+                });
+            });
+
+            $('#tryAgainLink').click(function (e) {
+                e.preventDefault();
+                $('#restoreLinkContainer').hide();
+                $('#forgotPasswordProcessContainer').show();
+            });
+
+            $('#backToLoginLink').click(function (e) {
+                e.preventDefault();
+                $('#forgotPasswordContainer').hide();
+                $('#loginForm').show();
+            });
+        });
+
+        $('.btn-close-forgot-psw').click(function () {
+            document.getElementById('AbpPageAlertsPsw').classList.add('hidden');
+        });
+
+        $('.btn-close-reg').click(function () {
+            $('#message').text('');
+            $('#AbpPageAlerts').hide();
+        });
+
+        
+        var codeInput = document.getElementById('otp_input');
+        var inputs = Array.from(document.querySelectorAll('input[id^="code_"]'));
+        function updateOtp() {
+            var otps = document.querySelectorAll('#otp_input');
+            otps[0].value = '';
+            otps[1].value = '';
+            for (let input of inputs) {
+                otps[0].value += input.value;
+                otps[1].value += input.value;
+            }
+        }
+
+        inputs.forEach((input, i) => {
+            input.addEventListener('input', function (e) {
+                hideOtpError();
+
+                if (e.inputType === 'deleteContentBackward') {
+                    e.preventDefault();
+                    return;
+                }
+
+                if (e.inputType === 'deleteContentForward') {
+                    e.preventDefault();
+                    return;
+                }
+
+                if (e.inputType === 'insertText') {
+                    const filtered = e.data.replace(/[^0-9]/g, '');
+                    e.target.value = filtered[filtered.length - 1] || '';
+                    if (inputs[i + 1] && e.target.value?.length) {
+                        inputs[i + 1].focus();
+                    }
+                }
+
+                updateOtp();
+                
+                if (i == 5 && codeInput.value?.length == 6){
+                    document.getElementById('form_submit_btn').click();
+                }
+            });
+            input.addEventListener('paste', function (e) {
+                hideOtpError();
+                e.preventDefault();
+                var data = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
+                var arr = data.slice(0, 6).split('');
+
+                inputs.forEach((input, i) => {
+                    input.value = arr[i] || '';
+                });
+
+                updateOtp();
+                
+                if (codeInput.value?.length == 6) {
+                    document.getElementById('form_submit_btn').click();
+                }
+            });
+
+            input.addEventListener('keydown', function (event) {
+              if (event.key === 'Backspace') {
+                if (i > 0){
+                    inputs[i].value = '';
+                    inputs[i - 1].focus();
+                    updateOtp();
+                    event.preventDefault();
+                }
+              }
+              else if (event.key === 'Delete') {
+                if (i < inputs.length - 1) {
+                    inputs[i].value = '';
+                    inputs[i + 1].focus();
+                    updateOtp();
+                    event.preventDefault();
+                }
+              }
+              else if (event.key === 'ArrowLeft') {
+                if (i > 0) {
+                    inputs[i - 1].focus();
+                    event.preventDefault();
+                }
+              }
+              else if (event.key === 'ArrowRight') {
+                if (i < inputs.length - 1) {
+                    inputs[i + 1].focus();
+                    event.preventDefault();
+                }
+              }
+            });
+
+            input.value = "@(ViewData["prevCode"] ?? "")"[i] || '';
+        });
+
+        
+        codeInput.addEventListener('input', function (event) {
+            hideOtpError();
+            if (event.inputType === 'insertText') {
+                event.preventDefault();
+                codeInput.value = event.target.value.replace(/\D/g, '').slice(0, 6);
+            }
+            
+            if (codeInput.value?.length == 6){
+                document.getElementById('form_submit_btn').click();
+            }
+        });
+
+        codeInput.addEventListener('paste', function (event) {
+            hideOtpError();
+            event.preventDefault();
+            var key = event.key;
+            codeInput.value = event.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+            if (codeInput.value?.length == 6){
+                document.getElementById('form_submit_btn').click();
+            }
+        });
+        @if (Model.IsTwoFactorSecondStep)
+        {
+            <text>
+                document.getElementById("login_form").addEventListener("submit", function(e) {
+                    const inpt = document.getElementById("otp_input");
+                    const otpValue = inpt.value.trim();
+
+                    if (otpValue?.length != 6)
+                    {
+                        showOtpError("@(CustomIdentityL.GetString("Otp:Invalid:Length"))");
+                        console.error("@(CustomIdentityL.GetString("Otp:Invalid:Length"))")
+                        e.preventDefault();
+                    }
+                    else
+                    {
+                        const submitBtn = document.getElementById('form_submit_btn');
+                        submitBtn.disabled = true;
+                        submitBtn.ariaDisabled = true;
+                        inpt.ariaReadOnly = true;
+                        inpt.readOnly = true;
+
+                        showOtpInfo("@(CustomIdentityL.GetString("Otp:Validation"))", true);
+
+                        Array.from(document.querySelectorAll('input[id^="code_"]')).forEach((i) =>
+                            {
+                                i.disabled = true;
+                                i.ariaDisabled = true;
+                                i.readOnly = true;
+                                i.ariaReadOnly = true;
+                            });
+                     }
+                });
+            </text>
+        }
+    </script>
+    
+    <script>
+        var atSymbol = '\u0040';
+
+        function updateUsername() {
+            var allowChangeUsername = "@Model.Settings.AllowChangeUserName".toString();
+            var emailInput = document.getElementById('emailSelfReg').value;
+            var usernameInput = document.getElementById('usernameSelfReg');
+            if (allowChangeUsername == "False") {
+                var username = emailInput?.split(atSymbol)[0];
+                username = username.replace(/[^a-zA-Z]/g, '');
+                usernameInput.value = username;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var emailInput = document.getElementById('emailSelfReg');
+            if (emailInput) {
+                emailInput.addEventListener('input', updateUsername);
+            }
+        });
+    </script>
+    <!--end::Custom Javascript-->
+    <!--end::Javascript-->
+</body>
+<!--end::Body-->
+</html>

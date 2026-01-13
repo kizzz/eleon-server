@@ -1,0 +1,21 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "SamplePageMessage": "A sample page for the Module module",
+    "Menu:Module": "Module",
+    "DocumentVersion:Version": "Version",
+    "DocumentVersion:CreatedByUserName": "Author",
+    "DocumentVersion:CreatedAt": "Date",
+    "LastModifiedBy": "Modified by {0} at {1}",
+    "DocumentVersion:CreatedByNobody": "System",
+    "ArchiveMessage": "You are viewing an archive version {0} created by {1} at {2}",
+    "VersionOutdatedMessage": "The version you are viewing is outdated. A new version {0} was created by {1} at {2}.",
+    "VersionOutdatedWarningUser": "The document was updated by {0}.",
+    "VersionOutdatedWarningSystem": "The document was updated.",
+    "VersionOutdatedCaution": "Caution: unsaved data will be lost!",
+    "VersionOutdatedReloadConfirm": "Do you want to reload this page?",
+    "History:Title": "Document Audit History",
+    "History:Tooltip": "Document History",
+    "EmptyMessage": "No versions"
+  }
+}

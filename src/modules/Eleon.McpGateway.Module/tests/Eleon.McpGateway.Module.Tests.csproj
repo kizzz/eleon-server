@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <!-- Default test filter: exclude Manual tests unless RUN_MANUAL_TESTS is set -->
+    <!-- This property is used by the SetDefaultTestFilter target -->
+    <DefaultTestFilter Condition="'$(RUN_MANUAL_TESTS)' != '1' AND '$(RUN_MANUAL_TESTS)' != 'true'">Category!=Manual</DefaultTestFilter>
+    <!-- Set VSTestTestCaseFilter directly if not already set and RUN_MANUAL_TESTS is not enabled -->
+    <VSTestTestCaseFilter Condition="'$(VSTestTestCaseFilter)' == '' AND '$(RUN_MANUAL_TESTS)' != '1' AND '$(RUN_MANUAL_TESTS)' != 'true'">Category!=Manual</VSTestTestCaseFilter>
+  </PropertyGroup>
+
+  <!-- Ensure filter is applied even if overridden -->
+  <Target Name="SetDefaultTestFilter" BeforeTargets="VSTest">
+    <PropertyGroup Condition="'$(VSTestTestCaseFilter)' == '' AND '$(RUN_MANUAL_TESTS)' != '1' AND '$(RUN_MANUAL_TESTS)' != 'true'">
+      <VSTestTestCaseFilter>Category!=Manual</VSTestTestCaseFilter>
+    </PropertyGroup>
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eleon.McpGateway.Module.Full.csproj" />
+    <ProjectReference Include="..\..\..\hosts\Eleon.McpGateway.Host.Sse\Eleon.McpGateway.Host.Sse.csproj" />
+    <ProjectReference Include="..\..\..\libs\Eleon.Mcp.Infrastructure\Eleon.Mcp.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\shared\libs\Eleon.TestsBase.Lib\Eleon.TestsBase.Lib.Full.csproj" />
+  </ItemGroup>
+
+</Project>

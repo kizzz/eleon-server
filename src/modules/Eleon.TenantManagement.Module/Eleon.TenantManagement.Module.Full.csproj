@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		 
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		
+	</PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+	<ItemGroup>
+		<!-- Universal localization resource inclusion -->
+		<EmbeddedResource Include="**/*.Domain.Shared/Localization/**/*.json">
+			<Link>Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[2])/%(Filename)%(Extension)</Link>
+			<LogicalName>/Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[2])/%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="**/*.Domain.Shared/Templates/*.cshtml">
+			<Link>Templates/%(Filename)%(Extension)</Link>
+			<LogicalName>/Templates/%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		<Content Remove="**/*.Domain.Shared/Localization/**/*.json" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.AutoMapper" />
+		<PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" />
+		<PackageReference Include="CommunityToolkit.Maui" />
+		<PackageReference Include="System.Data.SqlClient" />
+		<PackageReference Include="Volo.Abp.PermissionManagement.Application" />
+		<PackageReference Include="Volo.Abp.FeatureManagement.Application" />
+		<PackageReference Include="Volo.Abp.SettingManagement.Application" />
+		<PackageReference Include="Volo.Abp.Account.Application" />
+		<PackageReference Include="Volo.Abp.TenantManagement.Application" />
+    <PackageReference Include="Volo.Abp.AuditLogging.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" />
+		<PackageReference Include="Volo.Abp.PermissionManagement.Domain.Identity" />
+		<PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.BlobStoring.Database.Domain" />
+    <PackageReference Include="Volo.Abp.Identity.Application.Contracts" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application.Contracts" />
+    <PackageReference Include="Volo.CmsKit.Domain.Shared" />
+    <PackageReference Include="Volo.Abp.SettingManagement.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.BlobStoring.Database.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.Identity.HttpApi" />
+    <PackageReference Include="Volo.CmsKit.HttpApi" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.HttpApi.Client" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.HttpApi.Client" />
+    <PackageReference Include="Volo.Abp.SettingManagement.HttpApi.Client" />
+    <PackageReference Include="Volo.Abp.Identity.HttpApi.Client" />
+    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi.Client" />
+    <PackageReference Include="Volo.CmsKit.HttpApi.Client" />
+
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+<ItemGroup>
+	     <ProjectReference Include="..\..\libs\Eleon.IdentityQuerying.Lib\Eleon.IdentityQuerying.Lib.Full.csproj" />
+	     <ProjectReference Include="..\..\shared\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+       <ProjectReference Include="..\..\shared\libs\Eleon.Abp.Lib\Eleon.Abp.Lib.Full.csproj" />
+	    <ProjectReference Include="..\..\libs\Eleon.InternalCommons.Lib\Eleon.InternalCommons.Lib.Full.csproj" />
+       <ProjectReference Include="..\..\shared\libs\Eleon.TenantSettings.Lib\Eleon.TenantSettings.Lib.Full.csproj" />
+		</ItemGroup>
+
+<ItemGroup><EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+
+</Project>
+
+
+

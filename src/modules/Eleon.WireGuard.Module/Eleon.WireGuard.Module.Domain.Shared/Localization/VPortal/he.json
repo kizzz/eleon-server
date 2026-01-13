@@ -1,0 +1,32 @@
+{
+  "Culture": "he",
+  "Texts": {
+    "ExternalProvider:Twitter": "Twitter",
+    "ExternalProvider:Microsoft": "Microsoft",
+    "ExternalProvider:Google": "Google",
+    "ExternalProvider:Twitter:ConsumerSecret": "Consumer Secret",
+    "ExternalProvider:Twitter:ConsumerKey": "Consumer Key",
+    "ExternalProvider:Google:ClientSecret": "Client Secret",
+    "ExternalProvider:Microsoft:ClientSecret": "Client Secret",
+    "ExternalProvider:Google:ClientId": "Client ID",
+    "ExternalProvider:Microsoft:ClientId": "Client ID",
+    "Menu:Home": "בית",
+    "Menu:ContactUs": "צור קשר",
+    "Menu:ArticleSample": "מאמר לדוגמא",
+    "Home": "בית",
+    "Welcome": "vPortal ברוכים הבאים",
+    "LongWelcomeMessage": "ברוכים הבאים לאפליקציה. זהו פרויקט סטארט-אפ המבוסס על מסגרת ABP. למידע נוסף בקר בכתובת abp.io.",
+    "EndDate": "תאריך סיום",
+    "StartDate": "תאריך התחלה",
+    "Permission:Dashboard": "לוח מחוונים",
+    "Menu:Dashboard": "לוח מחוונים",
+    "Menu:HomePage": "דף הבית",
+    "Dashboard": "לוח מחוונים",
+    "NewsletterHeader": "הירשמו לניוזלטר!",
+    "NewsletterInfo": "קבל מידע על ההתרחשויות האחרונות.",
+    "NewsletterPreference_Default": "ברירת מחדל ניוזלטר",
+    "NewsletterPrivacyAcceptMessage": "אני מסכים ל<a href='/privacy-policy'>מדיניות הפרטיות</a>.",
+    "HomeHeaderMessage": "'אבדר אלבו' - החברה המובילה בישראל בתחום אספקת מתכות לתעשיות",
+    "HomeLongCardMessage": "אבדר אלבו’ מתמחה בתחום אספקת מתכות לתעשיות. החברה התחילה את דרכה בשנת 1993 ועברה המון שינויים לאורך הדרך, עד שלאחרונה – נולדה מחדש."
+  }
+}

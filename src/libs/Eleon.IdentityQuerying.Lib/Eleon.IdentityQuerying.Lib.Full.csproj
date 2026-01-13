@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		<Configurations>Debug;Release;ImmuRelease;QA</Configurations>
+		
+	</PropertyGroup>
+
+	  <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+    <PackageReference Include="MailKit" />
+		<PackageReference Include="Volo.Abp.TextTemplating" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+		<PackageReference Include="Volo.Abp.SettingManagement.Domain" />
+
+	</ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+  <ItemGroup>
+	  <ProjectReference Include="..\..\shared\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Authorization.Lib\Eleon.Authorization.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.TenantSettings.Lib\Eleon.TenantSettings.Lib.Full.csproj" />
+    <ProjectReference Include="..\Eleon.InternalCommons.Lib\Eleon.InternalCommons.Lib.Full.csproj" />
+
+    <PackageReference Include="Volo.Abp.AutoMapper" />
+    <PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" />
+    <PackageReference Include="CommunityToolkit.Maui" />
+    <PackageReference Include="System.Data.SqlClient" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Application" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Application" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Identity" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.Identity.Application.Contracts" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application.Contracts" />
+    <PackageReference Include="Volo.Abp.SettingManagement.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.Identity.HttpApi" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.HttpApi.Client" />
+    <PackageReference Include="Volo.Abp.AuditLogging.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.HttpApi.Client" />
+    <PackageReference Include="Volo.Abp.SettingManagement.HttpApi.Client" />
+    <PackageReference Include="Volo.Abp.Identity.HttpApi.Client" />
+    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi.Client" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests\**" />
+  </ItemGroup>
+<ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+</Project>
+
+
+

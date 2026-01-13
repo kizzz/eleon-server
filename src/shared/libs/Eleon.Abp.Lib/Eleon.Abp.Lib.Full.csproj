@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	   
+	  <Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+    
+  </PropertyGroup>
+
+	<ItemGroup>
+		<!-- SDK inclusion -->
+		<Compile Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+		<None Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+		<Content Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+	</ItemGroup>
+  <ItemGroup>
+	<Compile Remove="**/bin/**/*;**/obj/**/*" />
+	<None Remove="**/bin/**/*;**/obj/**/*" />
+	<Content Remove="**/bin/**/*;**/obj/**/*" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Sinks.Async" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Sentry" />
+    <PackageReference Include="IdentityModel" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.Data" />
+    <PackageReference Include="Volo.Abp.Uow" />
+    <PackageReference Include="Volo.Abp.Ddd.Domain" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.Authorization" />
+    <PackageReference Include="Volo.Abp.Users.Abstractions" />
+    <PackageReference Include="Volo.Abp.AspNetCore" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+	<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+    <ProjectReference Include="..\Eleon.ErrorHandling.Lib\Eleon.ErrorHandling.Lib.Full.csproj" />
+    <ProjectReference Include="..\Eleon.Common.Lib\Eleon.Common.Lib.Full.csproj" />
+  </ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+</Project>
+
+
+
+

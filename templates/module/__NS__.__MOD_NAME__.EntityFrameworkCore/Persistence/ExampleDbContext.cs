@@ -1,0 +1,1 @@
+using Microsoft.EntityFrameworkCore; namespace __NS__.__MOD_NAME__.EntityFrameworkCore; public class ExampleDbContext:DbContext{ public ExampleDbContext(DbContextOptions<ExampleDbContext> o):base(o){} }

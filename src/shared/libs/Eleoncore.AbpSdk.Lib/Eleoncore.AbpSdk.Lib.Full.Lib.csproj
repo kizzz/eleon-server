@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>abp_sdk</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    <Configurations>Debug;Release;ImmuRelease;QA</Configurations>
+    
+  </PropertyGroup>
+
+	<ItemGroup>
+    <PackageReference Include="Volo.Abp.Identity.Domain" />
+    <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" />
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eleon.Migration.Lib\Eleon.Migration.Lib.Full.csproj" />
+    <ProjectReference Include="..\Eleon.Startup.Lib\Eleon.Startup.Lib.Full.csproj" />
+    <ProjectReference Include="..\Eleoncore.CSharpSdk.Lib\Eleoncore.CSharpSdk.Lib.csproj" />
+  </ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="test\**\*.resx" />
+    <None Include="test\**\*.json" />
+    <None Include="test\**\*.config" />
+  </ItemGroup>
+</Project>
+

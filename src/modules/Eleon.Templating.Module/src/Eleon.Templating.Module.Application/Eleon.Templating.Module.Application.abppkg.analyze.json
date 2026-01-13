@@ -1,0 +1,83 @@
+{
+  "name": "Eleon.Templating.Module.Application",
+  "hash": "",
+  "contents": [
+    {
+      "namespace": "Eleon.Templating.Module",
+      "dependsOnModules": [
+        {
+          "declaringAssemblyName": "Eleon.Templating.Module.Domain",
+          "namespace": "Eleon.Templating.Module",
+          "name": "ModuleDomainModule"
+        },
+        {
+          "declaringAssemblyName": "Eleon.Templating.Module.Application.Contracts",
+          "namespace": "Eleon.Templating.Module",
+          "name": "ModuleApplicationContractsModule"
+        },
+        {
+          "declaringAssemblyName": "Volo.Abp.Ddd.Application",
+          "namespace": "Volo.Abp.Application",
+          "name": "AbpDddApplicationModule"
+        },
+        {
+          "declaringAssemblyName": "Volo.Abp.Mapperly",
+          "namespace": "Volo.Abp.Mapperly",
+          "name": "AbpMapperlyModule"
+        },
+        {
+          "declaringAssemblyName": "Volo.Abp.PermissionManagement.Domain.Shared",
+          "namespace": "Volo.Abp.PermissionManagement",
+          "name": "AbpPermissionManagementDomainSharedModule"
+        }
+      ],
+      "implementingInterfaces": [
+        {
+          "name": "IAbpModule",
+          "namespace": "Volo.Abp.Modularity",
+          "declaringAssemblyName": "Volo.Abp.Core",
+          "fullName": "Volo.Abp.Modularity.IAbpModule"
+        },
+        {
+          "name": "IOnPreApplicationInitialization",
+          "namespace": "Volo.Abp.Modularity",
+          "declaringAssemblyName": "Volo.Abp.Core",
+          "fullName": "Volo.Abp.Modularity.IOnPreApplicationInitialization"
+        },
+        {
+          "name": "IOnApplicationInitialization",
+          "namespace": "Volo.Abp",
+          "declaringAssemblyName": "Volo.Abp.Core",
+          "fullName": "Volo.Abp.IOnApplicationInitialization"
+        },
+        {
+          "name": "IOnPostApplicationInitialization",
+          "namespace": "Volo.Abp.Modularity",
+          "declaringAssemblyName": "Volo.Abp.Core",
+          "fullName": "Volo.Abp.Modularity.IOnPostApplicationInitialization"
+        },
+        {
+          "name": "IOnApplicationShutdown",
+          "namespace": "Volo.Abp",
+          "declaringAssemblyName": "Volo.Abp.Core",
+          "fullName": "Volo.Abp.IOnApplicationShutdown"
+        },
+        {
+          "name": "IPreConfigureServices",
+          "namespace": "Volo.Abp.Modularity",
+          "declaringAssemblyName": "Volo.Abp.Core",
+          "fullName": "Volo.Abp.Modularity.IPreConfigureServices"
+        },
+        {
+          "name": "IPostConfigureServices",
+          "namespace": "Volo.Abp.Modularity",
+          "declaringAssemblyName": "Volo.Abp.Core",
+          "fullName": "Volo.Abp.Modularity.IPostConfigureServices"
+        }
+      ],
+      "contentType": "abpModule",
+      "name": "ModuleApplicationModule",
+      "summary": null
+    }
+  ]
+}

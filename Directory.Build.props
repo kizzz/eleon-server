@@ -1,0 +1,100 @@
+<Project>
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)'=='true'">true</ContinuousIntegrationBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>preview</LangVersion>
+
+    <Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+    
+    <!-- Disable MAUI source generators/items for non-MAUI projects -->
+    <EnableDefaultMauiItems Condition="'$(UseMaui)' != 'true'">false</EnableDefaultMauiItems>
+    <EnableDefaultXamlItems Condition="'$(UseMaui)' != 'true'">false</EnableDefaultXamlItems>
+    <EnableDefaultCssItems Condition="'$(UseMaui)' != 'true'">false</EnableDefaultCssItems>
+    <DisableMauiAnalyzers Condition="'$(UseMaui)' != 'true'">true</DisableMauiAnalyzers>
+
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
+    <!-- Linux agents do not have the Windows-specific NuGet fallback cache -->
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+
+    <!-- Ensure core build dimensions have defaults before they're used below -->
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+
+    <!-- Repo root: where this file lives -->
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))</RepoRoot>
+    <!-- Workspace root: repo root parent, used for shared /workspace drops -->
+    <WorkspaceRoot Condition="'$(WorkspaceRoot)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))</WorkspaceRoot>
+
+    <!-- Test Project Classification -->
+    <!-- Default: NOT a test project -->
+    <IsTestProject Condition="'$(IsTestProject)' == ''">false</IsTestProject>
+    
+    <!-- Auto-detect test projects by naming convention or folder location -->
+    <!-- Check if project name ends with .Tests, .Test, or .IntegrationTests -->
+    <_ProjectNameEndsWithTests Condition="$([System.String]::Copy('$(MSBuildProjectName)').EndsWith('.Tests'))">true</_ProjectNameEndsWithTests>
+    <_ProjectNameEndsWithTest Condition="$([System.String]::Copy('$(MSBuildProjectName)').EndsWith('.Test'))">true</_ProjectNameEndsWithTest>
+    <_ProjectNameEndsWithIntegrationTests Condition="$([System.String]::Copy('$(MSBuildProjectName)').EndsWith('.IntegrationTests'))">true</_ProjectNameEndsWithIntegrationTests>
+    <_IsTestProjectByName Condition="'$(_ProjectNameEndsWithTests)' == 'true' OR '$(_ProjectNameEndsWithTest)' == 'true' OR '$(_ProjectNameEndsWithIntegrationTests)' == 'true'">true</_IsTestProjectByName>
+    
+    <!-- Check if project is in a tests folder -->
+    <!-- First normalize the path to a property, then check it -->
+    <_ProjectDirNormalized>$([System.String]::Copy('$(MSBuildProjectDirectory)').Replace('/', '\'))</_ProjectDirNormalized>
+    <_IsInTestsFolder Condition="$(_ProjectDirNormalized.Contains('\tests\'))">true</_IsInTestsFolder>
+    
+    <!-- Set IsTestProject if detected by name or folder, but only if not already explicitly set -->
+    <IsTestProject Condition="'$(IsTestProject)' == 'false' AND '$(_IsTestProjectByName)' == 'true'">true</IsTestProject>
+    <IsTestProject Condition="'$(IsTestProject)' == 'false' AND '$(_IsInTestsFolder)' == 'true'">true</IsTestProject>
+    
+    <!-- Explicitly exclude "Full" projects from being test projects -->
+    <!-- These are container projects that include test code but are NOT test projects themselves -->
+    <_IsFullProject Condition="$([System.String]::Copy('$(MSBuildProjectName)').Contains('.Full.'))">true</_IsFullProject>
+    <IsTestProject Condition="'$(_IsFullProject)' == 'true'">false</IsTestProject>
+
+    <!-- Avoid duplicate assembly attributes in test projects -->
+    <GenerateAssemblyInfo Condition="'$(IsTestProject)' == 'true'">false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute Condition="'$(IsTestProject)' == 'true'">false</GenerateTargetFrameworkAttribute>
+
+    <!-- Isolate obj/restore assets for projects sharing the same folder -->
+    <BaseIntermediateOutputPath Condition="'$(MSBuildProjectName)' == 'Eleonsoft.Tests'">$(MSBuildProjectDirectory)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath Condition="'$(MSBuildProjectName)' == 'Eleonsoft.Tests'">$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+    <BaseIntermediateOutputPath Condition="'$(MSBuildProjectName)' == 'Eleonsoft.Full.NoTests'">$(MSBuildProjectDirectory)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath Condition="'$(MSBuildProjectName)' == 'Eleonsoft.Full.NoTests'">$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+
+    <!-- Central BIN path -->
+    <BaseOutputPath Condition="'$(BaseOutputPath)' == ''">$(WorkspaceRoot)bin\$(Configuration)\</BaseOutputPath>
+    <OutputPath Condition="'$(OutputPath)' == ''">$(BaseOutputPath)$(MSBuildProjectName)\</OutputPath>
+    
+    <!-- For test projects: use isolated output path and append TFM to avoid collisions -->
+    <BaseOutputPath Condition="'$(IsTestProject)' == 'true' AND '$(BaseOutputPath)' == '$(WorkspaceRoot)bin\$(Configuration)\'">$(WorkspaceRoot)bin\$(Configuration)\tests\</BaseOutputPath>
+    <OutputPath Condition="'$(IsTestProject)' == 'true' AND '$(OutputPath)' == '$(BaseOutputPath)$(MSBuildProjectName)\'">$(BaseOutputPath)$(MSBuildProjectName)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath Condition="'$(IsTestProject)' == 'true'">true</AppendTargetFrameworkToOutputPath>
+    <AppendTargetFrameworkToOutputPath Condition="'$(IsTestProject)' != 'true'">false</AppendTargetFrameworkToOutputPath>
+
+    <!-- Avoid static web asset cache collisions -->
+    <StaticWebAssetsCacheDefineStaticWebAssetsEnabled>false</StaticWebAssetsCacheDefineStaticWebAssetsEnabled>
+    
+    <NoWarn>$(NoWarn);NETSDK1233;NU1902;NU1904;NU1510;CS0436;CS0618;CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8609;CS8613;CS8618;CS8619;CS8620;CS8625;CS8629;CS8632;CS8633;CS8714</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <MicrosoftSourceLinkGitHubVersion Condition="'$(MicrosoftSourceLinkGitHubVersion)' == ''">8.0.0</MicrosoftSourceLinkGitHubVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**/bin/**/*;**/obj/**/*" />
+    <None Remove="**/bin/**/*;**/obj/**/*" />
+    <Content Remove="**/bin/**/*;**/obj/**/*" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All" Condition="'$(ManagePackageVersionsCentrally)' == 'false'" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" Condition="'$(ManagePackageVersionsCentrally)' != 'false'" />
+  </ItemGroup>
+  <ItemGroup>
+    <RuntimeHostConfigurationOption
+      Include="System.Text.Json.Serialization.RespectNullableAnnotationsDefault"
+      Value="false" />
+  </ItemGroup>
+
+</Project>

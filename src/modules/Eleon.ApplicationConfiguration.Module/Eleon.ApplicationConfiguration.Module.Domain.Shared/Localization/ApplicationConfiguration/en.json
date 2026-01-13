@@ -1,0 +1,8 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "SamplePageMessage": "A sample page for the ApplicationConfiguration module",
+    "Menu:ApplicationConfiguration": "Application Configuration",
+    "Permission:ApplicationConfiguration": "Application Configuration"
+  }
+}

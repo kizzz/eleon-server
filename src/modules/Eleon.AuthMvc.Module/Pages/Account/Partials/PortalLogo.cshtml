@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using VPortal.Identity.Module.Localization;
+@inject IHtmlLocalizer<IdentityResource> IdentityL;
+
+<!--begin::Aside-->
+<div class="d-flex flex-center w-lg-50 pt-15 pt-lg-0 px-10">
+    <!--begin::Aside-->
+    <div class="d-flex flex-center flex-lg-start flex-column">
+        <!--begin::Logo-->
+        <a href="https://www.eleonsphere.com/" class="mb-3">
+            <img alt="Logo" class="w-300px md:w-400px" src="~/files/images/logo/eleonsphere-logo.png" />
+        </a>
+        <!--end::Logo-->
+        <!--begin::Title-->
+        <h2 class="text-white fw-bold m-0 d-none md:d-block" style="width: 400px; text-align: center;">@IdentityL["Login:Motto"]</h2>
+        <!--end::Title-->
+    </div>
+    <!--begin::Aside-->
+</div>
+<!--begin::Aside-->

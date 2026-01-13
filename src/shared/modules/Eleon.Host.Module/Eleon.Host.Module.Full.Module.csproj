@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+		<OutputType>library</OutputType>
+		
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Volo.Abp.FeatureManagement.EntityFrameworkCore" />
+		<PackageReference Include="MiniProfiler.AspNetCore" />
+		<PackageReference Include="MiniProfiler.AspNetCore.Mvc" />
+		<PackageReference Include="MiniProfiler.EntityFrameworkCore" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="StackExchange.Redis" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Serilog" />
+		
+		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" />
+		<PackageReference Include="Volo.Abp.Swashbuckle" />
+		<PackageReference Include="System.Data.SqlClient" />
+		<PackageReference Include="Volo.Abp.Ddd.Application" />
+		<PackageReference Include="Volo.Abp.AutoMapper" />
+		<PackageReference Include="Volo.Abp.Ddd.Application.Contracts" />
+		<PackageReference Include="Volo.Abp.Authorization.Abstractions" />
+		<PackageReference Include="Volo.Abp.Identity.Application.Contracts" />
+		<PackageReference Include="Volo.Abp.Caching" />
+		<PackageReference Include="Volo.Abp.Ddd.Domain" />
+		<PackageReference Include="Volo.Abp.Identity.Domain" />
+		<PackageReference Include="Volo.Abp.Identity.Domain.Shared" />
+		<PackageReference Include="Volo.Abp.Validation" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
+		<PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+		<PackageReference Include="Volo.Abp.Http.Client" />
+		<PackageReference Include="Volo.Abp.Authorization" />
+		<PackageReference Include="Sentry" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="Volo.Abp.BackgroundJobs.Quartz" />
+		<PackageReference Include="Volo.Abp.Core" />
+		<PackageReference Include="Volo.Abp.Features" />
+		<PackageReference Include="Volo.Abp.AspNetCore.SignalR" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\..\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+	  <ProjectReference Include="..\..\libs\Eleon.ErrorHandling.Lib\Eleon.ErrorHandling.Lib.Full.csproj" />
+	  <ProjectReference Include="..\..\libs\Eleon.Startup.Lib\Eleon.Startup.Lib.Full.csproj" />
+	</ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="test\**\*.resx" />
+    <None Include="test\**\*.json" />
+    <None Include="test\**\*.config" />
+  </ItemGroup>
+</Project>

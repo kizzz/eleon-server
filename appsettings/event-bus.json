@@ -1,0 +1,26 @@
+{
+	"EventBus": {
+	  "Provider": 3,
+	  "ProviderOptionsJson": {
+      "Type": 1,
+      "RabbitMqOptions": {
+        "Host": "127.0.0.1",
+        "Port": 5672,
+        "VirtualHost": "new-admin",
+        "Username": "guest",
+        "Password": "guest",
+        "UseSsl": false,
+        "UseCluster": false,
+        "ClusterNodes": [
+        "127.0.0.1"
+        ],
+        "DefaultQueuePrefix": "eleonsoft_server_queue",
+        "DefaultConcurrentMessageLimit": 1,
+        "DefaultPrefetchCount": 4,
+        "DefaultDurable": true,
+        "DefaultAutoDelete": false,
+        "DefaultExchangeType": "fanout"
+      }
+	  }
+	}
+}

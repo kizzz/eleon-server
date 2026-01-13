@@ -1,0 +1,125 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<TargetFramework>net10.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		<AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+		<RootNamespace>VPortal</RootNamespace>
+		<PreserveCompilationReferences>true</PreserveCompilationReferences>
+		<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+		<ANCMPreConfiguredForIIS>true</ANCMPreConfiguredForIIS>
+		 
+		<GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+		
+	</PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <!-- Debug-like settings -->
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+	<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Logs\**" />
+		<Content Remove="Logs\**" />
+		<Content Remove="obj\**" />
+		<EmbeddedResource Remove="Logs\**" />
+		<None Remove="Logs\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="Properties\launchSettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<_WebToolingArtifacts Remove="Properties\launchSettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Properties\launchSettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="wwwroot\**\*.*" />
+		<Content Include="wwwroot\**\*.*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="appsettings.$(Configuration).json" Condition="Exists('appsettings.$(Configuration).json')" CopyToOutputDirectory="Always" Link="appsettings.json" />
+		<None Include="appsettings.app.json" CopyToOutputDirectory="Always" />
+		<None Include="appsettings.Debug.json" Condition="Exists('appsettings.Debug.json')" />
+		<None Include="appsettings.Release.json" />
+		<None Include="appsettings.ImmuRelease.json" />
+		<None Include="appsettings.QA.json" />
+    <None Include="web.config" CopyToOutputDirectory="Always"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="MiniProfiler.AspNetCore" />
+		<PackageReference Include="MiniProfiler.AspNetCore.Mvc" />
+		<PackageReference Include="MiniProfiler.EntityFrameworkCore" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\modules\\Eleon.GatewayManagement.Module\\Eleon.GatewayManagement.Module.Full.csproj" />
+	  <ProjectReference Include="..\..\modules\\Eleon.SitesManagement.Module\\Eleon.SitesManagement.Module.Full.csproj" />
+	  <ProjectReference Include="..\..\shared\libs\Eleon.Startup.Lib\Eleon.Startup.Lib.Full.csproj" />
+	  <ProjectReference Include="..\..\shared\modules\\Eleon.Host.Module\\Eleon.Host.Module.Full.csproj" />
+		</ItemGroup>
+
+<Target Name="WipeMergedSettings_BeforeClean" BeforeTargets="Clean">
+		<ItemGroup>
+			<_MergedToDelete Include="$(TargetDir)appsettings.*Merged.json" />
+		</ItemGroup>
+		<Delete Files="@(_MergedToDelete)" ContinueOnError="true" />
+	</Target>
+
+	<Target Name="WipeMergedSettings_BeforeBuild" BeforeTargets="Build">
+		<ItemGroup>
+			<_MergedToDelete Include="$(TargetDir)appsettings.*Merged.json" />
+		</ItemGroup>
+		<Delete Files="@(_MergedToDelete)" ContinueOnError="true" />
+	</Target>
+
+	<Target Name="WipeMergedSettings_BeforePublish" BeforeTargets="Publish">
+		<ItemGroup>
+			<_MergedToDeletePub Include="$(PublishDir)appsettings.*Merged.json" />
+		</ItemGroup>
+		<Delete Files="@(_MergedToDeletePub)" ContinueOnError="true" />
+	</Target>
+  <ItemGroup><EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+</Project>
+
+

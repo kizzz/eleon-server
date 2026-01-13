@@ -1,0 +1,12 @@
+# EleonsoftProxy.Model.GatewayManagementUpdateGatewayRequestDto
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**Gateway** | [**GatewayManagementGatewayDto**](GatewayManagementGatewayDto.md) |  | [optional] 
+**EventBus** | [**GatewayManagementEventBusDto**](GatewayManagementEventBusDto.md) |  | [optional] 
+**UseDefault** | **bool** |  | [optional] 
+
+[[Back to Model list]](../../README.md#documentation-for-models) [[Back to API list]](../../README.md#documentation-for-api-endpoints) [[Back to README]](../../README.md)
+

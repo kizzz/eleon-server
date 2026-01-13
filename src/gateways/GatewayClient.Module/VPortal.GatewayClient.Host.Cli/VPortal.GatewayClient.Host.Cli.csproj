@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SharedDeprecatedDir)\Eleon.Common.HttpApi.Module\Eleon.Common.HttpApi.Module.csproj" />
+    <ProjectReference Include="..\VPortal.GatewayClient.Host.Collector\VPortal.GatewayClient.Host.Collector.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+  </ItemGroup>
+</Project>

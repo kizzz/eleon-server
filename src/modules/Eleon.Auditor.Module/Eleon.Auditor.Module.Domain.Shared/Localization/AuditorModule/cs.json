@@ -1,0 +1,15 @@
+{
+  "Culture": "cs",
+  "Texts": {
+    "SamplePageMessage": "Ukázková stránka modulu Module",
+    "Menu:Module": "Modul",
+    "DocumentVersion:Version": "Verze",
+    "DocumentVersion:CreatedByUserName": "Autor",
+    "DocumentVersion:CreatedAt": "datum",
+    "LastModifiedBy": "Naposledy upraveno uživatelem {0} v {1}",
+    "DocumentVersion:CreatedByNobody": "Systém",
+    "ArchiveMessage": "Prohlížíte si archivní verzi {0} vytvořenou uživatelem {1} na adrese {2}",
+    "History:Title": "Historie auditu dokumentů",
+    "History:Tooltip": "Historie dokumentu"
+  }
+}

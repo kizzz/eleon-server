@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Eleon.Application\Eleon.Application.csproj" />
+    <ProjectReference Include="..\..\src\Eleon.HttpApi\Eleon.HttpApi.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\shared\libs\Eleon.TestsBase.Lib\Eleon.TestsBase.Lib.Full.csproj" />
+  </ItemGroup>
+</Project>
+

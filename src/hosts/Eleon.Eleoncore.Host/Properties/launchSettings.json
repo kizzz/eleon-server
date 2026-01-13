@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS": {
+      "commandName": "IIS",
+      "launchBrowser": false,
+      "launchUrl": "https://localhost:5050",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5050"
+    },
+    "IIS-Immu": {
+      "commandName": "IIS",
+      "launchBrowser": false,
+      "launchUrl": "https://localhost:5150",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5150"
+    },
+    "Kestrel": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5050",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      }
+    },
+    "ImmuKestrel": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5150",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      }
+    }
+  },
+  "iisSettings": {
+    "iis": {
+      "applicationUrl": "https://localhost:5050",
+      "sslPort": 443
+    }
+  }
+}

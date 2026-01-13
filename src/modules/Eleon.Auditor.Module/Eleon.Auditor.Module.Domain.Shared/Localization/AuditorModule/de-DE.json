@@ -1,0 +1,15 @@
+{
+  "Culture": "de-DE",
+  "Texts": {
+    "SamplePageMessage": "Eine Musterseite für das Module-Modul",
+    "Menu:Module": "Modul",
+    "DocumentVersion:Version": "Ausführung",
+    "DocumentVersion:CreatedByUserName": "Autor",
+    "DocumentVersion:CreatedAt": "Datum",
+    "LastModifiedBy": "Zuletzt geändert von {0} um {1}",
+    "DocumentVersion:CreatedByNobody": "System",
+    "ArchiveMessage": "Sie sehen sich eine Archivversion {0} an, die von {1} unter {2} erstellt wurde.",
+    "History:Title": "Auditverlauf dokumentieren",
+    "History:Tooltip": "Dokumentenverlauf"
+  }
+}

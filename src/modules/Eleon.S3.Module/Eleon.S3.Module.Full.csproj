@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>enable</ImplicitUsings>
+     
+    
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    
+    <PackageReference Include="MiniProfiler.AspNetCore" />
+    <PackageReference Include="Microsoft.OpenApi" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" />
+    <PackageReference Include="Volo.Abp.AutoMapper" />
+    <PackageReference Include="Volo.Abp.Autofac" />
+    <PackageReference Include="Volo.Abp.Account.Application" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs" />
+    
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" />
+    <PackageReference Include="Serilog.Settings.Configuration" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" />
+    <PackageReference Include="Volo.Abp.Ddd.Application" />
+    <PackageReference Include="Volo.Abp.Ddd.Domain" />
+    <PackageReference Include="Volo.Abp.BlobStoring" />
+    <PackageReference Include="Volo.Abp.BlobStoring.FileSystem" />
+    <PackageReference Include="Volo.Abp.BlobStoring.Azure" />
+    <PackageReference Include="Volo.Abp.BlobStoring.Aws" />
+    <PackageReference Include="Volo.Abp.MultiTenancy" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" />
+    <PackageReference Include="Volo.Abp.Swashbuckle" />
+    
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\Eleon.Mcp.Abstractions\Eleon.Mcp.Abstractions.csproj" />
+    <ProjectReference Include="..\..\libs\Eleon.Ssh\Eleon.Ssh.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Abp.Lib\Eleon.Abp.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\libs\Eleon.InternalCommons.Lib\Eleon.InternalCommons.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Migration.Lib\Eleon.Migration.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\libs\Eleon.Logging.Lib\Eleon.Logging.Lib.Full.csproj" />
+    <ProjectReference Include="..\..\shared\modules\Eleon.Storage.Module\Eleon.Storage.Module.Full.csproj" />
+    <ProjectReference Include="..\..\modules\Eleon.HealthCheck.Module\Eleon.HealthCheck.Module.Full.csproj" />
+    <ProjectReference Include="..\..\modules\Eleon.ProxyRouter.Module\Eleon.ProxyRouter.Module.Full.csproj" />
+  </ItemGroup>
+</Project>
+
+

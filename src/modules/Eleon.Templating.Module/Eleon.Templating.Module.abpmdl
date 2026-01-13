@@ -1,0 +1,58 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "Eleon.Templating.Module.Domain": {
+      "path": "src/Eleon.Templating.Module.Domain/Eleon.Templating.Module.Domain.abppkg",
+      "folder": "src"
+    },
+    "Eleon.Templating.Module.Application.Contracts": {
+      "path": "src/Eleon.Templating.Module.Application.Contracts/Eleon.Templating.Module.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "Eleon.Templating.Module.Application": {
+      "path": "src/Eleon.Templating.Module.Application/Eleon.Templating.Module.Application.abppkg",
+      "folder": "src"
+    },
+    "Eleon.Templating.Module.EntityFrameworkCore": {
+      "path": "src/Eleon.Templating.Module.EntityFrameworkCore/Eleon.Templating.Module.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "Eleon.Templating.Module.HttpApi": {
+      "path": "src/Eleon.Templating.Module.HttpApi/Eleon.Templating.Module.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "Eleon.Templating.Module.HttpApi.Client": {
+      "path": "src/Eleon.Templating.Module.HttpApi.Client/Eleon.Templating.Module.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "Eleon.Templating.Module.TestBase": {
+      "path": "test/Eleon.Templating.Module.TestBase/Eleon.Templating.Module.TestBase.abppkg",
+      "folder": "test"
+    },
+    "Eleon.Templating.Module.EntityFrameworkCore.Tests": {
+      "path": "test/Eleon.Templating.Module.EntityFrameworkCore.Tests/Eleon.Templating.Module.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "Eleon.Templating.Module.Domain.Tests": {
+      "path": "test/Eleon.Templating.Module.Domain.Tests/Eleon.Templating.Module.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "Eleon.Templating.Module.Application.Tests": {
+      "path": "test/Eleon.Templating.Module.Application.Tests/Eleon.Templating.Module.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "Eleon.Templating.Module.Domain.Shared": {
+      "path": "src/Eleon.Templating.Module.Domain.Shared/Eleon.Templating.Module.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "Eleon.Templating.Module.Installer": {
+       "path": "src/Eleon.Templating.Module.Installer/Eleon.Templating.Module.Installer.abppkg",
+       "folder": "src"
+    }
+  }
+}

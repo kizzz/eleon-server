@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:styles="clr-namespace:VPortal.ProxyClient.UI.Windows.Resources.Styles"
+             xmlns:ex="clr-namespace:VPortal.ProxyClient.UI.Windows.Views.ExceptionHandling"
+             x:Class="VPortal.ProxyClient.UI.Windows.Pages.HomePage"
+             x:Name="this"
+             Shell.NavBarIsVisible="True">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing"
+                                        Command="{Binding Init}" />
+    </ContentPage.Behaviors>
+
+    <ContentPage.MenuBarItems>
+        <MenuBarItem
+                Text="File"
+                BindingContext="{Binding Path=BindingContext, Source={x:Reference this}}">
+            <MenuFlyoutItem
+                Text="Host Logs"
+                Command="{Binding OpenHostLogs}"/>
+            <MenuFlyoutItem
+                Text="Refresh"
+                Command="{Binding Init}"/>
+            <MenuFlyoutItem
+                Text="Quit"
+                Command="{Binding Quit}"/>
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <VerticalStackLayout.Resources>
+                <Style x:Key="OutlinedButton" TargetType="Button">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderColor" Value="#6c66ff" />
+                    <Setter Property="TextColor" Value="#6c66ff" />
+                    <Setter Property="Padding" Value="8,10" />
+                </Style>
+
+                <Style x:Key="InternetCellValue" TargetType="Label">
+                    <Style.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding HasInternetConnection}" Value="False">
+                            <Setter Property="TextColor" Value="{StaticResource Error}"/>
+                        </DataTrigger>
+                        <DataTrigger TargetType="Label" Binding="{Binding HasInternetConnection}" Value="True">
+                            <Setter Property="TextColor" Value="{StaticResource Success}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+
+                <Style x:Key="TableDivider" TargetType="BoxView">
+                    <Setter Property="Color" Value="#6c56b8" />
+                    <Setter Property="HeightRequest" Value="1" />
+                </Style>
+
+                <Style x:Key="RegistrationButton" TargetType="Button">
+                    <Setter Property="IsVisible" Value="False"/>
+                    <Style.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding IsRegistered}" Value="False">
+                            <Setter Property="IsVisible" Value="True"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </VerticalStackLayout.Resources>
+            
+            <VerticalStackLayout
+                    Spacing="8"
+                    Margin="25"
+                    IsVisible="{Binding HostExecutableAbsent}">
+                <VerticalStackLayout Spacing="8">
+                    <Label
+                            Text="Critical Error"
+                            class="SectionTitle"/>
+                    <Grid
+                            RowDefinitions="30,30">
+                        <Label
+                            Grid.Row="0"
+                            Text="Installation Corruption"
+                            class="Subhead"/>
+                        <HorizontalStackLayout
+                                Grid.Row="1"
+                                Spacing="8">
+                            <Label
+                                VerticalOptions="Center"
+                                Text="Host executable is not present"
+                                class="SubContent"/>
+                            <ex:ErrorViewer Command="{Binding UpdateHostExecutableInfo}"/>
+                            <ImageButton
+                                VerticalOptions="Center"
+                                HeightRequest="20"
+                                WidthRequest="20"
+                                Source="{StaticResource SyncIcon}"
+                                Command="{Binding UpdateHostExecutableInfo}">
+                            </ImageButton>
+                        </HorizontalStackLayout>
+                    </Grid>
+                    <BoxView class="HRule"/>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout
+                    Spacing="8"
+                    VerticalOptions="FillAndExpand"
+                    IsVisible="{Binding HostExecutablePresent}"
+                    Margin="25">
+                <VerticalStackLayout Spacing="8">
+                    <!--Summary-->
+                    <HorizontalStackLayout
+                            Spacing="10"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center">
+                        <Label
+                            Text="Summary Information"
+                            class="SectionTitle"/>
+                        <ActivityIndicator 
+                            VerticalOptions="Center"
+                            IsVisible="{Binding IsStatusLoading}"
+                            IsRunning="{Binding IsStatusLoading}" />
+                        <ex:ErrorViewer Command="{Binding UpdateStatus}"/>
+                    </HorizontalStackLayout>
+                    
+                    <BoxView class="HRule"/>
+                    
+                    <Grid
+                            RowDefinitions="30,30">
+                        <Label
+                            Grid.Row="0"
+                            Text="Internet Connection"
+                            class="Subhead"/>
+                        <HorizontalStackLayout
+                                Grid.Row="1"
+                                Spacing="8">
+                            <Label
+                                VerticalOptions="Center"
+                                Style="{StaticResource InternetCellValue}"
+                                Text="{Binding InternetConnectionInfo}"
+                                class="SubContent"/>
+                            <ex:ErrorViewer Command="{Binding UpdateInternetInfo}"/>
+                            <ImageButton
+                                VerticalOptions="Center"
+                                HeightRequest="20"
+                                WidthRequest="20"
+                                Source="{StaticResource SyncIcon}"
+                                Command="{Binding UpdateInternetInfo}">
+                            </ImageButton>
+
+                        </HorizontalStackLayout>
+                    </Grid>
+                    
+                    <BoxView class="HRule"/>
+
+                    <!--Registration-->
+                    <Grid
+                            RowDefinitions="30,30"
+                            ColumnDefinitions="1*,1*">
+                        <Label 
+                            Grid.Row="0" 
+                            Text="Registration"
+                            class="Subhead"/>
+                        <Label
+                            Grid.Row="1"
+                            Text="{Binding CurrentRegistrationStage}"
+                            class="SubContent"/>
+                        <VerticalStackLayout
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.RowSpan="2"
+                            VerticalOptions="Center"
+                            IsVisible="{Binding HasInternetConnection}">
+                            <Button
+                                Style="{StaticResource RegistrationButton}"
+                                MaximumWidthRequest="100"
+                                Text="Register"
+                                Margin="10,5,10,5"
+                                Command="{Binding Register}"/>
+                            <Button
+                                MaximumWidthRequest="100"
+                                IsVisible="{Binding IsRegistered}"
+                                Text="Reset"
+                                Margin="10,5,10,5"
+                                Command="{Binding ResetRegistration}"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    <BoxView class="HRule"/>
+
+                    <!--Port-->
+                    <Grid
+                            RowDefinitions="30,30"
+                            ColumnDefinitions="1*,1*">
+                        <Label 
+                            Grid.Row="0" 
+                            Text="Port"
+                            class="Subhead"/>
+                        <Label
+                            Grid.Row="1"
+                            Text="{Binding PortInfo}"
+                            class="SubContent"/>
+                        <VerticalStackLayout
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.RowSpan="2"
+                            VerticalOptions="Center">
+                            <Button
+                                MaximumWidthRequest="100"
+                                Text="Change"
+                                Margin="10,5,10,5"
+                                Command="{Binding ChangePort}"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    <BoxView class="HRule"/>
+
+                    <VerticalStackLayout IsVisible="{Binding IsRegistered}">
+                        <Grid
+                            RowDefinitions="30,30"
+                            ColumnDefinitions="1*,1*">
+                            <Label 
+                            Grid.Row="0" 
+                            Text="Host"
+                            class="Subhead"/>
+
+                            <Label
+                            Grid.Row="1"
+                            Text="{Binding ProcessInfo}"
+                            class="SubContent"/>
+
+                            <HorizontalStackLayout
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Grid.RowSpan="2"
+                                Spacing="8"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center">
+                                <Button
+                                WidthRequest="100"
+                                Text="Start"
+                                IsEnabled="{Binding IsProcessNotRunning}"
+                                Margin="10,5,10,5"
+                                Command="{Binding StartProcess}"/>
+                                <Button
+                                WidthRequest="100"
+                                Text="Stop"
+                                IsEnabled="{Binding IsProcessRunning}"
+                                Margin="10,5,10,5"
+                                Command="{Binding StopProcess}"/>
+                            </HorizontalStackLayout>
+
+                            <!--<Label
+                            Grid.Row="1"
+                            Text="Ready for configuration"
+                            class="SubContent"/>
+                            <VerticalStackLayout
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.RowSpan="2"
+                            VerticalOptions="Center">
+                                <Button
+                                    MaximumWidthRequest="100"
+                                    Text="Configure"
+                                    Margin="10,5,10,5"
+                                    Command="{Binding ConfigureHost}"/>
+                            </VerticalStackLayout>-->
+                        </Grid>
+                        <BoxView class="HRule"/>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

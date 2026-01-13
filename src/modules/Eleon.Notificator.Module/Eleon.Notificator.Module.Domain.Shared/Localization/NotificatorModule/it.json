@@ -1,0 +1,19 @@
+{
+  "Culture": "it",
+  "Texts": {
+    "SamplePageMessage": "Una pagina di esempio per il modulo Modulo",
+    "Menu:Module": "Notificatore",
+    "ModuleDescription": "Descrizione modulo notificatore...",
+    "Menu:Top": "Gestione dei modelli di messaggio",
+    "Menu:MessageTemplates": "Modelli di messaggio",
+    "Menu:MessageTemplateTypes": "Tipi di modello di messaggio",
+    "MessageTemplateTypes": "Tipi di modello di messaggio",
+    "MessageTemplates": "Modelli di messaggio",
+    "MessageTemplateCategories:Selection": "Scegli la categoria",
+    "Header:Type": "Tipo",
+    "Header:Name": "Nome",
+    "Header:Key": "Chiave",
+    "Header:Description": "Descrizione",
+    "Header:Template": "Modello"
+  }
+}

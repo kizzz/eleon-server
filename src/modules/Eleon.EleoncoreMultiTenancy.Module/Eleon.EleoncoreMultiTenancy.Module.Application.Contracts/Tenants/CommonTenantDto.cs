@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace VPortal.TenantManagement.Module.Tenants;
+
+public class CommonTenantDto
+{
+  public Guid Id { get; set; }
+  public string Name { get; set; }
+  public int EntityVersion { get; set; }
+  public bool IsRoot { get; set; }
+  public List<TenantConnectionStringDto> ConnectionStrings { get; set; }
+}

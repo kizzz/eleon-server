@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	   
+	  <Configurations>Debug;Release;QA;ImmuRelease</Configurations>
+    
+  </PropertyGroup>
+
+	<ItemGroup>
+		<!-- SDK inclusion -->
+		<Compile Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+    <Compile Remove="test\**" />
+		<None Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+    <None Remove="test\**" />
+		<Content Remove="**/bin/**/*;**/obj/**/*;sdk/**/*" />
+	</ItemGroup>
+  <ItemGroup>
+	<Compile Remove="**/bin/**/*;**/obj/**/*" />
+  <Compile Remove="test\**" />
+	<None Remove="**/bin/**/*;**/obj/**/*" />
+  <None Remove="test\**" />
+	<Content Remove="**/bin/**/*;**/obj/**/*" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Sinks.Async" />
+	<PackageReference Include="Serilog.Extensions.Hosting" />
+	<PackageReference Include="Sentry" />
+    <PackageReference Include="IdentityModel" />
+	<PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Volo.Abp.Core" />
+    <PackageReference Include="Volo.Abp.MultiTenancy" />
+	<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+<ItemGroup>
+    <EmbeddedResource Include="test\**\*.resx" />
+    <None Include="test\**\*.json" />
+    <None Include="test\**\*.config" />
+  </ItemGroup>
+</Project>

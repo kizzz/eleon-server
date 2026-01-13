@@ -1,0 +1,20 @@
+<Project>
+  <PropertyGroup>
+    <!-- Workspace root: repo root parent, used for shared /workspace drops -->
+    <WorkspaceRoot Condition="'$(WorkspaceRoot)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</WorkspaceRoot>
+
+    <!-- Ensure core build dimensions have defaults before they're used below -->
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+
+    <!-- Central BIN path -->
+    <BaseOutputPath>$(WorkspaceRoot)bin\$(Configuration)\hosts\</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)$(MSBuildProjectName)\</OutputPath>
+
+    <!-- OBJ root + per-project path (clearer separation) -->
+    <!-- <BaseIntermediateOutputPath>$(WorkspaceRoot).ai\logs\obj\$(Configuration)\hosts\server\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Platform)\</IntermediateOutputPath> -->
+  </PropertyGroup>
+  <Import Project="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\Directory.Build.props'))" />
+</Project>

@@ -1,0 +1,19 @@
+{
+  "Culture": "ar",
+  "Texts": {
+    "SamplePageMessage": "نموذج لصفحة الوحدة النمطية",
+    "Menu:Module": "المفكر",
+    "ModuleDescription": "وصف وحدة الإعلام ...",
+    "Menu:Top": "إدارة قوالب الرسائل",
+    "Menu:MessageTemplates": "قوالب الرسائل",
+    "Menu:MessageTemplateTypes": "أنواع قوالب الرسائل",
+    "MessageTemplateTypes": "أنواع قوالب الرسائل",
+    "MessageTemplates": "قوالب الرسائل",
+    "MessageTemplateCategories:Selection": "اختر الفئة",
+    "Header:Type": "يكتب",
+    "Header:Name": "اسم",
+    "Header:Key": "مفتاح",
+    "Header:Description": "وصف",
+    "Header:Template": "نموذج"
+  }
+}

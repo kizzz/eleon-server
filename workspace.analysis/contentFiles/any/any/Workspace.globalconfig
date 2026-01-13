@@ -1,0 +1,17 @@
+is_global = true
+
+# Turn style off; keep signals about correctness/architecture
+dotnet_analyzer_diagnostic.category-Style.severity = none
+
+# NO ERRORS: suggestions/warnings only
+dotnet_analyzer_diagnostic.category-Design.severity = suggestion
+dotnet_analyzer_diagnostic.category-Maintainability.severity = suggestion
+dotnet_analyzer_diagnostic.category-Performance.severity = suggestion
+dotnet_analyzer_diagnostic.category-Reliability.severity = warning
+dotnet_analyzer_diagnostic.category-Security.severity = warning
+
+# Targeted rules as warnings
+dotnet_diagnostic.ASP0000.severity = warning
+dotnet_diagnostic.RS0030.severity  = warning
+dotnet_diagnostic.IDISP001.severity = warning
+dotnet_diagnostic.MA0042.severity   = warning

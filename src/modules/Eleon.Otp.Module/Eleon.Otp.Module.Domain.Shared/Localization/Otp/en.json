@@ -1,0 +1,14 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "SamplePageMessage": "A sample page for the Otp module",
+    "Menu:Otp": "Otp",
+    "OtpValidForMinutes": "A code was sent to {0}. It will be valid for {1} minutes.",
+    "Error:Expired": "Code is invalid",
+    "Error:Invalid": "Code is invalid",
+    "Error:AlreadyUsed": "Code is already used",
+    "Error:RetryTooSoon": "For resend wait {0} seconds",
+    "Error:RegenerateTooSoon": "Too many failed attempts. Wait {0} minutes.",
+    "Error:FailedAttemptsCount": "Number of attempts exceeded"
+  }
+}

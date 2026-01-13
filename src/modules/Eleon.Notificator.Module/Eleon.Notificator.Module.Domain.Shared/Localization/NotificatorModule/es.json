@@ -1,0 +1,19 @@
+{
+  "Culture": "es",
+  "Texts": {
+    "SamplePageMessage": "Una página de muestra para el módulo Módulo",
+    "Menu:Module": "notificador",
+    "ModuleDescription": "Descripción del módulo Notificador...",
+    "Menu:Top": "Gestión de plantillas de mensajes",
+    "Menu:MessageTemplates": "Plantillas de mensajes",
+    "Menu:MessageTemplateTypes": "Tipos de plantillas de mensajes",
+    "MessageTemplateTypes": "Tipos de plantillas de mensajes",
+    "MessageTemplates": "Plantillas de mensajes",
+    "MessageTemplateCategories:Selection": "Elegir la categoría",
+    "Header:Type": "Tipo",
+    "Header:Name": "Nombre",
+    "Header:Key": "Llave",
+    "Header:Description": "Descripción",
+    "Header:Template": "Plantilla"
+  }
+}

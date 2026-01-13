@@ -1,0 +1,9 @@
+root = false
+
+[src/Host/Eleon.App.HttpApi.Host/**.cs]
+dotnet_diagnostic.SA1633.severity = none   # file header
+dotnet_diagnostic.SA1200.severity = none   # using inside namespace
+dotnet_diagnostic.SA1600.severity = none   # xml docs
+dotnet_diagnostic.SA1615.severity = none   # xml return docs
+dotnet_diagnostic.SA1500.severity = suggestion
+dotnet_diagnostic.SA1413.severity = suggestion

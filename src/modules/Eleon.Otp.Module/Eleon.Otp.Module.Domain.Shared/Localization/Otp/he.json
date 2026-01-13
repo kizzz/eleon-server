@@ -1,0 +1,13 @@
+{
+  "Culture": "he",
+  "Texts": {
+    "SamplePageMessage": "עמוד לדוגמא ",
+    "Menu:Otp": "Otp",
+    "OtpValidForMinutes": "קוד נשלח אל {0}. זה יהיה תקף למשך {1} דקות.",
+    "Error:Expired": "תוקף הקוד פג",
+    "Error:Invalid": "הקוד לא חוקי",
+    "Error:AlreadyUsed": "הקוד כבר בשימוש",
+    "Error:RetryTooSoon": "המתן {0} שניות לפני יצירת קוד נוסף",
+    "Error:RegenerateTooSoon": "יותר מדי ניסיונות כושלים. המתן {0} דקות."
+  }
+}

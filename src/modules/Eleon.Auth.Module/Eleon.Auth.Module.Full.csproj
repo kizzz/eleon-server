@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+		<TargetFramework>net10.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<ImplicitUsings>enable</ImplicitUsings>
+		 
+		
+	</PropertyGroup>
+	<ItemGroup>
+		<!-- Universal localization resource inclusion -->
+		<EmbeddedResource Include="**/*.Domain.Shared/Localization/**/*.json">
+			<Link>Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[2])/%(Filename)%(Extension)</Link>
+			<LogicalName>/Localization/$([System.String]::new('%(RelativeDir)').Replace('\','/').Split('/')[2])/%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="**/*.Domain.Shared/Templates/*.cshtml">
+			<Link>Templates/%(Filename)%(Extension)</Link>
+			<LogicalName>/Templates/%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		
+		<Content Remove="**/*.Domain.Shared/Localization/**/*.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="**\bin\**" />
+    <Compile Remove="tests\**" />
+		<Compile Remove="**\obj\**" />
+		<EmbeddedResource Remove="**\bin\**" />
+		<EmbeddedResource Remove="**\obj\**" />
+		<None Remove="**\bin\**" />
+		<None Remove="**\obj\**" />
+	</ItemGroup>
+	
+	<ItemGroup>
+    <PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Authentication.OAuth" />
+		<PackageReference Include="Volo.Abp.Account.Application" />
+
+		<PackageReference Include="Volo.Abp.IdentityModel" />
+		<PackageReference Include="Volo.Abp.Http.Client.IdentityModel" />
+		<PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" />
+		<PackageReference Include="Volo.Abp.IdentityServer.EntityFrameworkCore" />
+		<PackageReference Include="Volo.Abp.Account.Web" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Bootstrap" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic" />
+		<PackageReference Include="Volo.Abp.AutoMapper" />
+		<!--<PackageReference Include="workspace.analysis" PrivateAssets="all" />-->
+
+	</ItemGroup>
+
+<ItemGroup>
+	     <ProjectReference Include="..\..\shared\libs\Eleon.AbpSdk.Lib\Eleon.AbpSdk.Lib.Full.csproj" />
+	    <ProjectReference Include="..\..\libs\Eleon.InternalCommons.Lib\Eleon.InternalCommons.Lib.Full.csproj" />
+		</ItemGroup>
+
+<ItemGroup><EmbeddedResource Include="tests\**\*.resx" />
+    <None Include="tests\**\*.json" />
+    <None Include="tests\**\*.config" />
+  </ItemGroup>
+
+</Project>
+
+
+

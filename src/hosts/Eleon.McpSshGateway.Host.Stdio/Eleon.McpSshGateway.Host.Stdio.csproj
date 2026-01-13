@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+     
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="**\bin\**" />
+    <Compile Remove="**\obj\**" />
+    <Compile Remove="**\*.AssemblyAttributes.cs" />
+    <Compile Remove="**\*.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="**\bin\**" />
+    <EmbeddedResource Remove="**\obj\**" />
+    <None Remove="**\bin\**" />
+    <None Remove="**\obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Core" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\modules\Eleon.McpSshGateway\Eleon.McpSshGateway.Module.Full.csproj" />
+    <ProjectReference Include="..\..\libs\Eleon.JsonRpc.Stdio\Eleon.JsonRpc.Stdio.csproj" />
+    <ProjectReference Include="..\..\shared\modules\Eleon.Host.Module\Eleon.Host.Module.Full.csproj" />
+  </ItemGroup>
+
+</Project>
+

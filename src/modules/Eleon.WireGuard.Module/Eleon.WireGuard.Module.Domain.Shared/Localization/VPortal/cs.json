@@ -1,0 +1,30 @@
+{
+  "Culture": "cs",
+  "Texts": {
+    "Menu:Home": "Domov",
+    "Menu:ContactUs": "Kontaktujte nás",
+    "Menu:ArticleSample": "Ukázka článku",
+    "Home": "Domov",
+    "Welcome": "Vítejte",
+    "LongWelcomeMessage": "Vítejte v aplikaci. Jedná se o startovací projekt založený na frameworku ABP. Pro více informací navštivte abp.io.",
+    "EndDate": "Datum ukončení",
+    "StartDate": "Datum zahájení",
+    "Permission:Dashboard": "Přístrojová deska",
+    "Menu:Dashboard": "Přístrojová deska",
+    "Menu:HomePage": "Domovská stránka",
+    "Dashboard": "Přístrojová deska",
+    "ExternalProvider:Google": "Google",
+    "ExternalProvider:Google:ClientId": "ID klienta",
+    "ExternalProvider:Google:ClientSecret": "Tajemství klienta",
+    "ExternalProvider:Microsoft": "Microsoft",
+    "ExternalProvider:Microsoft:ClientId": "ID klienta",
+    "ExternalProvider:Microsoft:ClientSecret": "Tajemství klienta",
+    "ExternalProvider:Twitter": "Cvrlikání",
+    "ExternalProvider:Twitter:ConsumerKey": "Zákaznický klíč",
+    "ExternalProvider:Twitter:ConsumerSecret": "Tajemství spotřebitele",
+    "NewsletterHeader": "Přihlaste se k odběru newsletteru!",
+    "NewsletterInfo": "Získejte informace o nejnovějším dění.",
+    "NewsletterPreference_Default": "Výchozí bulletin",
+    "NewsletterPrivacyAcceptMessage": "Přijímám <a href='/privacy-policy'>Zásady ochrany osobních údajů</a>."
+  }
+}

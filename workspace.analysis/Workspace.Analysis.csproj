@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.5.0">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>workspace.analysis</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>workspace</Authors>
+    <Description>Central analyzer config and guardrails. Warnings/Suggestions only; no errors.</Description>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <PackageType>Analyzer</PackageType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NoWarn>NU5128</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="buildTransitive\Workspace.Analysis.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="contentFiles\any\any\Workspace.globalconfig" Pack="true" PackagePath="contentFiles\any\any\" />
+    <None Include="contentFiles\any\any\BannedSymbols.txt" Pack="true" PackagePath="contentFiles\any\any\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Meziantou.Analyzer" />
+    <PackageReference Include="SonarAnalyzer.CSharp" />
+    <PackageReference Include="SecurityCodeScan.VS2019" />
+    <PackageReference Include="IDisposableAnalyzers" />
+    <PackageReference Include="AsyncFixer" />
+    <PackageReference Include="SerilogAnalyzer" />
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" />
+  </ItemGroup>
+</Project>

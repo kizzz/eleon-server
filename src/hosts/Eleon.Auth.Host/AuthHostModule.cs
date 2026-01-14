@@ -5,6 +5,7 @@ using VPortal.ExternalLinkModule;
 using VPortal.HealthCheckModule;
 using VPortal.Identity.Module;
 using VPortal.Otp.Module;
+using VPortal.SystemServicesModule;
 
 namespace VPortal;
 
@@ -14,7 +15,9 @@ namespace VPortal;
     typeof(ApplicationConfigurationModuleCollector),
     typeof(OtpModuleCollector),
     typeof(ExternalLinkModuleCollector),
-    typeof(IdentityQueryingModuleCollector)
+    typeof(IdentityQueryingModuleCollector),
+    typeof(SystemServicesModuleCollector)
+
     )]
 public class AuthHostModule : AbpModule
 {

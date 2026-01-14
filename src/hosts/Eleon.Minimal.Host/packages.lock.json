@@ -1707,6 +1707,17 @@
           "Volo.Abp.TextTemplating": "[10.0.1, )"
         }
       },
+      "eleon.identityquerying.module.full": {
+        "type": "Project",
+        "dependencies": {
+          "CommunityToolkit.Maui": "[13.0.0, )",
+          "Eleon.AbpSdk.Lib.Full": "[1.0.0, )",
+          "Eleon.Common.Lib.Full": "[1.0.0, )",
+          "Eleon.IdentityQuerying.Lib.Full": "[1.0.0, )",
+          "Eleon.InternalCommons.Lib.Full": "[1.0.0, )",
+          "Volo.Abp.AutoMapper": "[10.0.1, )"
+        }
+      },
       "eleon.infrastructure.module.full": {
         "type": "Project",
         "dependencies": {
@@ -1863,6 +1874,16 @@
           "Volo.Abp.AuditLogging.Domain": "[10.0.1, )",
           "Volo.Abp.AuditLogging.Domain.Shared": "[10.0.1, )",
           "Volo.Abp.AuditLogging.EntityFrameworkCore": "[10.0.1, )",
+          "Volo.Abp.AutoMapper": "[10.0.1, )"
+        }
+      },
+      "eleon.systemservices.module.full": {
+        "type": "Project",
+        "dependencies": {
+          "CommunityToolkit.Maui": "[13.0.0, )",
+          "Eleon.AbpSdk.Lib.Full": "[1.0.0, )",
+          "Eleon.Common.Lib.Full": "[1.0.0, )",
+          "Eleon.InternalCommons.Lib.Full": "[1.0.0, )",
           "Volo.Abp.AutoMapper": "[10.0.1, )"
         }
       },

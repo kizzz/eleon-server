@@ -31,15 +31,15 @@ public class TemplateController : ModuleController, ITemplateAppService
   }
 
   [HttpPost("Create")]
-  public async Task<TemplateDto> CreateAsync([FromBody] CreateUpdateTemplateDto input, CancellationToken cancellationToken = default)
+  public async Task<TemplateDto> CreateAsync([FromBody] TemplateDto input, CancellationToken cancellationToken = default)
   {
     return await _templateAppService.CreateAsync(input, cancellationToken);
   }
 
   [HttpPut("Update")]
-  public async Task<TemplateDto> UpdateAsync(Guid id, [FromBody] CreateUpdateTemplateDto input, CancellationToken cancellationToken = default)
+  public async Task<TemplateDto> UpdateAsync([FromBody] TemplateDto input, CancellationToken cancellationToken = default)
   {
-    return await _templateAppService.UpdateAsync(id, input, cancellationToken);
+    return await _templateAppService.UpdateAsync(input, cancellationToken);
   }
 
   [HttpDelete("Delete")]
@@ -61,9 +61,9 @@ public class TemplateController : ModuleController, ITemplateAppService
   }
 
   [HttpPost("Reset")]
-  public async Task<TemplateDto> ResetAsync(Guid id, CancellationToken cancellationToken = default)
+  public async Task<TemplateDto> ResetAsync(Guid id, TemplateType type, CancellationToken cancellationToken = default)
   {
-    return await _templateAppService.ResetAsync(id, cancellationToken);
+    return await _templateAppService.ResetAsync(id, type, cancellationToken);
   }
 }
 

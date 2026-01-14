@@ -59,32 +59,19 @@ public class TemplateAppService : ModuleAppService, ITemplateAppService
 
 
   [Authorize(ModulePermissions.TemplatesCreate)]
-  public async Task<TemplateDto> CreateAsync(CreateUpdateTemplateDto input, CancellationToken cancellationToken = default)
+  public async Task<TemplateDto> CreateAsync(TemplateDto input, CancellationToken cancellationToken = default)
   {
-    var template = await _templateManager.CreateAsync(
-        input.Name,
-        input.Type,
-        input.Format,
-        input.TemplateContent,
-        input.RequiredPlaceholders,
-        false,
-        input.TemplateId,
-        cancellationToken);
+    var templateToAdd = ObjectMapper.Map<TemplateDto, Template>(input);
+    var template = await _templateManager.CreateAsync(templateToAdd, cancellationToken);
 
     return ObjectMapper.Map<Template, TemplateDto>(template);
   }
 
   [Authorize(ModulePermissions.TemplatesUpdate)]
-  public async Task<TemplateDto> UpdateAsync(Guid id, CreateUpdateTemplateDto input, CancellationToken cancellationToken = default)
+  public async Task<TemplateDto> UpdateAsync(TemplateDto input, CancellationToken cancellationToken = default)
   {
-    var template = await _templateManager.UpdateAsync(
-        id,
-        input.Name,
-        input.Type,
-        input.Format,
-        input.TemplateContent,
-        input.RequiredPlaceholders,
-        input.TemplateId,
+    var updateInput = await _templateRepository.GetAsync(input.Id, cancellationToken: cancellationToken);
+    var template = await _templateManager.UpdateAsync(updateInput,
         cancellationToken);
 
     return ObjectMapper.Map<Template, TemplateDto>(template);
@@ -110,9 +97,9 @@ public class TemplateAppService : ModuleAppService, ITemplateAppService
   }
 
   [Authorize(ModulePermissions.TemplatesGet)]
-  public async Task<TemplateDto> ResetAsync(Guid id, CancellationToken cancellationToken = default)
+  public async Task<TemplateDto> ResetAsync(Guid id, TemplateType type, CancellationToken cancellationToken = default)
   {
-    var template = await _templateManager.ResetAsync(id, cancellationToken: cancellationToken);
+    var template = await _templateManager.ResetAsync(id, type, cancellationToken: cancellationToken);
     return ObjectMapper.Map<Template, TemplateDto>(template);
   }
 }

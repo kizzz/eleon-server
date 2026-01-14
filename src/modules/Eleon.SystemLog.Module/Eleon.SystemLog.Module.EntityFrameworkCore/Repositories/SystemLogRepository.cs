@@ -155,17 +155,15 @@ public class SystemLogRepository : EfCoreRepository<SystemLogDbContext, SystemLo
   {
     try
     {
+
       var dbSet = await GetDbSetAsync();
 
-      var query = dbSet
-          .WhereIf(minLogLevelFilter != null, x => x.LogLevel >= minLogLevelFilter)
-          .Where(x => !x.IsArchived);
-      var entities = await query.ToListAsync();
-      foreach (var entity in entities)
-      {
-        entity.IsArchived = true;
-      }
-      await UpdateManyAsync(entities, true);
+      var q = dbSet
+    .WhereIf(minLogLevelFilter != null, x => x.LogLevel >= minLogLevelFilter)
+    .Where(x => !x.IsArchived);
+
+      var affected = await q.ExecuteUpdateAsync(setters =>
+          setters.SetProperty(x => x.IsArchived, true));
     }
     catch (Exception ex)
     {

@@ -438,7 +438,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
           }
         }
 
-        await _triggerDomainService.UpdateTaskNextRunTimeAsync(task);
         await taskHubContext.TaskCompleted(task);
       }
       catch (Exception e)
@@ -558,7 +557,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
             );
           }
         }
-        await _triggerDomainService.UpdateTaskNextRunTimeAsync(task);
         if (taskExecution.ActionExecutions != null && taskExecution.ActionExecutions.Any())
         {
           await RequestNextActionExecution(

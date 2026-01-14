@@ -12,9 +12,11 @@
     <OutputPath>$(BaseOutputPath)$(MSBuildProjectName)\</OutputPath>
 
     <!-- OBJ root + per-project path (clearer separation) -->
-    <BaseIntermediateOutputPath>$(WorkspaceRoot).agents\logs\obj\$(Configuration)\modules\server\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <!-- 
+	<BaseIntermediateOutputPath>$(WorkspaceRoot).agents\logs\obj\$(Configuration)\modules\server\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Platform)\</IntermediateOutputPath>
+	 -->
   </PropertyGroup>
   <Import Project="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\Directory.Build.props'))" />
 </Project>

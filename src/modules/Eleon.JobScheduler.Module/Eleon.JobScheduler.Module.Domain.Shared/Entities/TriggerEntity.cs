@@ -1,4 +1,4 @@
-﻿using Common.Module.Constants;
+using Common.Module.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,6 +15,7 @@ namespace VPortal.JobScheduler.Module.Entities
     public virtual string Name { get; set; }
     public virtual bool IsEnabled { get; set; }
     public virtual DateTime? LastRun { get; set; }
+    public virtual DateTime? NextRunUtc { get; set; }
     public virtual DateTime StartUtc { get; set; }
     public virtual DateTime? ExpireUtc { get; set; }
     public virtual TimePeriodType PeriodType { get; set; }

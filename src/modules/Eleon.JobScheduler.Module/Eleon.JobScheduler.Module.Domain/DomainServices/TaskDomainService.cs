@@ -1,4 +1,4 @@
-﻿using Common.Module.Constants;
+using Common.Module.Constants;
 using Logging.Module;
 using Microsoft.Extensions.Logging;
 using Sentry;
@@ -39,6 +39,12 @@ namespace VPortal.JobScheduler.Module.DomainServices
       {
         var task = await taskRepository.GetAsync(id, true);
 
+        var nextTrigger = task.Triggers.OrderBy(x => x.NextRunUtc).FirstOrDefault();
+        if (nextTrigger != null)
+        {
+          task.NextRunTimeUtc = nextTrigger.NextRunUtc;
+        }
+
         result = task;
       }
       catch (Exception e)
@@ -55,6 +61,15 @@ namespace VPortal.JobScheduler.Module.DomainServices
       try
       {
         result = await taskRepository.GetList(skipCount, maxCount, sorting, nameFilter);
+
+        foreach (var task in result.Value)
+        {
+          var nextTrigger = task.Triggers.OrderBy(x => x.NextRunUtc).FirstOrDefault();
+          if (nextTrigger != null)
+          {
+            task.NextRunTimeUtc = nextTrigger.NextRunUtc;
+          }
+        }
       }
       catch (Exception e)
       {
@@ -117,7 +132,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
           Timeout = TimeSpan.FromMinutes(30),
           LastRunTimeUtc = null,
           Status = JobSchedulerTaskStatus.Inactive,
-          NextRunTimeUtc = null,
         };
 
         task = await taskRepository.InsertAsync(task, true);
@@ -164,8 +178,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
         trackedTask.Timeout = task.Timeout;
         trackedTask.Status = task.IsActive ? JobSchedulerTaskStatus.Ready : JobSchedulerTaskStatus.Inactive;
         trackedTask.OnFailureRecepients = task.OnFailureRecepients;
-
-        await triggerDomainService.UpdateTaskNextRunTimeAsync(trackedTask);
 
         await taskRepository.UpdateAsync(trackedTask, true);
 

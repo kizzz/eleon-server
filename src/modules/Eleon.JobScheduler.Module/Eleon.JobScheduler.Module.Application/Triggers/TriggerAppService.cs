@@ -1,4 +1,5 @@
-﻿using EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Application.Contracts.Triggers;
+using Eleon.JobScheduler.Module.Full.Eleon.JobScheduler.Module.Application.Contracts.Triggers;
+using EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Application.Contracts.Triggers;
 using JobScheduler.Module.Triggers;
 using Logging.Module;
 using Microsoft.AspNetCore.Authorization;
@@ -123,6 +124,21 @@ namespace VPortal.JobScheduler.Module.Triggers
       finally
       {
       }
+    }
+
+    public async Task<List<DateTime>> GetNextRuntimes(NextRuntimesRequestDto request)
+    {
+      var response = new List<DateTime>();
+      try
+      {
+        response = await domainService.GetTriggerUpcomingRunTimes(request.TriggerId, request.FromUtc, request.Count);
+      }
+      catch (Exception e)
+      {
+        logger.Capture(e);
+      }
+
+      return response;
     }
   }
 }

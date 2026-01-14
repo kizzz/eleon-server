@@ -10,6 +10,7 @@ namespace VPortal.JobScheduler.Module.Triggers
     public string Name { get; set; }
     public bool IsEnabled { get; set; }
     public DateTime StartUtc { get; set; }
+    public DateTime? NextRunUtc { get; set; }
     public DateTime? ExpireUtc { get; set; }
     public TimePeriodType PeriodType { get; set; }
     public int Period { get; set; }

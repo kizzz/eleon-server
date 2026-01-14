@@ -11,28 +11,11 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
 {
   public static class SystemTemplatesConsts
   {
-    // Action Template IDs
-    public static readonly Guid ActionSendSystemLogId = new Guid("00000000-0000-0000-0000-000000000001");
-    public static readonly Guid ActionBankFaxJobId = new Guid("00000000-0000-0000-0000-000000000002");
-    public static readonly Guid ActionSendMailNotificationId = new Guid("00000000-0000-0000-0000-000000000003");
-    public static readonly Guid ActionSendTelegramId = new Guid("00000000-0000-0000-0000-000000000004");
-    public static readonly Guid ActionSendMessageNotificationId = new Guid("00000000-0000-0000-0000-000000000005");
-
-    // Notification Template IDs
-    public static readonly Guid NotificationEmailId = new Guid("10000000-0000-0000-0000-000000000001");
-    public static readonly Guid NotificationTelegramId = new Guid("10000000-0000-0000-0000-000000000002");
-    public static readonly Guid TwoFAEmailId = new Guid("10000000-0000-0000-0000-000000000003");
-    public static readonly Guid TwoFaSMSId = new Guid("10000000-0000-0000-0000-000000000004");
-    public static readonly Guid BankFaxJobReportHtmlHeaderId = new Guid("10000000-0000-0000-0000-000000000005");
-    public static readonly Guid BankFaxJobReportHtmlBodyId = new Guid("10000000-0000-0000-0000-000000000006");
-    public static readonly Guid BankFaxJobReportCsvHeaderId = new Guid("10000000-0000-0000-0000-000000000007");
-    public static readonly Guid BankFaxJobReportCsvBodyId = new Guid("10000000-0000-0000-0000-000000000008");
-
-    public static Dictionary<Guid, Template> ActionTemplates = new()
+    public static Dictionary<string, Template> ActionTemplates = new()
     {
       {
-          ActionSendSystemLogId,
-          new Template(ActionSendSystemLogId)
+          TemplatingDomainConstants.ActionSendSystemLog,
+          new Template(Guid.Empty)
           {
             Name = TemplatingDomainConstants.ActionSendSystemLog,
             Type = TemplateType.Action,
@@ -48,8 +31,8 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
           }
       },
       {
-          ActionBankFaxJobId,
-          new Template(ActionBankFaxJobId)
+          TemplatingDomainConstants.ActionBankFaxJobWithTemplating,
+          new Template(Guid.Empty)
           {
             Name = TemplatingDomainConstants.ActionBankFaxJobWithTemplating,
             Type = TemplateType.Action,
@@ -74,33 +57,33 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
           }
       },
       {
-          ActionSendMailNotificationId,
-          new Template(ActionSendMailNotificationId)
+          TemplatingDomainConstants.ActionSendMailNotification,
+          new Template(Guid.Empty)
           {
             Name = TemplatingDomainConstants.ActionSendMailNotification,
             Type = TemplateType.Action,
             TemplateContent = """
-            {
-              "recipients": [
-                { "type": 2, "recipientAddress": "vladymir.ogorodnytsky@eleonsoft.com" }
-              ],
-              "message": "<p>See the attached report.</p>",
-              "type": {
-                "Type": "Email",
-                "isHtml": true,
-                "subject": "Daily Report",
-                "attachments": {
-                  "report.txt": " SGVsbG8gd29ybGQuCkkgaGF2ZSBlbmNvZGVkIHRoaXMgbWVzc2FnZSBoZXJlOiBodHRwczovL3d3dy5iYXNlNjRlbmNvZGUub3JnLw== "
-                }
+            { 
+              "recipients": [ 
+                { "type": 2, "recipientAddress": "vladymir.ogorodnytsky@eleonsoft.com" } 
+              ], 
+              "message": "<p>See the attached report.</p>", 
+              "type": { 
+                "Type": "Email", 
+                "isHtml": true, 
+                "subject": "Daily Report", 
+                "attachments": { 
+                  "report.txt": " SGVsbG8gd29ybGQuCkkgaGF2ZSBlbmNvZGVkIHRoaXMgbWVzc2FnZSBoZXJlOiBodHRwczovL3d3dy5iYXNlNjRlbmNvZGUub3JnLw== " 
+                } 
 
-              },
+              }, 
 
-              "priority": 0,
+              "priority": 0, 
 
-              "runImmidiate": true
+              "runImmidiate": true 
 
-            }
-
+            } 
+             
 
             """,
             Format = TextFormat.Json,
@@ -109,26 +92,26 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
           }
       },
       {
-          ActionSendTelegramId,
-          new Template(ActionSendTelegramId)
+          TemplatingDomainConstants.ActionSendTelegram,
+          new Template(Guid.Empty)
           {
             Name = TemplatingDomainConstants.ActionSendTelegram,
             Type = TemplateType.Action,
             TemplateContent = """
-            {
-              "message": "Telegram Notification",
-              "type": {
-                "Type": "Social",
+            { 
+              "message": "Telegram Notification", 
+              "type": { 
+                "Type": "Social", 
                 "Platform": "telegram",
                 "ChannelId": "-1003077669273"
 
-              },
+              }, 
 
-              "priority": 0,
+              "priority": 0, 
 
-              "runImmidiate": true
+              "runImmidiate": true 
 
-            }
+            } 
             """,
             Format = TextFormat.Json,
             TemplateId = "SendNotification",
@@ -136,31 +119,31 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
           }
       },
       {
-          ActionSendMessageNotificationId,
-          new Template(ActionSendMessageNotificationId)
+          TemplatingDomainConstants.ActionSendMessageNotification,
+          new Template(Guid.Empty)
           {
             Name = TemplatingDomainConstants.ActionSendMessageNotification,
             Type = TemplateType.Action,
             TemplateContent = """
-            {
-              "recipients": [{
-                "refId": "9fe1dadd-ad2b-bbfd-92ad-3a1ddba6e04d",
-                "type": 0
-              }],
-              "message": "Message for SA",
-              "priority": 1,
-              "runImmidiate": true,
-              "type": {
-                  "Type": "Message",
-                  "isLocalizedData": true,
+            { 
+              "recipients": [{ 
+                "refId": "9fe1dadd-ad2b-bbfd-92ad-3a1ddba6e04d", 
+                "type": 0 
+              }], 
+              "message": "Message for SA", 
+              "priority": 1, 
+              "runImmidiate": true, 
+              "type": { 
+                  "Type": "Message", 
+                  "isLocalizedData": true, 
 
-                  "isRedirectEnabled": true,
-                  "redirectUrl": "/home",
-                  "dataParams": ["Eleonsoft", "2025"],
-                  "applicationName": "Admin"
-                }
-            }
-
+                  "isRedirectEnabled": true, 
+                  "redirectUrl": "/home",  
+                  "dataParams": ["Eleonsoft", "2025"], 
+                  "applicationName": "Admin" 
+                } 
+            } 
+            
             """,
             Format = TextFormat.Json,
             TemplateId = "SendNotification",
@@ -169,11 +152,11 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
       }
     };
 
-    public static Dictionary<Guid, Template> NotificationTemplates = new()
+    public static Dictionary<string, Template> NotificationTemplates = new()
     {
         {
-            NotificationEmailId,
-            new Template(NotificationEmailId)
+            TemplatingDomainConstants.NotificationEmail,
+            new Template(Guid.Empty)
             {
                 Name = TemplatingDomainConstants.NotificationEmail,
                 Type = TemplateType.Notification,
@@ -187,8 +170,8 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             }
         },
         {
-            NotificationTelegramId,
-            new Template(NotificationTelegramId)
+            TemplatingDomainConstants.NotificationTelegram,
+            new Template(Guid.Empty)
             {
                 Name = TemplatingDomainConstants.NotificationTelegram,
                 Format = TextFormat.Scriban,
@@ -211,8 +194,8 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             }
         },
         {
-            TwoFAEmailId,
-            new Template(TwoFAEmailId)
+            TemplatingDomainConstants.TwoFAEmail,
+            new Template(Guid.Empty)
             {
                 Name = TemplatingDomainConstants.TwoFAEmail,
                 Type = TemplateType.Notification,
@@ -238,8 +221,8 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             }
         },
       {
-            TwoFaSMSId,
-            new Template(TwoFaSMSId)
+            TemplatingDomainConstants.TwoFaSMS,
+            new Template(Guid.Empty)
             {
                 Name = TemplatingDomainConstants.TwoFaSMS,
                 Type = TemplateType.Notification,
@@ -249,8 +232,8 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             }
         },
       {
-            BankFaxJobReportHtmlHeaderId,
-            new Template(BankFaxJobReportHtmlHeaderId)
+            TemplatingDomainConstants.BankFaxJobReportHtmlHeader,
+            new Template(Guid.Empty)
             {
                 Name = TemplatingDomainConstants.BankFaxJobReportHtmlHeader,
                 Type = TemplateType.Notification,
@@ -300,8 +283,8 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             }
         },
       {
-            BankFaxJobReportHtmlBodyId,
-            new Template(BankFaxJobReportHtmlBodyId)
+            TemplatingDomainConstants.BankFaxJobReportHtmlBody,
+            new Template(Guid.Empty)
             {
                 Name = TemplatingDomainConstants.BankFaxJobReportHtmlBody,
                 Type = TemplateType.Notification,
@@ -351,8 +334,8 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             }
         },
       {
-            BankFaxJobReportCsvHeaderId,
-            new Template(BankFaxJobReportCsvHeaderId)
+            TemplatingDomainConstants.BankFaxJobReportCsvHeader,
+            new Template(Guid.Empty)
             {
                 Name = TemplatingDomainConstants.BankFaxJobReportCsvHeader,
                 Type = TemplateType.Notification,
@@ -361,8 +344,8 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             }
       },
             {
-            BankFaxJobReportCsvBodyId,
-            new Template(BankFaxJobReportCsvBodyId)
+            TemplatingDomainConstants.BankFaxJobReportCsvBody,
+            new Template(Guid.Empty)
             {
                 Name = TemplatingDomainConstants.BankFaxJobReportCsvBody,
                 Type = TemplateType.Notification,

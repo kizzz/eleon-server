@@ -79,37 +79,42 @@ public class TemplateManager : DomainService
   }
 
   public async Task<Template> CreateAsync(
-        Template? templateToAdd = null,
+        string name,
+        TemplateType type,
+        TextFormat format,
+        string templateContent,
+        string requiredPlaceholders,
+        bool isSystem,
+        string templateId,
         CancellationToken cancellationToken = default)
   {
     // Validate uniqueness of (Name, Type)
-    var existing = await _templateRepository.FindByNameAndTypeAsync(templateToAdd.Name, templateToAdd.Type, cancellationToken);
+    var existing = await _templateRepository.FindByNameAndTypeAsync(name, type, cancellationToken);
 
     if (existing != null)
     {
       throw new BusinessException(ModuleErrorCodes.TemplateNameTypeAlreadyExists)
-          .WithData("Name", templateToAdd.Name)
-          .WithData("Type", templateToAdd.Type);
+          .WithData("Name", name)
+          .WithData("Type", type);
     }
-    var isSystem = false;
-    existing = FindConstantById(templateToAdd.Id, templateToAdd.Type);
+
+    existing = FindByNameAndType(name, type);
     if (existing != null)
     {
       isSystem = true;
     }
     // Validate format rules
-    ValidateFormatForType(templateToAdd.Type, templateToAdd.Format);
+    ValidateFormatForType(type, format);
 
-    var templateId = existing?.Id ?? GuidGenerator.Create();
-    var template = new Template(templateId);
+    var template = new Template(GuidGenerator.Create());
 
-    template.Name = templateToAdd.Name;
-    template.Type = templateToAdd.Type;
-    template.Format = templateToAdd.Format;
-    template.TemplateContent = templateToAdd.TemplateContent;
-    template.RequiredPlaceholders = templateToAdd.RequiredPlaceholders;
+    template.Name = name;
+    template.Type = type;
+    template.Format = format;
+    template.TemplateContent = templateContent;
+    template.RequiredPlaceholders = requiredPlaceholders;
     template.IsSystem = isSystem;
-    template.TemplateId = templateToAdd.TemplateId;
+    template.TemplateId = templateId;
 
     // Validate template content
     await ValidateTemplateAsync(template, cancellationToken);
@@ -118,29 +123,22 @@ public class TemplateManager : DomainService
   }
 
   public async Task<Template> UpdateAsync(
-      Template templateToUpdate,
+      Guid id,
+      string name,
+      TemplateType type,
+      TextFormat format,
+      string templateContent,
+      string requiredPlaceholders,
+      string templateId,
       CancellationToken cancellationToken = default)
   {
-    Template template = null;
-
-    if (templateToUpdate.IsSystem)
-    {
-      template = await _templateRepository.FindAsync(templateToUpdate.Id, cancellationToken: cancellationToken);
-      if (template == null)
-      {
-        return await CreateAsync(templateToUpdate, cancellationToken);
-      }
-    }
-    else
-    {
-      template = await _templateRepository.GetAsync(templateToUpdate.Id, cancellationToken: cancellationToken);
-    }
+    var template = await _templateRepository.GetAsync(id, cancellationToken: cancellationToken);
 
     // Validate uniqueness of (Name, Type) if name or type changed
-    if (template.Name != templateToUpdate.Name || template.Type != templateToUpdate.Type)
+    if (template.Name != name || template.Type != type)
     {
-      var existing = await _templateRepository.FindByNameAndTypeAsync(templateToUpdate.Name, templateToUpdate.Type, cancellationToken);
-      if (existing != null && existing.Id == templateToUpdate.Id)
+      var existing = await _templateRepository.FindByNameAndTypeAsync(name, type, cancellationToken);
+      if (existing != null && existing.Id == id)
       {
         existing = null; // Same entity, allow update
       }
@@ -148,15 +146,15 @@ public class TemplateManager : DomainService
       if (existing != null)
       {
         throw new BusinessException(ModuleErrorCodes.TemplateNameTypeAlreadyExists)
-            .WithData("Name", templateToUpdate.Name)
-            .WithData("Type", templateToUpdate.Type);
+            .WithData("Name", name)
+            .WithData("Type", type);
       }
     }
 
     // Validate format rules
-    ValidateFormatForType(templateToUpdate.Type, templateToUpdate.Format);
+    ValidateFormatForType(type, format);
 
-    template.Update(templateToUpdate.Name, templateToUpdate.Type, templateToUpdate.Format, templateToUpdate.TemplateContent, templateToUpdate.RequiredPlaceholders, templateToUpdate.TemplateId);
+    template.Update(name, type, format, templateContent, requiredPlaceholders, templateId);
 
     // Validate template content
     await ValidateTemplateAsync(template, cancellationToken);
@@ -182,7 +180,7 @@ public class TemplateManager : DomainService
       TemplateType type,
       CancellationToken cancellationToken = default)
   {
-    var template = await _templateRepository.FindByNameAndTypeAsync(name, type, cancellationToken) ?? FindConstantByName(name, type);
+    var template = await _templateRepository.FindByNameAndTypeAsync(name, type, cancellationToken) ?? FindByNameAndType(name, type);
 
     if (template == null)
     {
@@ -196,14 +194,19 @@ public class TemplateManager : DomainService
 
   public async Task<Template> ResetAsync(
     Guid id,
-    TemplateType type,
     CancellationToken cancellationToken = default)
   {
-    var system = FindConstantById(id, type);
+    var template = await _templateRepository.GetAsync(id, cancellationToken: cancellationToken);
+    if (!template.IsSystem)
+    {
+      throw new Exception("Only system templates can be reset.");
+    }
+
+    var system = FindByNameAndType(template.Name, template.Type);
 
     return system ?? throw new BusinessException(ModuleErrorCodes.TemplateNotFound)
-          .WithData("Name", id)
-          .WithData("Type", type);
+          .WithData("Name", template.Name)
+          .WithData("Type", template.Type);
   }
 
 
@@ -213,7 +216,7 @@ public class TemplateManager : DomainService
       Dictionary<string, string> placeholders,
       CancellationToken cancellationToken = default)
   {
-    var template = await _templateRepository.FindByNameAndTypeAsync(templateName, templateType, cancellationToken: cancellationToken) ?? FindConstantByName(templateName, templateType);
+    var template = await _templateRepository.FindByNameAndTypeAsync(templateName, templateType, cancellationToken: cancellationToken) ?? FindByNameAndType(templateName, templateType);
 
     if (template == null)
     {
@@ -399,34 +402,21 @@ public class TemplateManager : DomainService
     throw new Exception("Unsupported template type.");
   }
 
-  private Template? FindConstantById(Guid id, TemplateType type)
+  private Template? FindByNameAndType(string name, TemplateType type)
   {
     if (type == TemplateType.Action)
     {
-      if (SystemTemplatesConsts.ActionTemplates.TryGetValue(id, out var template))
+      if (SystemTemplatesConsts.ActionTemplates.TryGetValue(name, out var template))
       {
         return template;
       }
     }
     else if (type == TemplateType.Notification)
     {
-      if (SystemTemplatesConsts.NotificationTemplates.TryGetValue(id, out var template))
+      if (SystemTemplatesConsts.NotificationTemplates.TryGetValue(name, out var template))
       {
         return template;
       }
-    }
-
-    return null;
-  }
-  private Template? FindConstantByName(string Name, TemplateType type)
-  {
-    if (type == TemplateType.Action)
-    {
-      return SystemTemplatesConsts.ActionTemplates.SingleOrDefault(x => x.Value.Name == Name).Value;
-    }
-    else if (type == TemplateType.Notification)
-    {
-      return SystemTemplatesConsts.NotificationTemplates.SingleOrDefault(x => x.Value.Name == Name).Value;
     }
 
     return null;

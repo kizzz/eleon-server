@@ -92,6 +92,33 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
           }
       },
       {
+          TemplatingDomainConstants.ActionSendTelegram,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionSendTelegram,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            { 
+              "message": "Telegram Notification", 
+              "type": { 
+                "Type": "Social", 
+                "Platform": "telegram",
+                "ChannelId": "-1003077669273"
+
+              }, 
+
+              "priority": 0, 
+
+              "runImmidiate": true 
+
+            } 
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "SendNotification",
+            IsSystem = true,
+          }
+      },
+      {
           TemplatingDomainConstants.ActionSendMessageNotification,
           new Template(Guid.Empty)
           {

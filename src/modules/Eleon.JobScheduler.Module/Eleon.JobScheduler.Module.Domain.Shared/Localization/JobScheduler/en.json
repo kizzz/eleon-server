@@ -290,6 +290,12 @@
     "IntervalPlaceholder": "Enter Interval",
     "RepeatIntervalGreaterThanDuration": "Repeat interval should be less or equal than duration.",
     "RepeatDurationOutOfRange": "Repeat duration should be between 5 minutes and 10 years.",
-    "Refresh": "Refresh"
+    "Refresh": "Refresh",
+    "Trigger:NextRuntimes:NoRuntimes": "No runtimes",
+    "Trigger:NextRuntimes:RunTime": "Runtime (UTC)",
+    "Trigger:NextRuntimes:Title": "Next runtimes",
+    "Trigger:NextRuntimes:Count": "Count",
+    "Trigger:ViewNextRuntimes": "View next runtimes",
+    "Trigger:NextRunTime": "Next runtime (UTC)"
   }
 }

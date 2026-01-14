@@ -1,4 +1,5 @@
 
+using Eleon.JobScheduler.Module.Full.Eleon.JobScheduler.Module.Application.Contracts.Triggers;
 using EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Application.Contracts.Triggers;
 using JobScheduler.Module.Triggers;
 using Logging.Module;
@@ -87,6 +88,14 @@ namespace VPortal.JobScheduler.Module.Controllers
 
       var response = await appService.GetListAsync(request);
 
+
+      return response;
+    }
+
+    [HttpGet("GetNextRuntimes")]
+    public Task<List<DateTime>> GetNextRuntimes(NextRuntimesRequestDto request)
+    {
+      var response = appService.GetNextRuntimes(request);
 
       return response;
     }

@@ -82,10 +82,11 @@ namespace VPortal.JobScheduler.Module.DomainServices
         trigger.StartUtc = TriggerDateHelper.TrimToMinute(trigger.StartUtc);
         trigger.ExpireUtc = TriggerDateHelper.TrimToMinute(trigger.ExpireUtc);
 
+        trigger.NextRunUtc = await GetTriggerNextRunTimeAsync(trigger, null);
+
         var entity = await triggerRepository.InsertAsync(trigger, true);
         var task = await _taskRepository.GetAsync(entity.TaskId);
 
-        await UpdateTaskNextRunTimeAsync(task);
         return entity;
       }
       catch (Exception e)
@@ -122,9 +123,9 @@ namespace VPortal.JobScheduler.Module.DomainServices
       {
         var trackedEntity = await triggerRepository.GetAsync(triggerId, false);
         trackedEntity.IsEnabled = isEnabled;
+        trackedEntity.NextRunUtc = await GetTriggerNextRunTimeAsync(trackedEntity, null);
         await triggerRepository.UpdateAsync(trackedEntity, true);
         var task = await _taskRepository.GetAsync(trackedEntity.TaskId);
-        await UpdateTaskNextRunTimeAsync(task);
         result = true;
       }
       catch (Exception e)
@@ -161,9 +162,10 @@ namespace VPortal.JobScheduler.Module.DomainServices
 
         ValidateTrigger(trackedEntity);
 
+        trackedEntity.NextRunUtc = await GetTriggerNextRunTimeAsync(trackedEntity, null);
+
         await triggerRepository.UpdateAsync(trackedEntity, true);
         var task = await _taskRepository.GetAsync(trackedEntity.TaskId);
-        await UpdateTaskNextRunTimeAsync(task);
 
         return trackedEntity;
       }
@@ -199,7 +201,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
         var trigger = await triggerRepository.GetAsync(id);
         await triggerRepository.DeleteAsync(id);
         var task = await _taskRepository.GetAsync(trigger.TaskId);
-        await UpdateTaskNextRunTimeAsync(task);
       }
       catch (Exception ex)
       {
@@ -271,14 +272,26 @@ namespace VPortal.JobScheduler.Module.DomainServices
         return (lastExecution.FinishedAtUtc.Value.Add(task.RestartAfterFailInterval.Value), null);
       }
 
+      var triggersToUpdate = new List<TriggerEntity>();
       var nextRunTimes = new List<(DateTime? NextRunTime, TriggerEntity? trigger)>();
+
       foreach (var taskTrigger in task.Triggers)
       {
         var nextRunTime = await GetTriggerNextRunTimeAsync(taskTrigger, null);
+        if (taskTrigger.NextRunUtc != nextRunTime)
+        {
+          taskTrigger.NextRunUtc = nextRunTime;
+          triggersToUpdate.Add(taskTrigger);
+        }
         if (nextRunTime != null)
         {
           nextRunTimes.Add((nextRunTime, taskTrigger));
         }
+      }
+
+      if (triggersToUpdate.Count > 0)
+      {
+        await triggerRepository.UpdateManyAsync(triggersToUpdate, true);
       }
 
       if (nextRunTimes.Count == 0)
@@ -289,11 +302,28 @@ namespace VPortal.JobScheduler.Module.DomainServices
       return nextRunTimes.OrderBy(x => x.NextRunTime ?? DateTime.MaxValue).FirstOrDefault();
     }
 
-    public async Task UpdateTaskNextRunTimeAsync(TaskEntity task)
+  public async Task<List<DateTime>> GetTriggerUpcomingRunTimes(Guid triggerId, DateTime? fromUtc, int count)
     {
-      task.NextRunTimeUtc = (await GetTaskNextRunTimeAsync(task))?.NextRunTime;
-
-      await _taskRepository.UpdateAsync(task, true);
+      var result = new List<DateTime>();
+      try
+      {
+        var trigger = await triggerRepository.GetAsync(triggerId);
+        var nextRunTime = TriggerDateHelper.GetNextRunTime(trigger, fromUtc);
+        while (nextRunTime.HasValue && result.Count < count)
+        {
+          result.Add(nextRunTime.Value);
+          nextRunTime = TriggerDateHelper.GetNextRunTime(trigger, nextRunTime);
+        }
+      }
+      catch (Exception e)
+      {
+        logger.Capture(e);
+        throw;
+      }
+      finally
+      {
+      }
+      return result;
     }
   }
 }

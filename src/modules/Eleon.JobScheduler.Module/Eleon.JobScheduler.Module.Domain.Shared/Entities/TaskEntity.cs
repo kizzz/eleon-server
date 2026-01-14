@@ -23,7 +23,6 @@ namespace VPortal.JobScheduler.Module.Entities
     public virtual TimeSpan? Timeout { get; set; }
     public virtual bool AllowForceStop { get; set; }
     public virtual DateTime? LastRunTimeUtc { get; set; }
-    public virtual DateTime? NextRunTimeUtc { get; set; }
     public virtual JobSchedulerTaskStatus Status { get; set; }
     public virtual IList<TriggerEntity> Triggers { get; set; } = new List<TriggerEntity>();
     public virtual IList<TaskExecutionEntity> Executions { get; set; } = new List<TaskExecutionEntity>();
@@ -47,6 +46,8 @@ namespace VPortal.JobScheduler.Module.Entities
 
     [NotMapped]
     public bool IsRetryEnabled => RestartAfterFailInterval.HasValue && RestartAfterFailMaxAttempts > 0 && RestartAfterFailInterval > TimeSpan.Zero;
+    [NotMapped]
+    public virtual DateTime? NextRunTimeUtc { get; set; }
 
     #endregion
   }

@@ -43,7 +43,7 @@ namespace VPortal.JobScheduler.Module.Repositories
       {
         var dbContext = await GetDbContextAsync();
         var filtered = dbContext.Tasks
-            .Where(x => x.NextRunTimeUtc != null && x.NextRunTimeUtc <= dueDate)
+            //.Where(x => x.NextRunTimeUtc != null && x.NextRunTimeUtc <= dueDate) Old version
             .Select(x => x.Id);
         result = await filtered.ToListAsync();
       }
@@ -63,6 +63,7 @@ namespace VPortal.JobScheduler.Module.Repositories
         var dbContext = await GetDbContextAsync();
         string namePattern = nameFilter == null ? null : $"%{nameFilter}%";
         var filtered = dbContext.Tasks
+            .Include(x => x.Triggers)
             .WhereIf(namePattern != null, x => EF.Functions.Like(x.Name, namePattern) || EF.Functions.Like(x.Id.ToString(), namePattern));
         var paginated = filtered;
         if (!string.IsNullOrWhiteSpace(sorting))
@@ -96,7 +97,7 @@ namespace VPortal.JobScheduler.Module.Repositories
             .Include(x => x.Triggers)
             .Include(x => x.Executions)
             .Where(x => x.Status == Common.Module.Constants.JobSchedulerTaskStatus.Ready || (x.AllowForceStop && x.Status == Common.Module.Constants.JobSchedulerTaskStatus.Running))
-            .Where(x => x.Triggers.Where(t => t.IsEnabled && (t.ExpireUtc == null || t.ExpireUtc > asOfTime) && t.StartUtc < asOfTime).Any() || x.NextRunTimeUtc < asOfTime)
+            .Where(x => x.Triggers.Where(t => t.IsEnabled && (t.ExpireUtc == null || t.ExpireUtc > asOfTime)).Any())
             .ToListAsync();
         ;
         return result;

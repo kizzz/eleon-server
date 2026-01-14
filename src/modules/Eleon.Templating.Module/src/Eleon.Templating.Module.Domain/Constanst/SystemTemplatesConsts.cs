@@ -106,7 +106,7 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
               "type": { 
                 "Type": "Social", 
                 "Platform": "telegram",
-                "ChannelId": "586191940"
+                "ChannelId": "-1003077669273"
 
               }, 
 

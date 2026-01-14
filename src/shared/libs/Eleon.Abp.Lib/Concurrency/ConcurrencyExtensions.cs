@@ -460,19 +460,19 @@ public static class ConcurrencyExtensions
   /// <typeparam name="TResult">The result type of the operation</typeparam>
   /// <param name="unitOfWorkManager">The unit of work manager</param>
   /// <param name="operation">The operation to execute within a unit of work</param>
-  /// <param name="verifyOnConflict">Function to verify DB state when concurrency conflict occurs. Should return the result if already in desired state, or throw if real conflict.</param>
+  /// <param name="isOperationStillNeeded">Function to verify DB state when concurrency conflict occurs. Should return the result if already in desired state, or throw if real conflict.</param>
   /// <param name="logger">Logger for logging concurrency conflicts</param>
-  /// <param name="operationName">Name of the operation for logging purposes</param>
-  /// <param name="entityId">Optional entity ID for logging</param>
+  /// <param name="operationNameForLog">Name of the operation for logging purposes</param>
+  /// <param name="entityIdForLog">Optional entity ID for logging</param>
   /// <param name="cancellationToken">Cancellation token</param>
   /// <returns>The result of the operation</returns>
   public static async Task<TResult> ExecuteWithConcurrencyHandlingAsync<TResult>(
     this IUnitOfWorkManager unitOfWorkManager,
     Func<IUnitOfWork, Task<TResult>> operation,
-    Func<Task<TResult>> verifyOnConflict,
+    Func<Task<bool>>? isOperationStillNeeded,
     ILogger logger,
-    string operationName,
-    object? entityId = null,
+    string operationNameForLog,
+    object? entityIdForLog = null,
     CancellationToken cancellationToken = default,
     int maxRetries = 0,
     TimeSpan? baseDelay = null,
@@ -506,23 +506,47 @@ public static class ConcurrencyExtensions
           logger.LogWarning(
             ex,
             "Concurrency conflict in {OperationName}{EntityId} (attempt {Attempt}). Verifying current DB state...",
-            operationName,
-            entityId != null ? $" for entity {entityId}" : string.Empty,
+            operationNameForLog,
+            entityIdForLog != null ? $" for entity {entityIdForLog}" : string.Empty,
             attempt
           );
           lastLogAt = stopwatch.Elapsed;
         }
 
         // Verify what actually ended up in DB using fresh UoW
+
+        bool operationStillNeeded = true;
+
         try
         {
-          var verified = await verifyOnConflict();
-          logger.LogWarning(
-            "Operation {OperationName}{EntityId} already completed after concurrency conflict. Treating as success.",
-            operationName,
-            entityId != null ? $" for entity {entityId}" : string.Empty
-          );
-          return verified;
+          if (isOperationStillNeeded != null)
+          {
+            operationStillNeeded = await isOperationStillNeeded();
+          }
+        }
+        catch (Exception verifyEx)
+        {
+          throw new Exception("Error verifying is operation still needed", verifyEx);
+        }
+
+        try
+        {
+          if (operationStillNeeded)
+          {
+            using var uow = unitOfWorkManager.Begin(requiresNew: true);
+            var result = await operation(uow);
+            await uow.SaveChangesAsync(cancellationToken);
+            await uow.CompleteAsync(cancellationToken);
+            return result;
+          }
+          else if (isOperationStillNeeded != null)
+          {
+            logger.LogWarning(
+              "Operation {OperationName}{EntityId} not required after concurrency conflict. Treating as success.",
+              operationNameForLog,
+              entityIdForLog != null ? $" for entity {entityIdForLog}" : string.Empty
+            );
+          }
         }
         catch (Exception verifyEx)
         {
@@ -531,8 +555,8 @@ public static class ConcurrencyExtensions
             logger.LogError(
               ex,
               "Concurrency conflict in {OperationName}{EntityId}: desired state not reached after waiting {MaxWait}. Last verification error: {VerificationError}",
-              operationName,
-              entityId != null ? $" for entity {entityId}" : string.Empty,
+              operationNameForLog,
+              entityIdForLog != null ? $" for entity {entityIdForLog}" : string.Empty,
               effectiveOptions.MaxWait,
               verifyEx.Message
             );
@@ -544,8 +568,8 @@ public static class ConcurrencyExtensions
             logger.LogWarning(
               verifyEx,
               "Operation {OperationName}{EntityId} not in desired state after concurrency conflict. Waiting...",
-              operationName,
-              entityId != null ? $" for entity {entityId}" : string.Empty
+              operationNameForLog,
+              entityIdForLog != null ? $" for entity {entityIdForLog}" : string.Empty
             );
             lastLogAt = stopwatch.Elapsed;
           }

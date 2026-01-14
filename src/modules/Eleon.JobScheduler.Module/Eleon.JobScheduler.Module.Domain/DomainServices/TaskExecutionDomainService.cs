@@ -142,7 +142,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
             };
 
             // Idempotency check: if already in desired final state, treat as success
-            if (IdempotencyHelpers.IsInDesiredFinalState(actionExecution.Status, desiredStatus))
+            if (IdempotencyHelpers.IsStatusEquals(actionExecution.Status, desiredStatus))
             {
               logger.Log.LogWarning(
                 "Action execution {ActionExecutionId} already in desired state ({Status}). Treating as idempotent success.",
@@ -210,119 +210,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
 
             return true;
           },
-          async () =>
-          {
-            // Verify DB state on concurrency conflict
-            using var verifyUow = _unitOfWorkManager.Begin(false);
-            var actionExecutions = await actionExecutionRepository.GetListByTaskExecutionIdAsync(
-              taskExecutionId
-            );
-            var currentActionExecution = actionExecutions.FirstOrDefault(x =>
-              x.Id == actionExecutionId
-            );
-
-            if (currentActionExecution == null)
-            {
-              throw new InvalidOperationException(
-                $"Action execution {actionExecutionId} no longer exists"
-              );
-            }
-
-            var desiredStatus = actionResult switch
-            {
-              JobSchedulerExecutionResult.Success => JobSchedulerActionExecutionStatus.Completed,
-              JobSchedulerExecutionResult.Cancelled => JobSchedulerActionExecutionStatus.Cancelled,
-              _ => JobSchedulerActionExecutionStatus.Failed,
-            };
-
-            if (
-              IdempotencyHelpers.IsInDesiredFinalState(currentActionExecution.Status, desiredStatus)
-            )
-            {
-              // FIX: Also verify and update task execution and task status if needed
-              // When all actions are completed, the task execution should be completed
-              // and the task should be set to Ready (if it was Running)
-              var taskExecution = await taskExecutionRepository.FindAsync(taskExecutionId);
-              if (taskExecution != null)
-              {
-                var anyExecutingAction = actionExecutions.Any(x =>
-                  x.Status == JobSchedulerActionExecutionStatus.Executing
-                );
-
-                if (!anyExecutingAction)
-                {
-                  // All actions are done, task execution should be in final state
-                  var allCompleted = actionExecutions.All(x =>
-                    x.Status == JobSchedulerActionExecutionStatus.Completed
-                  );
-                  var anyCancelled = actionExecutions.Any(x =>
-                    x.Status == JobSchedulerActionExecutionStatus.Cancelled
-                  );
-
-                  JobSchedulerTaskExecutionStatus desiredTaskExecutionStatus;
-                  if (allCompleted)
-                  {
-                    desiredTaskExecutionStatus = JobSchedulerTaskExecutionStatus.Completed;
-                  }
-                  else if (anyCancelled)
-                  {
-                    desiredTaskExecutionStatus = JobSchedulerTaskExecutionStatus.Cancelled;
-                  }
-                  else
-                  {
-                    desiredTaskExecutionStatus = JobSchedulerTaskExecutionStatus.Failed;
-                  }
-
-                  var taskExecutionNeedsUpdate = false;
-                  var currentTaskExecutionStatus = taskExecution.Status;
-                  if (taskExecution.Status != desiredTaskExecutionStatus)
-                  {
-                    taskExecution.Status = desiredTaskExecutionStatus;
-                    taskExecutionNeedsUpdate = true;
-                    logger.Log.LogWarning(
-                      "Task execution {TaskExecutionId} status was {CurrentStatus} but should be {DesiredStatus} after all actions completed. Updating during concurrency conflict resolution.",
-                      taskExecutionId, currentTaskExecutionStatus, desiredTaskExecutionStatus);
-                  }
-
-                  if (!taskExecution.FinishedAtUtc.HasValue)
-                  {
-                    taskExecution.FinishedAtUtc = DateTime.UtcNow;
-                    taskExecutionNeedsUpdate = true;
-                  }
-
-                  if (taskExecutionNeedsUpdate)
-                  {
-                    await taskExecutionRepository.UpdateAsync(taskExecution);
-                  }
-
-                  // Check and update task status if needed
-                  var taskNeedsUpdate = false;
-                  var task = await taskRepository.GetWithTriggerAsync(taskExecution.TaskId);
-                  if (task != null && task.Status == JobSchedulerTaskStatus.Running)
-                  {
-                    task.Status = JobSchedulerTaskStatus.Ready;
-                    await taskRepository.UpdateAsync(task);
-                    taskNeedsUpdate = true;
-                    logger.Log.LogWarning(
-                      "Task {TaskId} status was still Running after task execution completed. Updating to Ready during concurrency conflict resolution.",
-                      task.Id);
-                  }
-
-                  if (taskExecutionNeedsUpdate || taskNeedsUpdate)
-                  {
-                    await verifyUow.SaveChangesAsync();
-                    await verifyUow.CompleteAsync();
-                  }
-                }
-              }
-
-              return true; // Already in desired state
-            }
-
-            throw new InvalidOperationException(
-              $"Action execution {actionExecutionId} current state ({currentActionExecution.Status}) does not match desired ({desiredStatus})"
-            );
-          },
+          null,
           logger.Log,
           "AcknowledgeActionCompletedAsync",
           actionExecutionId

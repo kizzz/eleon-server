@@ -467,7 +467,7 @@ namespace VPortal.BackgroundJobs.Module.DomainServices
 
             if (currentExecution.Status == BackgroundJobExecutionStatus.Started)
             {
-              return currentExecution;
+              return false;
             }
 
             if (IsFinalExecutionStatus(currentExecution.Status))
@@ -475,11 +475,10 @@ namespace VPortal.BackgroundJobs.Module.DomainServices
               logger.Log.LogWarning(
                 "Execution {ExecutionId} for job {JobId} already reached final state ({Status}) while marking started. Treating as success.",
                 executionId, jobId, currentExecution.Status);
-              return currentExecution;
+              return false;
             }
 
-            throw new InvalidOperationException(
-              $"Execution {executionId} for job {jobId} is still {currentExecution.Status} (job status {currentJob.Status}). Waiting for Started.");
+            return true;
           },
           logger.Log,
           "MarkExecutionStartedAsync",
@@ -647,83 +646,7 @@ namespace VPortal.BackgroundJobs.Module.DomainServices
             await backgroundJobsRepository.UpdateAsync(job, true);
             return execution;
           },
-          async () =>
-          {
-            // Verify what actually ended up in DB
-            using var verifyUow = unitOfWorkManager.Begin(false);
-            var currentJob = await backgroundJobsRepository.FindAsync(jobId, includeDetails: true);
-
-            if (currentJob == null)
-            {
-              logger.Log.LogWarning("Job {JobId} no longer exists while verifying concurrency conflict.", jobId);
-              throw new EntityNotFoundException(typeof(BackgroundJobEntity), jobId);
-            }
-
-            var currentExecution = currentJob.Executions.FirstOrDefault(x => x.Id == executionId);
-            if (currentExecution == null)
-            {
-              logger.Log.LogWarning("Execution {ExecutionId} no longer exists on job {JobId} while verifying concurrency conflict.",
-                  executionId, jobId);
-              throw new EntityNotFoundException(typeof(BackgroundJobExecutionEntity), executionId);
-            }
-
-            // If DB state matches desired outcome, treat as success
-            if (IsFinalWithSameOutcome(currentExecution.Status, successfully))
-            {
-              // FIX: Also verify and update job status if needed
-              // The execution is completed, but the job might still be in Executing status
-              // due to the concurrency conflict preventing the job status update from being saved
-              var jobNeedsUpdate = false;
-              if (successfully && currentJob.Status == BackgroundJobStatus.Executing)
-              {
-                // Job should be Completed but is still Executing - update it
-                currentJob.UpdateStatus(BackgroundJobStatus.Completed);
-                if (!currentJob.JobFinishedUtc.HasValue)
-                {
-                  currentJob.JobFinishedUtc = DateTime.UtcNow;
-                }
-                jobNeedsUpdate = true;
-                logger.Log.LogWarning(
-                  "Job {JobId} status was still Executing after execution completed. Updating to Completed during concurrency conflict resolution.",
-                  jobId);
-              }
-              else if (!successfully && currentJob.Status == BackgroundJobStatus.Executing)
-              {
-                // Job should be Errored but is still Executing - update it
-                currentJob.UpdateStatus(BackgroundJobStatus.Errored);
-                if (!currentJob.JobFinishedUtc.HasValue)
-                {
-                  currentJob.JobFinishedUtc = DateTime.UtcNow;
-                }
-                jobNeedsUpdate = true;
-                logger.Log.LogWarning(
-                  "Job {JobId} status was still Executing after execution errored. Updating to Errored during concurrency conflict resolution.",
-                  jobId);
-              }
-
-              if (jobNeedsUpdate)
-              {
-                await backgroundJobsRepository.UpdateAsync(currentJob, true);
-                await verifyUow.SaveChangesAsync();
-                await verifyUow.CompleteAsync();
-              }
-
-              return currentExecution;
-            }
-
-            var desiredStatus = successfully
-              ? BackgroundJobExecutionStatus.Completed
-              : BackgroundJobExecutionStatus.Errored;
-
-            if (!IsFinalExecutionStatus(currentExecution.Status))
-            {
-              throw new InvalidOperationException(
-                $"Execution {executionId} for job {jobId} is still {currentExecution.Status} (job status {currentJob.Status}). Waiting for {desiredStatus}.");
-            }
-
-            throw new InvalidOperationException(
-              $"Execution {executionId} for job {jobId} final state ({currentExecution.Status}) does not match desired ({desiredStatus}). Job status {currentJob.Status}.");
-          },
+          null,
           logger.Log,
           "CompleteExecutionAsync",
           executionId

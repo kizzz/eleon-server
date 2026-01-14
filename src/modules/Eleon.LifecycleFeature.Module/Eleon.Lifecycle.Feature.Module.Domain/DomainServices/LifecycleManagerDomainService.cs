@@ -555,7 +555,7 @@ namespace VPortal.Lifecycle.Feature.Module.DomainServices
                   }
 
                   // Idempotency: check if already in desired state
-                  if (IdempotencyHelpers.IsInDesiredFinalState(currentActor.Status, status))
+                  if (IdempotencyHelpers.IsStatusEquals(currentActor.Status, status))
                   {
                     logger.Log.LogWarning(
                       "Actor {ActorId} for document {DocumentId} already in status {Status}. Treating as idempotent success.",
@@ -602,7 +602,7 @@ namespace VPortal.Lifecycle.Feature.Module.DomainServices
                   if (await CheckActorForCurrentUser(groupAudit, actor))
                   {
                     // Idempotency: check if already in desired state
-                    if (IdempotencyHelpers.IsInDesiredFinalState(actor.Status, status))
+                    if (IdempotencyHelpers.IsStatusEquals(actor.Status, status))
                     {
                       logger.Log.LogWarning(
                         "Actor {ActorId} for document {DocumentId} already in status {Status}. Treating as idempotent success.",
@@ -729,99 +729,7 @@ namespace VPortal.Lifecycle.Feature.Module.DomainServices
           },
           async () =>
           {
-            // Verify DB state on concurrency conflict
-            using var verifyUow = unitOfWorkManager.Begin(false);
-            var currentGroupAudit = await statesGroupAuditsRepository.GetByDocIdAsync(
-              documentObjectType,
-              documentId
-            );
-
-            if (currentGroupAudit == null || currentGroupAudit.Status == LifecycleStatus.New)
-            {
-              return false;
-            }
-
-            var desiredStatus = approved
-              ? LifecycleActorStatus.Approved
-              : LifecycleActorStatus.Rejected;
-
-            // Check if any actor for current user is already in desired state
-            if (currentGroupAudit.Status == LifecycleStatus.Enroute || currentGroupAudit.Status == LifecycleStatus.Complete)
-            {
-              var state = currentGroupAudit.States?.FirstOrDefault(s =>
-                s.OrderIndex == currentGroupAudit.CurrentStateOrderIndex
-              );
-
-              if (state != null)
-              {
-                var actors =
-                  state.Actors?.Where(a => a.IsEnroute || a.Status == desiredStatus).ToList()
-                  ?? new List<StateActorAuditEntity>();
-                foreach (var actor in actors)
-                {
-                  if (await CheckActorForCurrentUser(currentGroupAudit, actor))
-                  {
-                    if (IdempotencyHelpers.IsInDesiredFinalState(actor.Status, desiredStatus))
-                    {
-                      // FIX: Also verify and update state/group audit status if needed
-                      // When an actor is approved/rejected, RecognizeCurrentEnrouteState should be called
-                      // to update state and group audit statuses. If a concurrency conflict occurred,
-                      // these updates might not have been saved.
-                      var originalGroupAuditStatus = currentGroupAudit.Status;
-                      var originalCurrentStateOrderIndex = currentGroupAudit.CurrentStateOrderIndex;
-                      var originalStateId = state?.Id;
-                      var originalStateStatus = state?.Status;
-                      
-                      // Call RecognizeCurrentEnrouteState to ensure state and group audit statuses are correct
-                      var updatedGroupAudit = await RecognizeCurrentEnrouteState(currentGroupAudit);
-                      
-                      var groupAuditNeedsUpdate = false;
-                      if (updatedGroupAudit.Status != originalGroupAuditStatus)
-                      {
-                        groupAuditNeedsUpdate = true;
-                        logger.Log.LogWarning(
-                          "Group audit {DocumentId} status was {OriginalStatus} but should be {UpdatedStatus} after actor approval. Updating during concurrency conflict resolution.",
-                          documentId, originalGroupAuditStatus, updatedGroupAudit.Status);
-                      }
-                      
-                      // Check if state status or current state order index was updated
-                      if (originalStateId.HasValue)
-                      {
-                        var updatedState = updatedGroupAudit.States?.FirstOrDefault(s => s.Id == originalStateId.Value);
-                        if (updatedState != null && originalStateStatus.HasValue && updatedState.Status != originalStateStatus.Value)
-                        {
-                          groupAuditNeedsUpdate = true;
-                          logger.Log.LogWarning(
-                            "State {StateId} status was {OriginalStatus} but should be {UpdatedStatus} after actor approval. Updating during concurrency conflict resolution.",
-                            updatedState.Id, originalStateStatus.Value, updatedState.Status);
-                        }
-                      }
-                      
-                      if (updatedGroupAudit.CurrentStateOrderIndex != originalCurrentStateOrderIndex)
-                      {
-                        groupAuditNeedsUpdate = true;
-                        logger.Log.LogWarning(
-                          "Group audit {DocumentId} CurrentStateOrderIndex was {OriginalIndex} but should be {UpdatedIndex} after actor approval. Updating during concurrency conflict resolution.",
-                          documentId, originalCurrentStateOrderIndex, updatedGroupAudit.CurrentStateOrderIndex);
-                      }
-                      
-                      if (groupAuditNeedsUpdate)
-                      {
-                        await statesGroupAuditsRepository.UpdateAsync(updatedGroupAudit, true);
-                        await verifyUow.SaveChangesAsync();
-                        await verifyUow.CompleteAsync();
-                      }
-
-                      return true; // Already in desired state
-                    }
-                  }
-                }
-              }
-            }
-
-            throw new InvalidOperationException(
-              $"Approval status for document {documentId} current state does not match desired outcome"
-            );
+            return false;
           },
           logger.Log,
           "ChangeApprovmentStatus",

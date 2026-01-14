@@ -15,7 +15,7 @@ public static class IdempotencyHelpers
   /// <param name="desiredStatus">The desired final status</param>
   /// <param name="finalStatuses">Optional list of statuses that are considered "final"</param>
   /// <returns>True if current status matches desired status</returns>
-  public static bool IsInDesiredFinalState<TStatus>(
+  public static bool IsStatusEquals<TStatus>(
       TStatus currentStatus,
       TStatus desiredStatus,
       params TStatus[] finalStatuses)

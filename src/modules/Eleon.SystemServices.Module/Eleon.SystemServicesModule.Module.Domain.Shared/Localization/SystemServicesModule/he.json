@@ -1,0 +1,30 @@
+﻿{
+  "culture": "he",
+  "texts": {
+    "Menu:Module": "×ž×•×“×•×œ",
+    "LogList:Title": "×™×•×ž× ×™×",
+    "LogList:Message": "×”×•×“×¢×”",
+    "LogList:MessageType": "×¡×•×’",
+    "LogList:MessageTypeFilter": "×¡×•×’",
+    "LogList:CreationTime": "×ª××¨×™×š",
+    "LogList:RefKey": "×ª×¢×•×“×ª ×–×”×•×ª",
+    "LogDetails:Title": "×¤×¨×˜×™ ×™×•×ž×Ÿ",
+    "LogDetails:MessageType": "×¡×•×’",
+    "LogDetails:RefKey": "Ref Key",
+    "LogDetails:CreationTime": "×ª××¨×™×š",
+    "LogDetails:Message": "×”×•×“×¢×”",
+    "RetryJob:Success": "×”×ª×‘×§×© × ×™×¡×™×•×Ÿ ×—×•×–×¨ ×œ×¢×‘×•×“×” ×‘×”×¦×œ×—×”",
+    "RetryJob:Failed": "×œ× × ×™×ª×Ÿ ×œ×‘×§×© ×œ× ×¡×•×ª ×©×•×‘ ××ª ×”×¢×‘×•×“×” ×”×–×•",
+    "Retry": "× ×¡×” ×©×•×‘",
+    "JobDetails": "×¤×¨×˜×™ ×¢×‘×•×“×”",
+    "Close": "×¡×’×•×¨",
+    "LogList:Reload": "×œ×˜×¢×•×Ÿ ×ž×—×“×©",
+    "LogList:Retry": "× ×¡×” ×©×•×‘",
+    "LogDetails:IsJob": "×”×× ××™×•×‘",
+    "LogDetails:ActionName": "×¤×¢×•×œ×”",
+    "LogDetails:DocumentObjectType": "×¡×•×’ ×ž×¡×ž×š",
+    "SystemLogs:Title": "×™×•×ž× ×™ ×ž×¢×¨×›×ª",
+    "SystemLogs:Subject:Tag": "× ×ª×•× ×™ ×”×˜×‘×œ×” ×¢×•×“×›× ×•",
+    "Error:LogOutdated": "×™×•×ž×Ÿ ×–×” ×ž×™×•×©×Ÿ!"
+  }
+}

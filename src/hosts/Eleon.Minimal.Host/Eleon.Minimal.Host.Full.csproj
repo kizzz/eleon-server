@@ -73,7 +73,7 @@
 		<None Include="appsettings.Release.json" />
 		<None Include="appsettings.ImmuRelease.json" />
 		<None Include="appsettings.QA.json" />
-    <None Include="web.config" CopyToOutputDirectory="Always"/>
+    <None Include="web.config" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -89,6 +89,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\modules\Eleon.IdentityQuerying.Module\Eleon.IdentityQuerying.Module.Full.csproj" />
+	  <ProjectReference Include="..\..\modules\Eleon.SystemServices.Module\Eleon.SystemServices.Module.Full.csproj" />
 	  <ProjectReference Include="..\..\modules\\Eleon.AbpEf.Module\\Eleon.AbpEf.Module.Full.csproj" />
 	  <ProjectReference Include="..\..\modules\\Eleon.ApplicationConfiguration.Module\\Eleon.ApplicationConfiguration.Module.Full.csproj" />
 	  <ProjectReference Include="..\..\modules\\Eleon.Auth.Module\\Eleon.Auth.Module.Full.csproj" />

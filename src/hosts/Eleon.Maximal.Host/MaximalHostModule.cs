@@ -26,6 +26,7 @@ using VPortal.NotificatorModule;
 using VPortal.Otp.Module;
 using VPortal.SitesManagement.Module;
 using VPortal.Storage.Module;
+using VPortal.SystemServicesModule;
 using VPortal.TenantManagement.Module;
 
 namespace Eleonsoft.Host;
@@ -62,6 +63,7 @@ namespace Eleonsoft.Host;
     typeof(ExternalLinkModuleCollector),
     typeof(ApplicationConfigurationModuleCollector),
     typeof(IdentityQueryingModuleCollector),
+    typeof(SystemServicesModuleCollector),
 
     // eleoncore
     typeof(SitesManagementModuleCollector),

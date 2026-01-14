@@ -10,13 +10,14 @@ using VPortal.BackgroundJobs.Module;
 using VPortal.DocMessageLogModule;
 using VPortal.ExternalLinkModule;
 using VPortal.FileManagerModule;
-using VPortal.Identity.Module;
+using VPortal.HealthCheckModule;
 using VPortal.Infrastructure.Module;
 using VPortal.JobScheduler.Module;
 using VPortal.LanguageManagement.Module;
 using VPortal.NotificatorModule;
 using VPortal.Otp.Module;
 using VPortal.Storage.Module;
+using VPortal.SystemServicesModule;
 using VPortal.TenantManagement.Module;
 
 namespace Eleonsoft.Host;
@@ -40,6 +41,8 @@ namespace Eleonsoft.Host;
     typeof(OtpModuleCollector),
     typeof(ExternalLinkModuleCollector),
     typeof(ApplicationConfigurationModuleCollector),
+    typeof(IdentityQueryingModuleCollector),
+    typeof(SystemServicesModuleCollector),
 
     // immu required modules
     typeof(FileManagerModuleCollector),

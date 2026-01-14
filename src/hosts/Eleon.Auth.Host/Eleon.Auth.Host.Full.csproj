@@ -90,6 +90,7 @@
 
   <ItemGroup>
 	  <ProjectReference Include="..\..\modules\Eleon.IdentityQuerying.Module\Eleon.IdentityQuerying.Module.Full.csproj" />
+	  <ProjectReference Include="..\..\modules\Eleon.SystemServices.Module\Eleon.SystemServices.Module.Full.csproj" />
 	  <ProjectReference Include="..\..\modules\\Eleon.AbpEf.Module\\Eleon.AbpEf.Module.Full.csproj" />
 	  <ProjectReference Include="..\..\modules\\Eleon.ApplicationConfiguration.Module\\Eleon.ApplicationConfiguration.Module.Full.csproj" />
 	  <ProjectReference Include="..\..\modules\\Eleon.Auth.Module\\Eleon.Auth.Module.Full.csproj" />

@@ -292,9 +292,10 @@
     "RepeatDurationOutOfRange": "Repeat duration should be between 5 minutes and 10 years.",
     "Refresh": "Refresh",
     "Trigger:NextRuntimes:NoRuntimes": "No runtimes",
-    "Trigger:NextRuntimes:RunTime": "Runtime",
+    "Trigger:NextRuntimes:RunTime": "Runtime (UTC)",
     "Trigger:NextRuntimes:Title": "Next runtimes",
     "Trigger:NextRuntimes:Count": "Count",
-    "Trigger:ViewNextRuntimes": "View next runtimes"
+    "Trigger:ViewNextRuntimes": "View next runtimes",
+    "Trigger:NextRunTime": "Next runtime (UTC)"
   }
 }

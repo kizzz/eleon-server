@@ -81,7 +81,7 @@ public class TwoFactorNotificationHandler : INotificationHandler<TwoFactorNotifi
         };
     try
     {
-      var emailMessage = await _eventBus.RequestAsync<RenderNotificationTemplateResponse>(new RenderNotificationTemplateMsg
+      var emailMessage = await _eventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
       {
         TemplateName = "2FA Email",
         Placeholders = args

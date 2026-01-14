@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Commons.Module.Messages.Templating
 {
-  public class RenderNotificationTemplateResponse
+  public class RenderTemplateResponse
   {
     public string RenderedTemplate { get; set; }
   }

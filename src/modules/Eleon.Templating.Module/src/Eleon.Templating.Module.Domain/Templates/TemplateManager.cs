@@ -235,6 +235,22 @@ public class TemplateManager : DomainService
     };
   }
 
+  public async Task<string> ApplyTemplateByTextAsync(
+      string templateText,
+      TextFormat templateFormat,
+      Dictionary<string, string> placeholders,
+      CancellationToken cancellationToken = default)
+  {
+    return templateFormat switch
+    {
+      TextFormat.Plaintext => ApplyPlaintextTemplate(templateText, placeholders),
+      TextFormat.Scriban => ApplyScribanTemplate(templateText, placeholders),
+      TextFormat.Json => ApplyJsonTemplate(templateText, placeholders),
+      _ => throw new BusinessException(ModuleErrorCodes.InvalidTemplateFormat)
+          .WithData("Format", templateFormat)
+    };
+  }
+
   public async Task ValidateTemplateAsync(
       Template template,
       CancellationToken cancellationToken = default)

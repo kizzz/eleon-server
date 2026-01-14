@@ -1,4 +1,5 @@
 using Common.EventBus.Module;
+using Common.Module.Constants;
 using Commons.Module.Messages.Templating;
 using Eleon.Templating.Module.Templates;
 using Logging.Module;
@@ -14,25 +15,32 @@ using Volo.Abp.EventBus.Distributed;
 
 namespace VPortal.GatewayManagement.Module.Vpn
 {
-  public class RenderNotificationTemplateEventService : IDistributedEventHandler<RenderTemplateMsg>, ITransientDependency
+  public class RenderNotificationTemplateByTextEventService : IDistributedEventHandler<RenderTemplateByTextMsg>, ITransientDependency
   {
-    private readonly IVportalLogger<RenderNotificationTemplateEventService> logger;
+    private readonly IVportalLogger<RenderNotificationTemplateByTextEventService> logger;
     private readonly IResponseContext responseContext;
     private readonly TemplateManager templateManager;
 
-    public RenderNotificationTemplateEventService(IVportalLogger<RenderNotificationTemplateEventService> logger, IResponseContext responseContext, TemplateManager templateManager)
+    public RenderNotificationTemplateByTextEventService(IVportalLogger<RenderNotificationTemplateByTextEventService> logger, IResponseContext responseContext, TemplateManager templateManager)
     {
       this.logger = logger;
       this.responseContext = responseContext;
       this.templateManager = templateManager;
     }
 
-    public async Task HandleEventAsync(RenderTemplateMsg eventData)
+    public async Task HandleEventAsync(RenderTemplateByTextMsg eventData)
     {
       var response = new RenderTemplateResponse();
       try
       {
-        response.RenderedTemplate = await templateManager.ApplyTemplateAsync(eventData.TemplateName, TemplateType.Notification, eventData.Placeholders);
+        var format = eventData.TemplateType.ToLowerInvariant() switch {
+
+          "plaintext" => TextFormat.Plaintext,
+          "scriban" => TextFormat.Scriban,
+          _ => TextFormat.Plaintext
+        };
+
+        response.RenderedTemplate = await templateManager.ApplyTemplateByTextAsync(eventData.Text, format, eventData.Placeholders);
       }
       catch (Exception ex)
       {

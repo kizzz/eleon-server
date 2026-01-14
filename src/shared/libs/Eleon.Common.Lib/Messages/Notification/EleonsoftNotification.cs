@@ -1,4 +1,4 @@
-﻿using Common.Module.Constants;
+using Common.Module.Constants;
 using EleonsoftSdk.modules.Helpers.Module;
 using EleonsoftSdk.modules.Messaging.Module.SystemMessages.Notificator;
 using EleonsoftSdk.modules.Messaging.Module.SystemMessages.Notificator.NotificationType;
@@ -26,6 +26,10 @@ public class EleonsoftNotification
 
   /// <summary> If false sends message with background job. Recommended true for important messages </summary>
   public bool? RunImmidiate { get; set; }
+  public Dictionary<string, string> ExtraProperties { get; set; }
+  public string TemplateName { get; set; }
+  public string TemplateType { get; set; }
+
 
   public EleonsoftNotification()
   {

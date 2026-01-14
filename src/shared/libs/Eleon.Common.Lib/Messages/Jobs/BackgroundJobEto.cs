@@ -1,4 +1,4 @@
-﻿using Common.Module.Constants;
+using Common.Module.Constants;
 
 namespace Messaging.Module.ETO
 {
@@ -16,5 +16,6 @@ namespace Messaging.Module.ETO
     public string Description { get; set; }
     public string StartExecutionParams { get; set; }
     public string StartExecutionExtraParams { get; set; }
+    public Dictionary<string, string> ExtraProperties { get; set; }
   }
 }

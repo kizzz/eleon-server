@@ -40,6 +40,9 @@ public class NotificationJob : DefaultBackgroundJob, ITransientDependency
   protected override async Task<JobResult> ProcessExecutionAsync(BackgroundJobEto job, BackgroundJobExecutionEto execution)
   {
     var notification = _jsonSerializer.Deserialize<EleonsoftNotification>(execution.StartExecutionParams);
+
+    notification.ExtraProperties = job.ExtraProperties;
+
     var notifications = new List<EleonsoftNotification>
         {
             notification

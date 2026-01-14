@@ -95,7 +95,7 @@ public class SystemNotificationHandler : INotificationHandler<SystemNotification
           if (genealTenantSettings.SendErrors)
           {
             var replacements = NotificatorHelperService.GetPlaceholdersReplacements(notification, type);
-            var emailMessage = await _distributedEventBus.RequestAsync<RenderNotificationTemplateResponse>(new RenderNotificationTemplateMsg
+            var emailMessage = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
             {
 
               Placeholders = replacements,
@@ -104,7 +104,7 @@ public class SystemNotificationHandler : INotificationHandler<SystemNotification
             await NotifyEmailAsync(notification, type, emailMessage.RenderedTemplate);
 
 
-            var tgMessage = await _distributedEventBus.RequestAsync<RenderNotificationTemplateResponse>(new RenderNotificationTemplateMsg
+            var tgMessage = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
             {
               Placeholders = replacements,
               TemplateName = "Notification Telegram"

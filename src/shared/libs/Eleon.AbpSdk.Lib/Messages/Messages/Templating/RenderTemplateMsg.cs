@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Templating.Module.Messages
 {
   [DistributedEvent]
-  public class RenderNotificationTemplateMsg : VportalEvent
+  public class RenderTemplateMsg : VportalEvent
   {
     public Dictionary<string, string> Placeholders { get; set; } = new Dictionary<string, string>();
     public string TemplateName { get; set; } = string.Empty;

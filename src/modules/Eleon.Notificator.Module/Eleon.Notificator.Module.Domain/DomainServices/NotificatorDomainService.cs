@@ -1,12 +1,16 @@
-﻿using Common.Module.Extensions;
+using Common.EventBus.Module;
+using Common.Module.Extensions;
+using Commons.Module.Messages.Templating;
 using EleonsoftModuleCollector.Commons.Module.Constants.BackgroundJobs;
 using EleonsoftModuleCollector.Notificator.Module.Notificator.Module.Domain.Managers;
 using EleonsoftModuleCollector.Notificator.Module.Notificator.Module.Domain.NotificationHandler;
+using EleonsoftSdk.modules.Messaging.Module.SystemMessages.Notificator.NotificationType;
 using Logging.Module;
 using Messaging.Module.ETO;
 using Messaging.Module.Messages;
 using Microsoft.Extensions.Configuration;
 using ModuleCollector.Commons.Module.Constants;
+using Templating.Module.Messages;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.Emailing;
 using Volo.Abp.EventBus.Distributed;
@@ -39,6 +43,7 @@ namespace VPortal.Notificator.Module.DomainServices
     private readonly IServiceProvider _serviceProvider;
     private readonly IdentityUserManager _userManager;
     private readonly INotificationHandler _notificationHandler;
+    private readonly IDistributedEventBus _distributedEventBus;
 
     public NotificatorDomainService(IVportalLogger<NotificatorDomainService> logger,
         INotificationsRepository notificationsRepository,
@@ -54,7 +59,8 @@ namespace VPortal.Notificator.Module.DomainServices
         NotificatorHelperService recepientResolver,
         IServiceProvider serviceProvider,
         IdentityUserManager userManager,
-        INotificationHandler notificationHandler)
+        INotificationHandler notificationHandler,
+        IDistributedEventBus distributedEventBus)
     {
       this.logger = logger;
       this.notificationsRepository = notificationsRepository;
@@ -71,6 +77,7 @@ namespace VPortal.Notificator.Module.DomainServices
       _serviceProvider = serviceProvider;
       _userManager = userManager;
       _notificationHandler = notificationHandler;
+      _distributedEventBus = distributedEventBus;
     }
 
     #region NotifyAsync
@@ -86,6 +93,35 @@ namespace VPortal.Notificator.Module.DomainServices
         if (filters != null && !filters.Contains("*", StringComparer.OrdinalIgnoreCase) && !filters.Contains(notification.Type.Type, StringComparer.OrdinalIgnoreCase))
         {
           return true;
+        }
+
+        notification.ExtraProperties ??= new Dictionary<string, string>();
+        notification.ExtraProperties["Message"] = notification.Message;
+        notification.ExtraProperties["Recipients"] = notification.Recipients.Select(x => $"{x.Type};{x.RefId.ToString()}").JoinAsString(", ");
+        notification.ExtraProperties["ExtraProperties"] = notification.ExtraProperties.Any() ? string.Join(";\n", notification.ExtraProperties.Where(x => (x.Value?.Length ?? 0) < 100).Select(kvp => $"{kvp.Key}: {kvp.Value}")) : "None";
+
+        if (notification.Type is not TwoFactorNotificationType && notification.Type is not SystemNotificationType)
+        {
+          if (!string.IsNullOrEmpty(notification.TemplateName))
+          {
+            var message = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
+            {
+
+              Placeholders = notification.ExtraProperties,
+              TemplateName = notification.TemplateName
+            });
+            notification.Message = message.RenderedTemplate;
+          }
+          else if (!string.IsNullOrEmpty(notification.TemplateType))
+          {
+            var message = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateByTextMsg
+            {
+              Text = notification.Message,
+              Placeholders = notification.ExtraProperties,
+              TemplateType = notification.TemplateType
+            });
+            notification.Message = message.RenderedTemplate;
+          }
         }
 
         await _notificationHandler.HandleAsync(notification);

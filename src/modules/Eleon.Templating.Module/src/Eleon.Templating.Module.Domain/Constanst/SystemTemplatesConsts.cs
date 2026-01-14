@@ -99,9 +99,6 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             Type = TemplateType.Action,
             TemplateContent = """
             { 
-              "recipients": [ 
-                { "type": 2, "recipientAddress": "vladymir.ogorodnytsky@eleonsoft.com" } 
-              ], 
               "message": "Telegram Notification", 
               "type": { 
                 "Type": "Social", 

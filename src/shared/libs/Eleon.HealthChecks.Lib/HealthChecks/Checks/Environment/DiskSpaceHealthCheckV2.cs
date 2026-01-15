@@ -106,7 +106,7 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
         foreach (var r in results)
         {
             data[$"[{i}].path"] = r.AbsolutePath;
-            data[$"[{i}].size_bytes"] = r.SizeBytes;
+            data[$"[{i}].size_mb"] = (long)(r.SizeBytes / (1024.0 * 1024.0));
             i++;
         }
 

@@ -1,4 +1,4 @@
-﻿using EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Application.Contracts.Actions;
+using EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Application.Contracts.Actions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,6 +12,7 @@ namespace VPortal.JobScheduler.Module.Actions
     Task<List<ActionDto>> GetListAsync(ActionListRequestDto request);
     Task<ActionDto> AddAsync(ActionDto action);
     Task<ActionDto> UpdateAsync(ActionDto action);
+    Task DuplicateAction(DuplicateActionRequestDto input);
     Task<bool> DeleteAsync(Guid id);
   }
 }

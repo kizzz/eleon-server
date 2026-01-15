@@ -17,6 +17,7 @@ using VPortal.JobScheduler.Module;
 using VPortal.JobScheduler.Module.EntityFrameworkCore;
 using VPortal.JobScheduler.Module.Tasks;
 using JobScheduler.Module.Tasks;
+using Eleon.JobScheduler.Module.Eleon.JobScheduler.Module.Domain.Shared.DomainServices;
 
 namespace JobScheduler.Module.TestBase;
 
@@ -33,6 +34,9 @@ public class JobSchedulerTestStartupModule : AbpModule
         context.Services.AddAlwaysDisableUnitOfWorkTransaction();
         context.Services.AddLogging();
         context.Services.AddVportalLogging();
+
+        // Replace TaskHubContext with a no-op mock to avoid object mapper issues in tests
+        context.Services.AddTransient<ITaskHubContext>(_ => Substitute.For<ITaskHubContext>());
 
         // Add default configuration values for tests
         var configurationBuilder = new ConfigurationBuilder();

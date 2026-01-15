@@ -40,6 +40,25 @@ public class EventController : EventManagementCotroller, IEventAppService
     return response;
   }
 
+  [HttpPost("ClaimMany")]
+  public async Task<ClaimMessagesResponseDto> ClaimManyAsync(ClaimMessagesRequestDto input)
+  {
+    var response = await _eventAppService.ClaimManyAsync(input);
+    return response;
+  }
+
+  [HttpPost("Ack")]
+  public async Task AckAsync(AckRequestDto input)
+  {
+    await _eventAppService.AckAsync(input);
+  }
+
+  [HttpPost("Nack")]
+  public async Task NackAsync(NackRequestDto input)
+  {
+    await _eventAppService.NackAsync(input);
+  }
+
   [HttpPost("PublishError")]
   public async Task PublishErrorAsync(string message)
   {

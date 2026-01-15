@@ -67,6 +67,103 @@ namespace Eleon.EventManagement.Module.Migrations
                     b.ToTable("EcEventManagementEvents", (string)null);
                 });
 
+            modelBuilder.Entity("EventManagementModule.Module.Domain.Shared.Entities.EventQueueMessageBodyEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasDefaultValue("application/json");
+
+                    b.Property<string>("Encoding")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<byte[]>("Payload")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EcEventQueueMessageBodies", (string)null);
+                });
+
+            modelBuilder.Entity("EventManagementModule.Module.Domain.Shared.Entities.EventQueueMessageEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("datetime2(3)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<long>("EnqueueSeq")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<byte>("Lane")
+                        .HasColumnType("tinyint")
+                        .HasDefaultValue((byte)0);
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid?>("LockId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LockedUntilUtc")
+                        .HasColumnType("datetime2(3)");
+
+                    b.Property<string>("MessageKey")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<Guid>("QueueId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("tinyint");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TraceId")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime?>("VisibleAfterUtc")
+                        .HasColumnType("datetime2(3)");
+
+                    b.HasKey("Id").IsClustered(false);
+
+                    b.HasIndex("QueueId", "Lane", "MessageKey")
+                        .IsUnique()
+                        .HasFilter("[MessageKey] IS NOT NULL");
+
+                    b.HasIndex("QueueId", "Lane", "Status", "EnqueueSeq")
+                        .IsClustered()
+                        .IncludeProperties(new[] { "Id", "Name", "TenantId", "CreatedUtc", "Attempts", "VisibleAfterUtc", "LockedUntilUtc", "MessageKey", "TraceId" });
+
+                    b.HasIndex("QueueId", "Lane", "Status", "LockedUntilUtc")
+                        .IncludeProperties(new[] { "Id", "EnqueueSeq" });
+
+                    b.ToTable("EcEventQueueMessages", (string)null);
+                });
+
             modelBuilder.Entity("EventManagementModule.Module.Domain.Shared.Entities.QueueDefinitionEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -196,6 +293,22 @@ namespace Eleon.EventManagement.Module.Migrations
                         .HasForeignKey("QueueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EventManagementModule.Module.Domain.Shared.Entities.EventQueueMessageBodyEntity", b =>
+                {
+                    b.HasOne("EventManagementModule.Module.Domain.Shared.Entities.EventQueueMessageEntity", "Message")
+                        .WithOne("Body")
+                        .HasForeignKey("EventManagementModule.Module.Domain.Shared.Entities.EventQueueMessageBodyEntity", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Message");
+                });
+
+            modelBuilder.Entity("EventManagementModule.Module.Domain.Shared.Entities.EventQueueMessageEntity", b =>
+                {
+                    b.Navigation("Body");
                 });
 
             modelBuilder.Entity("EventManagementModule.Module.Domain.Shared.Entities.QueueEntity", b =>

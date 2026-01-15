@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EventManagementModule.Module.Domain.Shared.Queues;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain;
@@ -19,6 +20,8 @@ public class EventManagementModuleDomainModule : AbpModule
     {
       options.AddMaps<EventManagementModuleDomainModule>(validate: true);
     });
+
+    Configure<QueueEngineOptions>(context.Services.GetConfiguration().GetSection("EventManagement:QueueEngine"));
   }
 }
 

@@ -149,6 +149,13 @@ namespace VPortal.JobScheduler.Module.DomainServices
                 actionExecutionId,
                 actionExecution.Status
               );
+              var anyExecutingActionAfterIdempotent = actionExecutions.Any(x =>
+                x.Status == JobSchedulerActionExecutionStatus.Executing
+              );
+              if (!anyExecutingActionAfterIdempotent)
+              {
+                await FinishTaskExecutionAsync(taskExecution, actionExecutions);
+              }
               await uow.CompleteAsync();
               return true;
             }
@@ -190,7 +197,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
               );
             }
 
-            bool anyExecutingAction = taskExecution.ActionExecutions.Any(x =>
+            bool anyExecutingAction = actionExecutions.Any(x =>
               x.Status == JobSchedulerActionExecutionStatus.Executing
             );
 

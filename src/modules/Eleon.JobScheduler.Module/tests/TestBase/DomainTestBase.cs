@@ -96,8 +96,12 @@ public abstract class DomainTestBase : MockingTestBase
     {
         repository.GetAsync(taskExecution.Id, Arg.Any<bool>())
             .Returns(taskExecution);
+        repository.FindAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<CancellationToken>())
+            .Returns(taskExecution);
         var basicRepo = (Volo.Abp.Domain.Repositories.IBasicRepository<TaskExecutionEntity, Guid>)repository;
         basicRepo.GetAsync(taskExecution.Id, default)
+            .ReturnsForAnyArgs(taskExecution);
+        basicRepo.FindAsync(taskExecution.Id, default)
             .ReturnsForAnyArgs(taskExecution);
         repository
             .UpdateAsync(Arg.Any<TaskExecutionEntity>())

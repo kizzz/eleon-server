@@ -19,6 +19,7 @@ public static class EventManagementDefaults
   public const int MaxMessagesLimit = 1_000_000;
   public const int MaxReceiveMessagesCount = 1000;
   public const int DefaultSystemQueueLimit = 10_000;
+  public const int DefaultClaimLockSeconds = 60;
 
   public const string ForwardingSeparator = ";";
   public const string ForwardingAll = "*";

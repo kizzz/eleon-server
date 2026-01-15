@@ -8,9 +8,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModuleCollector.EventManagementModule.EventManagementModule.Module.Application.Contracts.Event;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.DependencyInjection;
 using VPortal.EventManagementModule.Module;
+using EventManagementModule.Module.Domain.Shared.Queues;
 
 namespace EventManagementModule.Module.Application.Events;
 
@@ -75,6 +78,65 @@ public class EventAppService : EventManagementAppService, IEventAppService
     return result;
   }
 
+  public async Task<ClaimMessagesResponseDto> ClaimManyAsync(ClaimMessagesRequestDto input)
+  {
+    ClaimMessagesResponseDto result = null;
+    try
+    {
+      var (lockId, messages, status, pending) = await eventDomainService.ClaimManyAsync(
+          input.QueueName,
+          input.MaxCount,
+          input.LockSeconds);
+
+      var dtos = messages.Select(MapClaimedMessage).ToList();
+      result = new ClaimMessagesResponseDto
+      {
+        LockId = lockId,
+        QueueStatus = status,
+        PendingCount = pending,
+        Messages = dtos
+      };
+    }
+    catch (Exception e)
+    {
+      _logger.Capture(e);
+    }
+    finally
+    {
+    }
+    return result;
+  }
+
+  public async Task AckAsync(AckRequestDto input)
+  {
+    try
+    {
+      await eventDomainService.AckAsync(input.LockId, input.MessageIds);
+    }
+    catch (Exception e)
+    {
+      _logger.Capture(e);
+    }
+    finally
+    {
+    }
+  }
+
+  public async Task NackAsync(NackRequestDto input)
+  {
+    try
+    {
+      await eventDomainService.NackAsync(input.LockId, input.MessageId, input.MaxAttempts, input.DelaySeconds, input.Error);
+    }
+    catch (Exception e)
+    {
+      _logger.Capture(e);
+    }
+    finally
+    {
+    }
+  }
+
   public async Task PublishErrorAsync(string message)
   {
     try
@@ -135,4 +197,31 @@ public class EventAppService : EventManagementAppService, IEventAppService
     {
     }
   }
+
+  private static ClaimedMessageDto MapClaimedMessage(ClaimedQueueMessage message)
+  {
+    QueuePayload? payload = null;
+    try
+    {
+      payload = JsonSerializer.Deserialize<QueuePayload>(message.Payload.Span);
+    }
+    catch
+    {
+    }
+
+    return new ClaimedMessageDto
+    {
+      Id = message.Id,
+      Name = message.Name,
+      Message = payload?.Message ?? string.Empty,
+      Token = payload?.Token,
+      Claims = payload?.Claims,
+      Attempts = message.Attempts,
+      CreatedUtc = message.CreatedUtc,
+      MessageKey = message.MessageKey,
+      TraceId = message.TraceId
+    };
+  }
+
+  private sealed record QueuePayload(string Message, string? Token, string? Claims);
 }

@@ -14,6 +14,7 @@
     <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Shouldly" />
     <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Moq" />
     <PackageReference Include="Volo.Abp.TestBase" />
     <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Volo.Abp.Autofac" />

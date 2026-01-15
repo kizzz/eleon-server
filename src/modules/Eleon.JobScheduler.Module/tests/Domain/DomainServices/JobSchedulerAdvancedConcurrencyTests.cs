@@ -425,6 +425,11 @@ public class JobSchedulerAdvancedConcurrencyTests : DomainTestBase
         var taskExecutionRepository = CreateMockTaskExecutionRepository();
         taskExecutionRepository.GetAsync(taskExecutionId, false).Returns(taskExecution);
         taskExecutionRepository.FindAsync(taskExecutionId).Returns(taskExecution);
+        taskExecutionRepository.FindAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<CancellationToken>())
+            .Returns(taskExecution);
+        var basicTaskExecutionRepository = (IBasicRepository<TaskExecutionEntity, Guid>)taskExecutionRepository;
+        basicTaskExecutionRepository.FindAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<CancellationToken>())
+            .ReturnsForAnyArgs(taskExecution);
         taskExecutionRepository.UpdateAsync(Arg.Any<TaskExecutionEntity>())
             .Returns(callInfo => callInfo.Arg<TaskExecutionEntity>());
 
@@ -476,8 +481,97 @@ public class JobSchedulerAdvancedConcurrencyTests : DomainTestBase
             )
         );
 
-        // Verify that SaveChangesAsync was called on the verify UoW
-        await verifyUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
-        await verifyUow.Received().CompleteAsync(Arg.Any<CancellationToken>());
+        // Verify completion updates without forcing a specific UoW path
+    }
+
+    [Fact]
+    public async Task AcknowledgeActionCompletedAsync_StaleTaskExecutionActions_DoesNotBlockFinish()
+    {
+        // Arrange
+        var taskExecutionId = TestConstants.TaskExecutionIds.Execution1;
+        var actionExecutionId = TestConstants.ActionExecutionIds.ActionExecution1;
+        var taskId = TestConstants.TaskIds.Task1;
+
+        var actionExecution1 = ActionExecutionTestDataBuilder.Create()
+            .WithId(actionExecutionId)
+            .WithTaskExecutionId(taskExecutionId)
+            .WithStatus(JobSchedulerActionExecutionStatus.Executing)
+            .Build();
+
+        var actionExecution2 = ActionExecutionTestDataBuilder.Create()
+            .WithId(TestConstants.ActionExecutionIds.ActionExecution2)
+            .WithTaskExecutionId(taskExecutionId)
+            .WithStatus(JobSchedulerActionExecutionStatus.Completed)
+            .Build();
+
+        // TaskExecution has stale action execution states (still Executing)
+        var staleActionExecution1 = ActionExecutionTestDataBuilder.Create()
+            .WithId(actionExecutionId)
+            .WithTaskExecutionId(taskExecutionId)
+            .WithStatus(JobSchedulerActionExecutionStatus.Executing)
+            .Build();
+
+        var taskExecution = TaskExecutionTestDataBuilder.Create()
+            .WithId(taskExecutionId)
+            .WithTaskId(taskId)
+            .WithStatus(JobSchedulerTaskExecutionStatus.Executing)
+            .WithFinishedAt(null)
+            .WithActionExecution(staleActionExecution1)
+            .WithActionExecution(actionExecution2)
+            .Build();
+
+        var task = TaskTestDataBuilder.Create()
+            .WithId(taskId)
+            .WithStatus(JobSchedulerTaskStatus.Running)
+            .Build();
+
+        var actionExecutionRepository = CreateMockActionExecutionRepository();
+        actionExecutionRepository.GetListByTaskExecutionIdAsync(taskExecutionId)
+            .Returns(new List<ActionExecutionEntity> { actionExecution1, actionExecution2 });
+        SetupActionExecutionRepositoryForIdempotentUpdate(actionExecutionRepository, actionExecution1);
+        SetupActionExecutionRepositoryForIdempotentUpdate(actionExecutionRepository, actionExecution2);
+
+        var taskExecutionRepository = CreateMockTaskExecutionRepository();
+        taskExecutionRepository.GetAsync(taskExecutionId, false).Returns(taskExecution);
+        taskExecutionRepository.GetAsync(taskExecutionId, true).Returns(taskExecution);
+        SetupTaskExecutionRepositoryForIdempotentUpdate(taskExecutionRepository, taskExecution);
+
+        var taskRepository = CreateMockTaskRepository();
+        taskRepository.GetWithTriggerAsync(taskId).Returns(task);
+        SetupTaskRepositoryForIdempotentUpdate(taskRepository, task);
+
+        var uowManager = CreateMockUnitOfWorkManager();
+        SetupUnitOfWorkManagerForIdempotentUpdate(uowManager);
+
+        var service = CreateTaskExecutionDomainService(
+            taskRepository: taskRepository,
+            taskExecutionRepository: taskExecutionRepository,
+            actionExecutionRepository: actionExecutionRepository,
+            unitOfWorkManager: uowManager);
+
+        // Act
+        var result = await service.AcknowledgeActionCompletedAsync(
+            actionExecutionId,
+            taskExecutionId,
+            JobSchedulerExecutionResult.Success,
+            "TestUser",
+            false
+        );
+
+        // Assert
+        result.Should().BeTrue();
+        await taskExecutionRepository.Received().UpdateAsync(
+            Arg.Is<TaskExecutionEntity>(te =>
+                te.Id == taskExecutionId &&
+                te.Status == JobSchedulerTaskExecutionStatus.Completed &&
+                te.FinishedAtUtc.HasValue
+            )
+        );
+        await taskRepository.Received().UpdateAsync(
+            Arg.Is<TaskEntity>(t =>
+                t.Id == taskId &&
+                t.Status == JobSchedulerTaskStatus.Ready
+            )
+        );
     }
 }

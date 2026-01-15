@@ -7,6 +7,7 @@ using Logging.Module;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Linq;
 using System.Text.Json;
 using Volo.Abp.Data;
@@ -14,6 +15,7 @@ using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.Security.Claims;
+using EventManagementModule.Module.Domain.Shared.Queues;
 using VPortal.EventManagementModule.Module.Localization;
 
 namespace EventManagementModule.Domain.EventServices;
@@ -27,6 +29,8 @@ public class EventDomainService : DomainService
   private readonly IStringLocalizer<EventManagementModuleResource> localizer;
   private readonly ICurrentPrincipalAccessor _currentPrincipalAccessor;
   private readonly IUserTokenProvider _userTokenProvider;
+  private readonly IQueueEngine _queueEngine;
+  private readonly QueueEngineOptions _queueEngineOptions;
 
   public EventDomainService(
       IVportalLogger<EventDomainService> logger,
@@ -36,7 +40,9 @@ public class EventDomainService : DomainService
       QueueDefinitionDomainService queueDefinitionDomainService,
       IStringLocalizer<EventManagementModuleResource> localizer,
       ICurrentPrincipalAccessor currentPrincipalAccessor,
-      IUserTokenProvider userTokenProvider)
+      IUserTokenProvider userTokenProvider,
+      IQueueEngine queueEngine,
+      IOptions<QueueEngineOptions> queueEngineOptions)
   {
     this.logger = logger;
     this.queueDefenitionRepository = queueDefinitionRepository;
@@ -46,6 +52,8 @@ public class EventDomainService : DomainService
     this.localizer = localizer;
     _currentPrincipalAccessor = currentPrincipalAccessor;
     _userTokenProvider = userTokenProvider;
+    _queueEngine = queueEngine;
+    _queueEngineOptions = queueEngineOptions.Value;
   }
 
   public async Task<KeyValuePair<long, List<EventEntity>>> GetPagedListAsync(
@@ -110,7 +118,7 @@ public class EventDomainService : DomainService
 
   }
 
-  private async Task<List<QueueEntity>> GetQueuesForMessageAsync(string queueName, string eventName)
+  protected virtual async Task<List<QueueEntity>> GetQueuesForMessageAsync(string queueName, string eventName)
   {
     var queues = (
         await queueRepository.GetDbSetAsync())
@@ -167,7 +175,48 @@ public class EventDomainService : DomainService
           eventEntity.SetProperty("Claims", claims);
           eventEntity.SetProperty("Token", _userTokenProvider.Token);
 
-          await queueRepository.EnqueueAsync(queue.Id, eventEntity);
+          if (_queueEngineOptions.QueueEngineMode is QueueEngineMode.LinkedList or QueueEngineMode.DualWrite)
+          {
+            await queueRepository.EnqueueAsync(queue.Id, eventEntity);
+          }
+
+          if (_queueEngineOptions.QueueEngineMode is QueueEngineMode.SqlClaim or QueueEngineMode.DualWrite)
+          {
+            var payload = new QueuePayload(message, _userTokenProvider.Token, claims);
+            var payloadBytes = JsonSerializer.SerializeToUtf8Bytes(payload);
+            var messageKey = eventEntity.Id.ToString("N");
+
+            await _queueEngine.EnqueueManyAsync(
+                new QueueKey(queue.Id, queue.TenantId, 0),
+                new[]
+                {
+                  new QueueMessageToEnqueue(
+                      eventName,
+                      payloadBytes,
+                      "application/json",
+                      "utf-8",
+                      messageKey,
+                      null)
+                },
+                CancellationToken.None);
+
+            if (_queueEngineOptions.ShadowVerificationEnabled)
+            {
+              var sampleRate = Math.Max(1, _queueEngineOptions.ShadowVerificationSampleRate);
+              if (Random.Shared.Next(sampleRate) == 0)
+              {
+                var exists = await _queueEngine.ExistsMessageKeyAsync(
+                    new QueueKey(queue.Id, queue.TenantId, 0),
+                    messageKey,
+                    CancellationToken.None);
+
+                if (!exists)
+                {
+                  logger.Log.LogError("Shadow verification failed for queue {QueueId} messageKey {MessageKey}", queue.Id, messageKey);
+                }
+              }
+            }
+          }
         }
         catch (Exception ex)
         {
@@ -210,6 +259,26 @@ public class EventDomainService : DomainService
       {
         result = (new List<EventEntity>(), EventManagementDefaults.QueueStatuses.NotFound, 0);
       }
+      else if (_queueEngineOptions.ConsumerMode == ConsumerMode.SqlClaim)
+      {
+        var lockId = Guid.NewGuid();
+        var claimed = await _queueEngine.ClaimManyAsync(
+            new QueueKey(queue.Id, queue.TenantId, 0),
+            new ClaimOptions(count, lockId, TimeSpan.FromSeconds(EventManagementDefaults.DefaultClaimLockSeconds)),
+            CancellationToken.None);
+
+        var messages = claimed.Select(c => MapClaimedToEventEntity(c, queue.TenantId)).ToList();
+        if (claimed.Count > 0)
+        {
+          await _queueEngine.AckAsync(lockId, claimed.Select(c => c.Id).ToList(), CancellationToken.None);
+        }
+
+        var pendingCount = await _queueEngine.GetPendingCountAsync(
+            new QueueKey(queue.Id, queue.TenantId, 0),
+            CancellationToken.None);
+
+        result = (messages, EventManagementDefaults.QueueStatuses.Ok, (int)Math.Min(int.MaxValue, pendingCount));
+      }
       else
       {
         var messages = await queueRepository.DequeueManyAsync(queue.Id, count);
@@ -229,6 +298,84 @@ public class EventDomainService : DomainService
 
     return result;
   }
+
+  public async Task<(Guid LockId, List<ClaimedQueueMessage> Messages, string Status, int PendingCount)> ClaimManyAsync(string queueName, int count, int lockSeconds)
+  {
+    if (count <= 0)
+    {
+      logger.Log.LogWarning("Invalid recieve messages count - {0}", count);
+      throw new ArgumentException(localizer["Event:RecieveCount:MustBeGratherThanZero"], nameof(count));
+    }
+
+    if (count > EventManagementDefaults.MaxReceiveMessagesCount)
+    {
+      logger.Log.LogWarning("Recieve messages count ({0}) was automaticaly changed by max value ({1})",
+          count, EventManagementDefaults.MaxReceiveMessagesCount);
+      count = EventManagementDefaults.MaxReceiveMessagesCount;
+    }
+
+    var queue = await queueDomainService.GetAsync(queueName);
+    if (queue == null)
+    {
+      return (Guid.Empty, new List<ClaimedQueueMessage>(), EventManagementDefaults.QueueStatuses.NotFound, 0);
+    }
+
+    var lockId = Guid.NewGuid();
+    var claimed = await _queueEngine.ClaimManyAsync(
+        new QueueKey(queue.Id, queue.TenantId, 0),
+        new ClaimOptions(count, lockId, TimeSpan.FromSeconds(lockSeconds)),
+        CancellationToken.None);
+
+    var pendingCount = await _queueEngine.GetPendingCountAsync(
+        new QueueKey(queue.Id, queue.TenantId, 0),
+        CancellationToken.None);
+
+    return (lockId, claimed.ToList(), EventManagementDefaults.QueueStatuses.Ok, (int)Math.Min(int.MaxValue, pendingCount));
+  }
+
+  public Task AckAsync(Guid lockId, IReadOnlyList<Guid> messageIds)
+  {
+    return _queueEngine.AckAsync(lockId, messageIds, CancellationToken.None);
+  }
+
+  public Task NackAsync(Guid lockId, Guid messageId, int maxAttempts, int delaySeconds, string error)
+  {
+    return _queueEngine.NackAsync(lockId, messageId, new NackOptions(maxAttempts, TimeSpan.FromSeconds(delaySeconds), error), CancellationToken.None);
+  }
+
+  private static EventEntity MapClaimedToEventEntity(ClaimedQueueMessage claimed, Guid? tenantId)
+  {
+    QueuePayload? payload = null;
+    try
+    {
+      payload = JsonSerializer.Deserialize<QueuePayload>(claimed.Payload.Span);
+    }
+    catch
+    {
+      // ignore malformed payloads, keep raw message empty
+    }
+
+    var entity = new EventEntity(claimed.Id)
+    {
+      Name = claimed.Name,
+      Message = payload?.Message ?? string.Empty,
+      TenantId = tenantId
+    };
+
+    if (!string.IsNullOrWhiteSpace(payload?.Claims))
+    {
+      entity.SetProperty("Claims", payload.Claims);
+    }
+
+    if (!string.IsNullOrWhiteSpace(payload?.Token))
+    {
+      entity.SetProperty("Token", payload.Token);
+    }
+
+    return entity;
+  }
+
+  private sealed record QueuePayload(string Message, string? Token, string? Claims);
 
   public async Task<EventEntity> GetAsync(Guid messageId)
   {

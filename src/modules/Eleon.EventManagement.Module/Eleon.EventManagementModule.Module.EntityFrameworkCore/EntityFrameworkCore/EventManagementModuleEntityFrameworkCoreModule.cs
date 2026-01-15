@@ -1,9 +1,11 @@
 ﻿using EventManagementModule.Module.Domain.Shared.Entities;
+using EventManagementModule.Module.Domain.Shared.Queues;
 using EventManagementModule.Module.Domain.Shared.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.Modularity;
 using VPortal.EventManagementModule.Module.EntityFrameworkCor.Repositories;
+using VPortal.EventManagementModule.Module.EntityFrameworkCore.Queues;
 
 namespace VPortal.EventManagementModule.Module.EntityFrameworkCore;
 
@@ -20,5 +22,7 @@ public class EventManagementModuleEntityFrameworkCoreModule : AbpModule
       options.AddRepository<QueueDefinitionEntity, QueueDefinitionRepository>();
       options.AddRepository<QueueEntity, QueueRepository>();
     });
+
+    context.Services.AddTransient<IQueueEngine, SqlClaimQueueEngine>();
   }
 }

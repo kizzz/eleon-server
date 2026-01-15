@@ -13,6 +13,8 @@ public class EventManagementModuleDbContext : AbpDbContext<EventManagementModule
   public DbSet<QueueDefinitionEntity> EventManagementQueueDefenition { get; set; }
   public DbSet<QueueEntity> EventManagementQueues { get; set; }
   public DbSet<EventEntity> EventManagementEvents { get; set; }
+  public DbSet<EventQueueMessageEntity> EventQueueMessages { get; set; }
+  public DbSet<EventQueueMessageBodyEntity> EventQueueMessageBodies { get; set; }
 
   //public DbSet<ForwarderEntity> EventManagementForwarders { get; set; }
   //public DbSet<QueueForwarderEntity> EventManagementQueueForwarderRelations { get; set; }
@@ -42,6 +44,56 @@ public class EventManagementModuleDbContext : AbpDbContext<EventManagementModule
 
     builder.Entity<EventEntity>()
         .HasIndex(m => m.QueueId);
+
+    builder.Entity<EventQueueMessageEntity>(b =>
+    {
+      b.HasKey(x => x.Id).IsClustered(false);
+
+      b.Property(x => x.Lane).HasDefaultValue((byte)0);
+      b.Property(x => x.EnqueueSeq).UseIdentityColumn();
+      b.Property(x => x.Name).HasMaxLength(256).IsRequired();
+      b.Property(x => x.Status).IsRequired();
+      b.Property(x => x.Attempts).HasDefaultValue(0);
+      b.Property(x => x.CreatedUtc).HasDefaultValueSql("SYSUTCDATETIME()");
+      b.Property(x => x.MessageKey).HasMaxLength(128);
+      b.Property(x => x.TraceId).HasMaxLength(64);
+      b.Property(x => x.LastError).HasMaxLength(1024);
+
+      b.HasIndex(x => new { x.QueueId, x.Lane, x.Status, x.EnqueueSeq })
+          .IsClustered()
+          .IncludeProperties(x => new
+          {
+            x.Id,
+            x.Name,
+            x.TenantId,
+            x.CreatedUtc,
+            x.Attempts,
+            x.VisibleAfterUtc,
+            x.LockedUntilUtc,
+            x.MessageKey,
+            x.TraceId
+          });
+
+      b.HasIndex(x => new { x.QueueId, x.Lane, x.Status, x.LockedUntilUtc })
+          .IncludeProperties(x => new { x.Id, x.EnqueueSeq });
+
+      b.HasIndex(x => new { x.QueueId, x.Lane, x.MessageKey })
+          .IsUnique()
+          .HasFilter("[MessageKey] IS NOT NULL");
+
+      b.HasOne(x => x.Body)
+          .WithOne(x => x.Message)
+          .HasForeignKey<EventQueueMessageBodyEntity>(x => x.Id)
+          .OnDelete(DeleteBehavior.Cascade);
+    });
+
+    builder.Entity<EventQueueMessageBodyEntity>(b =>
+    {
+      b.HasKey(x => x.Id);
+      b.Property(x => x.Payload).IsRequired();
+      b.Property(x => x.ContentType).HasMaxLength(64).HasDefaultValue("application/json");
+      b.Property(x => x.Encoding).HasMaxLength(32);
+    });
 
     //builder.Entity<ForwarderEntity>()
     //    .HasIndex(m => m.TenantId);

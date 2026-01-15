@@ -517,6 +517,11 @@
           "Serilog": "4.0.0"
         }
       },
+      "Swashbuckle.AspNetCore.SwaggerUI": {
+        "type": "Transitive",
+        "resolved": "9.0.4",
+        "contentHash": "2ugT2OvZsKHqk/2rMDmuqDuFmtix0NvzlXxAfnfHROVMTovbx7Z0UsOQHZa462DBTgdBFnR2Ss6wm4fypfymdA=="
+      },
       "System.ClientModel": {
         "type": "Transitive",
         "resolved": "1.5.1",
@@ -1745,12 +1750,6 @@
         "dependencies": {
           "Swashbuckle.AspNetCore.Swagger": "9.0.4"
         }
-      },
-      "Swashbuckle.AspNetCore.SwaggerUI": {
-        "type": "CentralTransitive",
-        "requested": "[10.1.0, )",
-        "resolved": "9.0.4",
-        "contentHash": "2ugT2OvZsKHqk/2rMDmuqDuFmtix0NvzlXxAfnfHROVMTovbx7Z0UsOQHZa462DBTgdBFnR2Ss6wm4fypfymdA=="
       },
       "System.Data.SqlClient": {
         "type": "CentralTransitive",

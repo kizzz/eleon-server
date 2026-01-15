@@ -1,4 +1,4 @@
-﻿using Common.Module.Constants;
+using Common.Module.Constants;
 using EleonsoftModuleCollector.Notificator.Module.Notificator.Module.Domain.Managers;
 using EleonsoftSdk.modules.Messaging.Module.SystemMessages.Notificator.NotificationType;
 using Messaging.Module.ETO;
@@ -32,6 +32,6 @@ public class PushNotificationHandler : INotificationHandler<PushNotificationType
       userIds.AddRange(resolvedIds);
     }
 
-    await _pushNotificator.SendPushAsync(userIds, notification.Message, type.DataParams, type.IsLocalizedData, null, type.ApplicationName, notification.Priority);
+    await _pushNotificator.SendPushAsync(userIds, notification.Message, type.LanguageKeyParams, type.IsLocalizedData, null, type.ApplicationName, notification.Priority);
   }
 }

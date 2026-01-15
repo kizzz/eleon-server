@@ -246,7 +246,7 @@ namespace EleonsoftProxy.Model
         /// Gets or Sets DataParams
         /// </summary>
         [JsonPropertyName("dataParams")]
-        public List<string> DataParams { get { return this.DataParamsOption; } set { this.DataParamsOption = new(value); } }
+        public List<string> LanguageKeyParams { get { return this.DataParamsOption; } set { this.DataParamsOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Platform
@@ -358,7 +358,7 @@ namespace EleonsoftProxy.Model
             sb.Append("  IsRedirectEnabled: ").Append(IsRedirectEnabled).Append("\n");
             sb.Append("  TemplateName: ").Append(TemplateName).Append("\n");
             sb.Append("  RedirectUrl: ").Append(RedirectUrl).Append("\n");
-            sb.Append("  DataParams: ").Append(DataParams).Append("\n");
+            sb.Append("  DataParams: ").Append(LanguageKeyParams).Append("\n");
             sb.Append("  Platform: ").Append(Platform).Append("\n");
             sb.Append("  ChannelId: ").Append(ChannelId).Append("\n");
             sb.Append("  IsHtml: ").Append(IsHtml).Append("\n");
@@ -679,7 +679,7 @@ public void WriteProperties(Utf8JsonWriter writer, NotificatorNotificationDto no
         if (notificatorNotificationDto.DataParamsOption.Value != null)
         {
             writer.WritePropertyName("dataParams");
-            JsonSerializer.Serialize(writer, notificatorNotificationDto.DataParams, jsonSerializerOptions);
+            JsonSerializer.Serialize(writer, notificatorNotificationDto.LanguageKeyParams, jsonSerializerOptions);
         }
         else
         {

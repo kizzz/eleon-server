@@ -58,7 +58,7 @@ public class MessageNotificationType : AbstractNotificationType
   public bool IsRedirectEnabled { get; set; }
   public string TemplateName { get; set; }
   public string RedirectUrl { get; set; }
-  public List<string> DataParams { get; set; }
+  public List<string> LanguageKeyParams { get; set; }
 }
 
 public class SystemNotificationType : AbstractNotificationType
@@ -68,13 +68,15 @@ public class SystemNotificationType : AbstractNotificationType
   public Dictionary<string, string> ExtraProperties { get; set; } = new Dictionary<string, string>();
   public SystemLogLevel LogLevel { get; set; } = SystemLogLevel.Info;
   public bool WriteLog { get; set; } = true;
+  public string TgMessage { get; set; }
+  public string EmailMessage { get; set; }
 }
 
 public class PushNotificationType : AbstractNotificationType
 {
   public string? ApplicationName { get; set; } = StaticServicesAccessor.GetConfiguration()?.GetValue<string>("NotificationApplication");
   public bool IsLocalizedData { get; set; } = false;
-  public List<string> DataParams { get; set; }
+  public List<string> LanguageKeyParams { get; set; }
 
   public const string TypeConst = "Push";
   public override string Type => TypeConst;
@@ -82,7 +84,7 @@ public class PushNotificationType : AbstractNotificationType
 
 public class TwoFactorNotificationType : AbstractNotificationType
 {
-  public const string TypeConst = "TwoFactor";
+  public const string TypeConst = "TwoFactor"; 
   public override string Type => TypeConst;
   public string UserName { get; set; }
   public FullSessionInformation Session { get; set; }
@@ -90,7 +92,7 @@ public class TwoFactorNotificationType : AbstractNotificationType
 
 public class SmsNotificationType : AbstractNotificationType
 {
-  public const string TypeConst = "SMS";
+  public const string TypeConst = "SMS"; 
   public override string Type => TypeConst;
 }
 

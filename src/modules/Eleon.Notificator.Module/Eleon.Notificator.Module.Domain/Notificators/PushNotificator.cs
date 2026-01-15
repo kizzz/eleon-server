@@ -38,13 +38,13 @@ namespace VPortal.Notificator.Module.Notificators.Implementations
       _systemHubContext = systemHubContext;
     }
 
-    public async Task SendPushAsync(List<Guid> userIds, string message, List<string> dataParams, bool isLocalizedData, string redirectUrl, string applicationName, NotificationPriority priority, NotificationSourceType sourceType = NotificationSourceType.Notification, bool isNewMessage = true)
+    public async Task SendPushAsync(List<Guid> userIds, string message, List<string> languageKeyParams, bool isLocalizedData, string redirectUrl, string applicationName, NotificationPriority priority, NotificationSourceType sourceType = NotificationSourceType.Notification, bool isNewMessage = true)
     {
       var notification = new PushNotificationValueObject
       {
         CreationTime = DateTime.UtcNow,
         Content = message,
-        DataParams = dataParams,
+        LanguageKeyParams = languageKeyParams,
         IsLocalizedData = isLocalizedData,
         IsRedirectEnabled = !string.IsNullOrWhiteSpace(redirectUrl),
         RedirectUrl = redirectUrl,
@@ -56,13 +56,13 @@ namespace VPortal.Notificator.Module.Notificators.Implementations
       await webPushDomainService.PushMessage(userIds, message, sourceType);
     }
 
-    public async Task SendSystemAsync(List<Guid> userIds, string message, List<string> dataParams, bool isLocalizedData, NotificationPriority priority, NotificationSourceType sourceType = NotificationSourceType.Notification)
+    public async Task SendSystemAsync(List<Guid> userIds, string message, List<string> languageKeyParams, bool isLocalizedData, NotificationPriority priority, NotificationSourceType sourceType = NotificationSourceType.Notification)
     {
       var notification = new PushNotificationValueObject
       {
         CreationTime = DateTime.UtcNow,
         Content = message,
-        DataParams = dataParams,
+        LanguageKeyParams = languageKeyParams,
         IsLocalizedData = isLocalizedData,
         IsRedirectEnabled = false,
         RedirectUrl = string.Empty,

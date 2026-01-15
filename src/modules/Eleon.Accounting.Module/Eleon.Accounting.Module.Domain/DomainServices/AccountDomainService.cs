@@ -349,7 +349,7 @@ namespace VPortal.Accounting.Module.DomainServices
             Id = notificationGuid,
             Message = string.Join(",", owner.UserName,
                                   owner.Email),
-            Type = new MessageNotificationType { TemplateName = AccountingTemplateConsts.ResendAccountInfoTemplate, DataParams = [] },
+            Type = new MessageNotificationType { TemplateName = AccountingTemplateConsts.ResendAccountInfoTemplate, LanguageKeyParams = [] },
             Recipients = new List<RecipientEto>()
                         {
                             new RecipientEto()

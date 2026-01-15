@@ -146,13 +146,13 @@ public static class ConfigureDefaultLoggerHelper
       Log.Error(ex, "Sentry configuration failed");
     }
 
-    if (isSentryConfigInited)
+    if (isSentryConfigInited && sentryEnable)
     {
       try
       {
         SentrySdk.Init(o =>
         {
-          o.Dsn = sentryEnable ? sentryDsn : "";
+          o.Dsn = sentryDsn;
           // When configuring for the first time, to see what the SDK is doing:
           o.Debug = sentryDebug;
           o.Environment = sentryEnvironment;

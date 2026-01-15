@@ -149,12 +149,14 @@ namespace VPortal.JobScheduler.Module.DomainServices
                 actionExecutionId,
                 actionExecution.Status
               );
-              var anyExecutingActionAfterIdempotent = actionExecutions.Any(x =>
+              var actionExecutionsAfterIdempotent =
+                await actionExecutionRepository.GetListByTaskExecutionIdAsync(taskExecutionId);
+              var anyExecutingActionAfterIdempotent = actionExecutionsAfterIdempotent.Any(x =>
                 x.Status == JobSchedulerActionExecutionStatus.Executing
               );
               if (!anyExecutingActionAfterIdempotent)
               {
-                await FinishTaskExecutionAsync(taskExecution, actionExecutions);
+                await FinishTaskExecutionAsync(taskExecution, actionExecutionsAfterIdempotent);
               }
               await uow.CompleteAsync();
               return true;
@@ -197,13 +199,15 @@ namespace VPortal.JobScheduler.Module.DomainServices
               );
             }
 
-            bool anyExecutingAction = actionExecutions.Any(x =>
+            var actionExecutionsAfterUpdate =
+              await actionExecutionRepository.GetListByTaskExecutionIdAsync(taskExecutionId);
+            bool anyExecutingAction = actionExecutionsAfterUpdate.Any(x =>
               x.Status == JobSchedulerActionExecutionStatus.Executing
             );
 
             if (!anyExecutingAction)
             {
-              await FinishTaskExecutionAsync(taskExecution, actionExecutions);
+              await FinishTaskExecutionAsync(taskExecution, actionExecutionsAfterUpdate);
             }
 
             await _eventBus.PublishAsync(

@@ -27,11 +27,21 @@ public class DefaultExceptionClassifierTests
   }
 
   [Fact]
+  public void Classify_returns_business_for_missing_session_id()
+  {
+    var classifier = new DefaultExceptionClassifier();
+
+    var result = classifier.Classify(new InvalidOperationException("Check session endpoint enabled, but SessionId is missing"));
+
+    Assert.Equal(ExceptionKind.Business, result);
+  }
+
+  [Fact]
   public void Classify_returns_unexpected_for_other_exceptions()
   {
     var classifier = new DefaultExceptionClassifier();
 
-    var result = classifier.Classify(new InvalidOperationException());
+    var result = classifier.Classify(new InvalidOperationException("boom"));
 
     Assert.Equal(ExceptionKind.Unexpected, result);
   }

@@ -1,4 +1,4 @@
-﻿using EventManagementModule.Module.Domain.Shared.Entities;
+using EventManagementModule.Module.Domain.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 using Migrations.Module;
 using SharedCollector.modules.Migration.Module.Extensions;
@@ -93,6 +93,8 @@ public class EventManagementModuleDbContext : AbpDbContext<EventManagementModule
       b.Property(x => x.Payload).IsRequired();
       b.Property(x => x.ContentType).HasMaxLength(64).HasDefaultValue("application/json");
       b.Property(x => x.Encoding).HasMaxLength(32);
+      b.HasQueryFilter(body => !IsMultiTenantFilterEnabled
+          || (body.Message != null && body.Message.TenantId == CurrentTenantId));
     });
 
     //builder.Entity<ForwarderEntity>()

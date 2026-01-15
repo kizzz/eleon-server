@@ -21,7 +21,7 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             Type = TemplateType.Action,
             TemplateContent = """
             {
-              "SystemLogLevel": "Info",
+              "SystemLogLevel": 0,
               "Message": "Info system log"
             }
             """,
@@ -201,7 +201,7 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             }
             """,
             Format = TextFormat.Json,
-            TemplateId = "SendSocialNotification",
+            TemplateId = "SendMessageNotification",
             IsSystem = true,
           }
       }

@@ -40,7 +40,7 @@ public class ShrinkSystemLogsBackgroundJob : DefaultBackgroundJob, ITransientDep
 
     if (args.MaxAgeMinutes.HasValue)
     {
-      olderThan.AddMinutes(-args.MaxAgeMinutes.Value);
+      olderThan = olderThan.AddMinutes(-args.MaxAgeMinutes.Value);
     }
 
     var count = await _systemLogRepository.ShrinkAsync(olderThan);

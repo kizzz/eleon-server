@@ -216,8 +216,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
               await FinishTaskExecutionAsync(taskExecution, actionExecutionsAfterUpdate);
             }
 
-            logger.Log.LogCritical($"Finished: t:{taskExecution.Id} a:{actionExecution.Id} {actionExecution.ActionName} status:{anyExecutingAction}:{actionExecutionsAfterUpdate.Where(x => x.Status == JobSchedulerActionExecutionStatus.Executing).Select(x => x.ActionName).JoinAsString(", ")}");
-
             await _eventBus.PublishAsync(
               new JobSchedulerActionExecutionCompletedMsg
               {

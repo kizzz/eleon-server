@@ -339,6 +339,13 @@ public class SystemLogDomainService : DomainService
     try
     {
       await _repository.MarkAllReadedAsync();
+      var admins = await _userManager.GetUsersInRoleAsync(MigrationConsts.AdminRoleNameDefaultValue);
+
+      var adminIds = admins.Select(a => a.Id).ToList();
+
+      await systemLogHubContext.PushSystemLogAsync(
+          adminIds,
+          new SystemLogEntity());
     }
     catch (Exception ex)
     {
@@ -369,6 +376,13 @@ public class SystemLogDomainService : DomainService
       try
       {
         await _repository.UpdateAsync(log, true);
+        var admins = await _userManager.GetUsersInRoleAsync(MigrationConsts.AdminRoleNameDefaultValue);
+
+        var adminIds = admins.Select(a => a.Id).ToList();
+
+        await systemLogHubContext.PushSystemLogAsync(
+            adminIds,
+            new SystemLogEntity());
       }
       catch (AbpDbConcurrencyException ex)
       {

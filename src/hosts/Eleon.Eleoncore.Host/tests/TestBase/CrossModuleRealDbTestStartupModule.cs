@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Common.EventBus.Abstractions.Module;
 using Common.EventBus.Module;
+using Eleonsoft.Host;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +12,6 @@ using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Sqlite;
 using Volo.Abp.EntityFrameworkCore.SqlServer;
 using Volo.Abp.Modularity;
-using Eleonsoft.Host;
 
 namespace Eleonsoft.Host.Test.TestBase;
 
@@ -47,7 +47,9 @@ public class CrossModuleRealDbTestStartupModule : AbpModule
       { "EventBus:Provider", EventBusProvider.InMemory.ToString() },
     };
 
-    var realDbConnectionString = Environment.GetEnvironmentVariable("ELEON_TEST_REAL_DB_CONNECTION_STRING");
+    var realDbConnectionString = Environment.GetEnvironmentVariable(
+      "ELEON_TEST_REAL_DB_CONNECTION_STRING"
+    );
     if (!string.IsNullOrWhiteSpace(realDbConnectionString))
     {
       overrides["ConnectionStrings:Default"] = realDbConnectionString;
@@ -82,13 +84,17 @@ public class CrossModuleRealDbTestStartupModule : AbpModule
           configurationContext.UseSqlServer(
             connectionString,
             opt =>
-                {
-                  opt.UseCompatibilityLevel(context.Services.GetConfiguration().GetValue("SqlServer:CompatibilityLevel", 120));
-                  opt.EnableRetryOnFailure(
-                      maxRetryCount: 5,
-                      maxRetryDelay: TimeSpan.FromSeconds(30),
-                      errorNumbersToAdd: null);
-                });
+            {
+              opt.UseCompatibilityLevel(
+                context.Services.GetConfiguration().GetValue("SqlServer:CompatibilityLevel", 120)
+              );
+              opt.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null
+              );
+            }
+          );
         });
       });
       return;

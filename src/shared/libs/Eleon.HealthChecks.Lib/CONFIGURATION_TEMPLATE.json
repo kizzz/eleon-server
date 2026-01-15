@@ -46,14 +46,6 @@
       "CpuThresholdPercent": 95,
       "MemoryThresholdPercent": 95
     },
-    "DiskSpaceCheck": {
-      "Items": [
-        {
-          "Path": "Logs",
-          "MaxSizeMb": 500
-        }
-      ]
-    },
     "SystemCheck": {
       "Enabled": true
     }

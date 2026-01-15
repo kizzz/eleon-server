@@ -40,7 +40,7 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             {
               "BankCode": "BLLI",
               "DataSourceKey": "SFTP",
-              "ReportRecepients": "vladymir.ogorodnytsky@eleonsoft.com",
+              "ReportRecepients": "example@mail.com",
               "EnablePostProcess": false,
               "RunDry": false,
               "DelayInMinutes": "0",
@@ -82,7 +82,7 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             TemplateContent = """
             {
               "Recipients": [
-                "vladymir.ogorodnytsky@eleonsoft.com"
+                "example@mail.com"
               ],
               "RecipientsType": "direct",
               "IsHtml": true,

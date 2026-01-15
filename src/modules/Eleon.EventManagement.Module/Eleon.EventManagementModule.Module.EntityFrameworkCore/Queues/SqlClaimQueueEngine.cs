@@ -23,44 +23,57 @@ public class SqlClaimQueueEngine : IQueueEngine
   private readonly IVportalLogger<SqlClaimQueueEngine> _logger;
 
   public SqlClaimQueueEngine(
-      EventManagementModuleDbContext dbContext,
-      IOptions<QueueEngineOptions> options,
-      IVportalLogger<SqlClaimQueueEngine> logger)
+    EventManagementModuleDbContext dbContext,
+    IOptions<QueueEngineOptions> options,
+    IVportalLogger<SqlClaimQueueEngine> logger
+  )
   {
     _dbContext = dbContext;
     _options = options.Value;
     _logger = logger;
   }
 
-  public async Task EnqueueManyAsync(QueueKey queue, IReadOnlyList<QueueMessageToEnqueue> messages, CancellationToken ct)
+  public async Task EnqueueManyAsync(
+    QueueKey queue,
+    IReadOnlyList<QueueMessageToEnqueue> messages,
+    CancellationToken ct
+  )
   {
     if (messages == null || messages.Count == 0)
     {
       return;
     }
 
-    await _dbContext.Database.OpenConnectionAsync(ct);
-    await using var transaction = await _dbContext.Database.BeginTransactionAsync(ct);
-    try
+    var strategy = _dbContext.Database.CreateExecutionStrategy();
+    await strategy.ExecuteAsync(async () =>
     {
-      var connection = _dbContext.Database.GetDbConnection();
-      var dbTransaction = transaction.GetDbTransaction();
+      await _dbContext.Database.OpenConnectionAsync(ct);
+      await using var transaction = await _dbContext.Database.BeginTransactionAsync(ct);
+      try
+      {
+        var connection = _dbContext.Database.GetDbConnection();
+        var dbTransaction = transaction.GetDbTransaction();
 
-      var ids = messages.Select(_ => Guid.NewGuid()).ToList();
-      await InsertMessagesAsync(connection, dbTransaction, queue, messages, ids, ct);
-      await InsertBodiesAsync(connection, dbTransaction, messages, ids, ct);
+        var ids = messages.Select(_ => Guid.NewGuid()).ToList();
+        await InsertMessagesAsync(connection, dbTransaction, queue, messages, ids, ct);
+        await InsertBodiesAsync(connection, dbTransaction, messages, ids, ct);
 
-      await transaction.CommitAsync(ct);
-    }
-    catch (Exception ex)
-    {
-      await transaction.RollbackAsync(ct);
-      _logger.CaptureAndSuppress(ex);
-      throw;
-    }
+        await transaction.CommitAsync(ct);
+      }
+      catch (Exception ex)
+      {
+        await transaction.RollbackAsync(ct);
+        _logger.CaptureAndSuppress(ex);
+        throw;
+      }
+    });
   }
 
-  public async Task<IReadOnlyList<ClaimedQueueMessage>> ClaimManyAsync(QueueKey queue, ClaimOptions options, CancellationToken ct)
+  public async Task<IReadOnlyList<ClaimedQueueMessage>> ClaimManyAsync(
+    QueueKey queue,
+    ClaimOptions options,
+    CancellationToken ct
+  )
   {
     var claimed = new List<ClaimedQueueMessage>();
     await _dbContext.Database.OpenConnectionAsync(ct);
@@ -80,21 +93,24 @@ public class SqlClaimQueueEngine : IQueueEngine
         continue;
       }
 
-      claimed.Add(item with
-      {
-        Payload = body.Payload,
-        ContentType = body.ContentType,
-        Encoding = body.Encoding
-      });
+      claimed.Add(
+        item with
+        {
+          Payload = body.Payload,
+          ContentType = body.ContentType,
+          Encoding = body.Encoding,
+        }
+      );
     }
 
     _logger.Log.LogInformation(
-        "Claimed {Count} messages (reclaimed {Reclaimed}) for queue {QueueId} lane {Lane} lock {LockId}",
-        claimed.Count,
-        reclaimedCount,
-        queue.QueueId,
-        queue.Lane,
-        options.LockId);
+      "Claimed {Count} messages (reclaimed {Reclaimed}) for queue {QueueId} lane {Lane} lock {LockId}",
+      claimed.Count,
+      reclaimedCount,
+      queue.QueueId,
+      queue.Lane,
+      options.LockId
+    );
 
     return claimed;
   }
@@ -105,7 +121,8 @@ public class SqlClaimQueueEngine : IQueueEngine
     var connection = _dbContext.Database.GetDbConnection();
 
     using var command = connection.CreateCommand();
-    command.CommandText = @"
+    command.CommandText =
+      @"
 SELECT COUNT_BIG(*)
 FROM EcEventQueueMessages
 WHERE QueueId = @QueueId
@@ -120,13 +137,18 @@ WHERE QueueId = @QueueId
     return result == null ? 0 : Convert.ToInt64(result);
   }
 
-  public async Task<bool> ExistsMessageKeyAsync(QueueKey queue, string messageKey, CancellationToken ct)
+  public async Task<bool> ExistsMessageKeyAsync(
+    QueueKey queue,
+    string messageKey,
+    CancellationToken ct
+  )
   {
     await _dbContext.Database.OpenConnectionAsync(ct);
     var connection = _dbContext.Database.GetDbConnection();
 
     using var command = connection.CreateCommand();
-    command.CommandText = @"
+    command.CommandText =
+      @"
 SELECT TOP (1) 1
 FROM EcEventQueueMessages
 WHERE QueueId = @QueueId
@@ -159,16 +181,26 @@ WHERE QueueId = @QueueId
     }
 
     await command.ExecuteNonQueryAsync(ct);
-    _logger.Log.LogInformation("Acked {Count} messages for lock {LockId}", messageIds.Count, lockId);
+    _logger.Log.LogInformation(
+      "Acked {Count} messages for lock {LockId}",
+      messageIds.Count,
+      lockId
+    );
   }
 
-  public async Task NackAsync(Guid lockId, Guid messageId, NackOptions options, CancellationToken ct)
+  public async Task NackAsync(
+    Guid lockId,
+    Guid messageId,
+    NackOptions options,
+    CancellationToken ct
+  )
   {
     await _dbContext.Database.OpenConnectionAsync(ct);
     var connection = _dbContext.Database.GetDbConnection();
 
     using var command = connection.CreateCommand();
-    command.CommandText = @"
+    command.CommandText =
+      @"
 UPDATE EcEventQueueMessages
 SET
   Status = CASE WHEN Attempts >= @MaxAttempts THEN @DeadStatus ELSE @PendingStatus END,
@@ -188,20 +220,22 @@ WHERE Id = @Id AND LockId = @LockId;";
 
     await command.ExecuteNonQueryAsync(ct);
     _logger.Log.LogWarning(
-        "Nack message {MessageId} for lock {LockId} (delay {DelaySeconds}s maxAttempts {MaxAttempts})",
-        messageId,
-        lockId,
-        (int)options.Delay.TotalSeconds,
-        options.MaxAttempts);
+      "Nack message {MessageId} for lock {LockId} (delay {DelaySeconds}s maxAttempts {MaxAttempts})",
+      messageId,
+      lockId,
+      (int)options.Delay.TotalSeconds,
+      options.MaxAttempts
+    );
   }
 
   private async Task InsertMessagesAsync(
-      DbConnection connection,
-      DbTransaction transaction,
-      QueueKey queue,
-      IReadOnlyList<QueueMessageToEnqueue> messages,
-      IReadOnlyList<Guid> ids,
-      CancellationToken ct)
+    DbConnection connection,
+    DbTransaction transaction,
+    QueueKey queue,
+    IReadOnlyList<QueueMessageToEnqueue> messages,
+    IReadOnlyList<Guid> ids,
+    CancellationToken ct
+  )
   {
     using var command = connection.CreateCommand();
     command.Transaction = transaction;
@@ -225,11 +259,12 @@ WHERE Id = @Id AND LockId = @LockId;";
   }
 
   private async Task InsertBodiesAsync(
-      DbConnection connection,
-      DbTransaction transaction,
-      IReadOnlyList<QueueMessageToEnqueue> messages,
-      IReadOnlyList<Guid> ids,
-      CancellationToken ct)
+    DbConnection connection,
+    DbTransaction transaction,
+    IReadOnlyList<QueueMessageToEnqueue> messages,
+    IReadOnlyList<Guid> ids,
+    CancellationToken ct
+  )
   {
     using var command = connection.CreateCommand();
     command.Transaction = transaction;
@@ -239,8 +274,8 @@ WHERE Id = @Id AND LockId = @LockId;";
     {
       var message = messages[i];
       var payloadBytes = _options.EnableCompression
-          ? Compress(message.Payload.ToArray())
-          : message.Payload.ToArray();
+        ? Compress(message.Payload.ToArray())
+        : message.Payload.ToArray();
 
       AddParameter(command, $"@Id{i}", ids[i]);
       AddParameter(command, $"@Payload{i}", payloadBytes);
@@ -252,13 +287,15 @@ WHERE Id = @Id AND LockId = @LockId;";
   }
 
   private async Task<(List<ClaimedQueueMessage> Messages, int ReclaimedCount)> ClaimMetadataAsync(
-      DbConnection connection,
-      QueueKey queue,
-      ClaimOptions options,
-      CancellationToken ct)
+    DbConnection connection,
+    QueueKey queue,
+    ClaimOptions options,
+    CancellationToken ct
+  )
   {
     using var command = connection.CreateCommand();
-    command.CommandText = @"
+    command.CommandText =
+      @"
 DECLARE @now datetime2(3) = SYSUTCDATETIME();
 
 ;WITH candidates AS (
@@ -311,7 +348,8 @@ OUTPUT
         reclaimedCount++;
       }
 
-      results.Add(new ClaimedQueueMessage(
+      results.Add(
+        new ClaimedQueueMessage(
           reader.GetGuid(0),
           reader.GetGuid(1),
           reader.GetByte(2),
@@ -323,16 +361,17 @@ OUTPUT
           reader.IsDBNull(8) ? null : reader.GetString(8),
           ReadOnlyMemory<byte>.Empty,
           "application/json",
-          null));
+          null
+        )
+      );
     }
 
     return (results, reclaimedCount);
   }
 
-  private async Task<Dictionary<Guid, (ReadOnlyMemory<byte> Payload, string ContentType, string? Encoding)>> LoadBodiesAsync(
-      DbConnection connection,
-      IReadOnlyList<Guid> ids,
-      CancellationToken ct)
+  private async Task<
+    Dictionary<Guid, (ReadOnlyMemory<byte> Payload, string ContentType, string? Encoding)>
+  > LoadBodiesAsync(DbConnection connection, IReadOnlyList<Guid> ids, CancellationToken ct)
   {
     if (ids.Count == 0)
     {
@@ -367,8 +406,11 @@ OUTPUT
 
   private static string BuildInsertMessagesSql(int count)
   {
-    var values = Enumerable.Range(0, count)
-        .Select(i => $"(@Id{i}, @TenantId, @QueueId, @Lane, @Name{i}, @Status, @MessageKey{i}, @TraceId{i})");
+    var values = Enumerable
+      .Range(0, count)
+      .Select(i =>
+        $"(@Id{i}, @TenantId, @QueueId, @Lane, @Name{i}, @Status, @MessageKey{i}, @TraceId{i})"
+      );
 
     return $@"
 INSERT INTO EcEventQueueMessages
@@ -378,8 +420,9 @@ VALUES {string.Join(", ", values)};";
 
   private static string BuildInsertBodiesSql(int count)
   {
-    var values = Enumerable.Range(0, count)
-        .Select(i => $"(@Id{i}, @Payload{i}, @ContentType{i}, @Encoding{i})");
+    var values = Enumerable
+      .Range(0, count)
+      .Select(i => $"(@Id{i}, @Payload{i}, @ContentType{i}, @Encoding{i})");
 
     return $@"
 INSERT INTO EcEventQueueMessageBodies

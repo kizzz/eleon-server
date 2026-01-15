@@ -193,20 +193,15 @@ public class TemplateManager : DomainService
   }
 
   public async Task<Template> ResetAsync(
-    Guid id,
+    string name,
+    TemplateType type,
     CancellationToken cancellationToken = default)
   {
-    var template = await _templateRepository.GetAsync(id, cancellationToken: cancellationToken);
-    if (!template.IsSystem)
-    {
-      throw new Exception("Only system templates can be reset.");
-    }
-
-    var system = FindByNameAndType(template.Name, template.Type);
+    var system = FindByNameAndType(name, type);
 
     return system ?? throw new BusinessException(ModuleErrorCodes.TemplateNotFound)
-          .WithData("Name", template.Name)
-          .WithData("Type", template.Type);
+          .WithData("Name", name)
+          .WithData("Type", type);
   }
 
 

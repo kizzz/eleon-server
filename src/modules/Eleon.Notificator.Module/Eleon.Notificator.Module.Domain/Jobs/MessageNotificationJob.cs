@@ -86,8 +86,12 @@ public class MessageNotificationJob : DefaultBackgroundJob, ITransientDependency
       Recipients = recipients,
       Message = jobParams.Message,
       TemplateName = jobParams.TemplateName,
+      RunImmidiate = true,
       TemplateType = jobParams.TemplateType,
       Type = new MessageNotificationType()
+      {
+        LanguageKeyParams = []
+      }
     };
 
     notification.ExtraProperties = job.ExtraProperties;

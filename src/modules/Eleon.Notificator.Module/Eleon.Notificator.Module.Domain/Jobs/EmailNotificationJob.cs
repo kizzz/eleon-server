@@ -89,6 +89,7 @@ public class EmailNotificationJob : DefaultBackgroundJob, ITransientDependency
       Message = jobParams.Message,
       TemplateName = jobParams.TemplateName,
       TemplateType = jobParams.TemplateType,
+      RunImmidiate = true,
       Type = new EmailNotificationType
       {
         IsHtml = jobParams.IsHtml,

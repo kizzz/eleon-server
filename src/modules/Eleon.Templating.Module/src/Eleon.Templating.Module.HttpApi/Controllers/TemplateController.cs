@@ -61,9 +61,9 @@ public class TemplateController : ModuleController, ITemplateAppService
   }
 
   [HttpPost("Reset")]
-  public async Task<TemplateDto> ResetAsync(Guid id, CancellationToken cancellationToken = default)
+  public async Task<TemplateDto> ResetAsync(ResetTemplateInput input, CancellationToken cancellationToken = default)
   {
-    return await _templateAppService.ResetAsync(id, cancellationToken);
+    return await _templateAppService.ResetAsync(input, cancellationToken);
   }
 }
 

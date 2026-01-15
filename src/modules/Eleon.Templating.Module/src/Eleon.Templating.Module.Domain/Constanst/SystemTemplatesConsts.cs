@@ -110,7 +110,7 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
               ],
               "RecipientsType": "user",
               "WriteLog": true,
-              "LogLevel": 0,
+              "LogLevel": "Warning",
               "Message": "System notification message"
             }
             """,
@@ -172,8 +172,30 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             TemplateContent = """
             {
               "Platform": "telegram",
-              "ChannelId": "-1003077669273",
+              "ChannelId": "",
               "Message": "Social notification message",
+              "TemplateName": "TelegramNotificationJobTemplate",
+              "TemplateType": ""
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "SendSocialNotification",
+            IsSystem = true,
+          }
+      },
+      {
+          TemplatingDomainConstants.ActionSendMessageNotification,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionSendMessageNotification,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "Recipients": [
+                "cf9500fb-e5d2-10c9-b5cb-3a1db801ca1e"
+              ],
+              "RecipientsType": "user",
+              "Message": "notification message",
               "TemplateName": "",
               "TemplateType": ""
             }
@@ -376,13 +398,27 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
                 IsSystem = true
             }
       },
-            {
+      {
             TemplatingDomainConstants.BankFaxJobReportCsvBody,
             new Template(Guid.Empty)
             {
                 Name = TemplatingDomainConstants.BankFaxJobReportCsvBody,
                 Type = TemplateType.Notification,
                 TemplateContent = "\"{AccountNo}\",\"{ClientName}\",\"{Valuedate}\",\"{FinalValuationDate}\",\"{FxOptionValuedate}\",\"{B/S}\",\"{Instrument}\",\"{Call/Put}\",\"{Ccypair}\",\"{FXNearAmountmaj}\",\"{FXNearAmountmin}\",\"{FXFarAmountmaj}\",\"{FXFarAmountmin}\",\"{Amountmaj}\",\"{Amountmin}\",\"{SpotonDeal}\",\"{Pips}\",\"{FXNearFinalRate}\",\"{FXFarFinalRate}\",\"{Strike}\",\"{TradeDate}\",\"{DeliveryDate}\",\"{PremiumCurrency}\",\"{Premium}\",\"{Bank}\",\"{BarrierType}\",\"{Barrier}\",\"{Del/Ndf}\",\"{TradeStatus}\",\"{TradeId}\",\"{Buy/Sell}\",\"{BCCY}\",\"{SCCY}\",\"{LEGID}\",\"{DMID}\",\"{Updated}\",\"{ExtraInfo}\",\"{ErrorMSG}\"",
+                IsSystem = true
+            }
+        },
+               {
+            TemplatingDomainConstants.JobNotificationTelegram,
+            new Template(Guid.Empty)
+            {
+                Name = TemplatingDomainConstants.JobNotificationTelegram,
+                Type = TemplateType.Notification,
+                Format = TextFormat.Scriban,
+                TemplateContent = """
+                  <b>💬 Message:</b> {{ Message }}
+                  <pre>{{ ExtraProperties }}</pre>
+                """,
                 IsSystem = true
             }
         }

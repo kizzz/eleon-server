@@ -12,6 +12,6 @@ public interface ITemplateAppService : IApplicationService
   Task<TemplateDto> UpdateAsync(Guid id, CreateUpdateTemplateDto input, CancellationToken cancellationToken = default);
   Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
   Task<string> ApplyTemplateAsync(ApplyTemplateInput input, CancellationToken cancellationToken = default);
-  Task<TemplateDto> ResetAsync(Guid id, CancellationToken cancellationToken = default);
+  Task<TemplateDto> ResetAsync(ResetTemplateInput input, CancellationToken cancellationToken = default);
 }
 

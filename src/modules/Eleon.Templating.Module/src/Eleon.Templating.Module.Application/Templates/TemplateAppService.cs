@@ -110,9 +110,9 @@ public class TemplateAppService : ModuleAppService, ITemplateAppService
   }
 
   [Authorize(ModulePermissions.TemplatesGet)]
-  public async Task<TemplateDto> ResetAsync(Guid id, CancellationToken cancellationToken = default)
+  public async Task<TemplateDto> ResetAsync(ResetTemplateInput input, CancellationToken cancellationToken = default)
   {
-    var template = await _templateManager.ResetAsync(id, cancellationToken: cancellationToken);
+    var template = await _templateManager.ResetAsync(input.Name, input.Type, cancellationToken: cancellationToken);
     return ObjectMapper.Map<Template, TemplateDto>(template);
   }
 }

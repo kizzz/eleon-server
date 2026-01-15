@@ -82,19 +82,22 @@ public class SystemNotificationJob : DefaultBackgroundJob, ITransientDependency
       }
     }
 
+    var extraProperties = job.ExtraProperties;
+    extraProperties["JobExecutionId"] = execution.Id.ToString();
     var notification = new EleonsoftNotification
     {
       Recipients = recipients,
       Message = jobParams.Message,
+      RunImmidiate = true,
       Type = new SystemNotificationType
       {
         LogLevel = jobParams.LogLevel,
-        WriteLog = jobParams.WriteLog
+        WriteLog = jobParams.WriteLog,
+        ExtraProperties = extraProperties
       }
     };
 
     notification.ExtraProperties = job.ExtraProperties;
-    notification.ExtraProperties["JobExecutionId"] = execution.Id.ToString();
 
     var notifications = new List<EleonsoftNotification>
         {

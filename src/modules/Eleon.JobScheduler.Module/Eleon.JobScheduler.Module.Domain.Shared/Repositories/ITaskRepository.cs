@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
@@ -10,11 +10,6 @@ namespace VPortal.JobScheduler.Module.Repositories
   {
     Task<KeyValuePair<long, List<TaskEntity>>> GetList(int skipCount, int maxCount, string sorting, string nameFilter);
 
-    [Obsolete("Use get tasks to execute method instead.")]
-    Task<List<Guid>> old__GetDueTasksAsync(DateTime dueDate);
-
     Task<List<TaskEntity>> GetTasksToStartAsync(DateTime asOfTime);
-
-    Task<TaskEntity> GetWithTriggerAsync(Guid id);
   }
 }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using System;
 using System.Linq;
 using Volo.Abp.AutoMapper;
@@ -24,34 +24,31 @@ public class JobSchedulerApplicationAutoMapperProfile : Profile
 
     CreateMap<TriggerEntity, TriggerDto>()
         .ReverseMap()
-        .ForMember(i => i.Id, opt => opt.Condition(i => i.Id != Guid.Empty))
-        .Ignore(x => x.Task);
+        .ForMember(i => i.Id, opt => opt.Condition(i => i.Id != Guid.Empty));
     CreateMap<TriggerEntity, TriggerDescriptionDto>();
 
     CreateMap<TaskExecutionEntity, TaskExecutionDto>()
         .ReverseMap()
-        .Ignore(x => x.Task)
         .Ignore(x => x.ActionExecutions);
     CreateMap<ActionExecutionEntity, ActionExecutionDto>()
         .ForMember(x => x.ParentActionExecutionIds, opt => opt.MapFrom((entity, dto) => entity.ParentActionExecutions != null ? entity.ParentActionExecutions.Select(x => x.ParentActionExecutionId).ToList() : new List<Guid>()));
 
-    CreateMap<TaskEntity, TaskDto>()
-        .ForMember(x => x.TimeoutSeconds, opt => opt.MapFrom((entity, dto) => entity.Timeout?.TotalSeconds))
-        .ForMember(x => x.RestartAfterFailIntervalSeconds, opt => opt.MapFrom((entity, dto) => entity.RestartAfterFailInterval?.TotalSeconds))
-        .Ignore(x => x.LastDurationSeconds)
-        .AfterMap(MapTaskEntityToDto)
-        .ReverseMap()
-        .Ignore(x => x.Actions)
-        .Ignore(x => x.Triggers)
-        .ForMember(
-            x => x.Timeout,
-            opt => opt.MapFrom((dto, entity) => dto.TimeoutSeconds == null ? null : (TimeSpan?)TimeSpan.FromSeconds((int)dto.TimeoutSeconds)))
-        .ForMember(
-            x => x.RestartAfterFailInterval,
-            opt => opt.MapFrom((dto, entity) => dto.RestartAfterFailIntervalSeconds == null
-                ? null
-                : (TimeSpan?)TimeSpan.FromSeconds((int)dto.RestartAfterFailIntervalSeconds)))
-        .ForMember(i => i.Id, opt => opt.Condition(i => i.Id != Guid.Empty));
+    //CreateMap<TaskEntity, TaskDto>()
+    //    .ForMember(x => x.TimeoutSeconds, opt => opt.MapFrom((entity, dto) => entity.Timeout?.TotalSeconds))
+    //    .ForMember(x => x.RestartAfterFailIntervalSeconds, opt => opt.MapFrom((entity, dto) => entity.RestartAfterFailInterval?.TotalSeconds))
+    //    .Ignore(x => x.LastDurationSeconds)
+    //    .AfterMap(MapTaskEntityToDto)
+    //    .ReverseMap()
+    //    .Ignore(x => x.Actions)
+    //    .ForMember(
+    //        x => x.Timeout,
+    //        opt => opt.MapFrom((dto, entity) => dto.TimeoutSeconds == null ? null : (TimeSpan?)TimeSpan.FromSeconds((int)dto.TimeoutSeconds)))
+    //    .ForMember(
+    //        x => x.RestartAfterFailInterval,
+    //        opt => opt.MapFrom((dto, entity) => dto.RestartAfterFailIntervalSeconds == null
+    //            ? null
+    //            : (TimeSpan?)TimeSpan.FromSeconds((int)dto.RestartAfterFailIntervalSeconds)))
+    //    .ForMember(i => i.Id, opt => opt.Condition(i => i.Id != Guid.Empty));
 
     CreateMap<TaskEntity, TaskHeaderDto>()
         .ForMember(x => x.TimeoutSeconds, opt => opt.MapFrom((entity, dto) => entity.Timeout?.TotalSeconds))
@@ -60,7 +57,6 @@ public class JobSchedulerApplicationAutoMapperProfile : Profile
         .AfterMap(MapTaskEntityToDto)
         .ReverseMap()
         .Ignore(x => x.Actions)
-        .Ignore(x => x.Triggers)
         .ForMember(
             x => x.Timeout,
             opt => opt.MapFrom((dto, entity) => dto.TimeoutSeconds == null ? null : (TimeSpan?)TimeSpan.FromSeconds((int)dto.TimeoutSeconds)))
@@ -74,21 +70,21 @@ public class JobSchedulerApplicationAutoMapperProfile : Profile
 
   private static void MapTaskEntityToDto<T>(TaskEntity src, T dest) where T : TaskHeaderDto
   {
-    if (src.Executions == null || !src.Executions.Any())
-    {
-      dest.LastDurationSeconds = null;
-      return;
-    }
-    var latestExecution = src.Executions
-        .OrderByDescending(x => x.FinishedAtUtc ?? DateTime.MaxValue)
-        .ThenByDescending(x => x.StartedAtUtc ?? DateTime.MaxValue)
-        .FirstOrDefault();
-    if (latestExecution == null || !latestExecution.StartedAtUtc.HasValue)
-    {
-      dest.LastDurationSeconds = null;
-      return;
-    }
-    var duration = (latestExecution.FinishedAtUtc ?? DateTime.UtcNow) - latestExecution.StartedAtUtc.Value;
-    dest.LastDurationSeconds = (int)duration.TotalSeconds;
+    //if (src.Executions == null || !src.Executions.Any())
+    //{
+    //  dest.LastDurationSeconds = null;
+    //  return;
+    //}
+    //var latestExecution = src.Executions
+    //    .OrderByDescending(x => x.FinishedAtUtc ?? DateTime.MaxValue)
+    //    .ThenByDescending(x => x.StartedAtUtc ?? DateTime.MaxValue)
+    //    .FirstOrDefault();
+    //if (latestExecution == null || !latestExecution.StartedAtUtc.HasValue)
+    //{
+    //  dest.LastDurationSeconds = null;
+    //  return;
+    //}
+    //var duration = (latestExecution.FinishedAtUtc ?? DateTime.UtcNow) - latestExecution.StartedAtUtc.Value;
+    //dest.LastDurationSeconds = (int)duration.TotalSeconds;
   }
 }

@@ -6,5 +6,5 @@ using VPortal.JobScheduler.Module.Tasks;
 namespace JobScheduler.Module.Tasks;
 public interface ITaskAppHubContext
 {
-  Task TaskCompleted(TaskDto task);
+  Task TaskCompleted(TaskHeaderDto task);
 }

@@ -1,4 +1,4 @@
-﻿using Common.Module.Constants;
+using Common.Module.Constants;
 using System;
 using System.Collections.Generic;
 using VPortal.JobScheduler.Module.Actions;

@@ -31,7 +31,7 @@ namespace VPortal.JobScheduler.Module.Tasks
     {
       try
       {
-        var taskDto = objectMapper.Map<TaskEntity, TaskDto>(task);
+        var taskDto = objectMapper.Map<TaskEntity, TaskHeaderDto>(task);
         await hubContext.TaskCompleted(taskDto);
       }
       catch (Exception ex)

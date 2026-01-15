@@ -30,7 +30,6 @@ namespace VPortal.JobScheduler.Module.Entities
     public TimeUnit RepeatIntervalUnitType { get; set; }
     public int? RepeatDurationUnits { get; set; }
     public TimeUnit RepeatDurationUnitType { get; set; }
-    public TaskEntity Task { get; set; }
     public virtual Guid TaskId { get; set; }
 
     protected TriggerEntity() { }

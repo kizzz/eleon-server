@@ -1,4 +1,4 @@
-﻿using EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Application.Contracts.Tasks;
+using EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Application.Contracts.Tasks;
 using Logging.Module;
 using System;
 using System.Collections.Generic;
@@ -30,13 +30,13 @@ namespace VPortal.JobScheduler.Module.Tasks
       this.taskExecutionService = taskExecutionService;
     }
 
-    public async Task<TaskDto> GetByIdAsync(Guid id)
+    public async Task<TaskHeaderDto> GetByIdAsync(Guid id)
     {
-      TaskDto response = null;
+      TaskHeaderDto response = null;
       try
       {
         var gotEntity = await taskService.GetByIdAsync(id);
-        response = ObjectMapper.Map<TaskEntity, TaskDto>(gotEntity);
+        response = ObjectMapper.Map<TaskEntity, TaskHeaderDto>(gotEntity);
       }
       catch (Exception e)
       {
@@ -122,12 +122,12 @@ namespace VPortal.JobScheduler.Module.Tasks
       return response;
     }
 
-    public async Task<TaskDto> CreateAsync(CreateTaskDto request)
+    public async Task<TaskHeaderDto> CreateAsync(CreateTaskDto request)
     {
       try
       {
         var result = await taskService.CreateAsync(request.Name, request.Description);
-        return ObjectMapper.Map<TaskEntity, TaskDto>(result);
+        return ObjectMapper.Map<TaskEntity, TaskHeaderDto>(result);
       }
       catch (Exception e)
       {

@@ -1,8 +1,3 @@
-using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Common.Module.Constants;
 using Eleon.AbpSdk.Lib.modules.HostExtensions.Module.Auth;
 using Eleon.JobScheduler.Module.Eleon.JobScheduler.Module.Domain.Shared.DomainServices;
@@ -11,6 +6,7 @@ using EleonsoftAbp.Auth;
 using EleonsoftModuleCollector.Commons.Module.Constants.BackgroundJobs;
 using EleonsoftSdk.modules.Messaging.Module.SystemMessages.Notificator.NotificationType;
 using Logging.Module;
+using MassTransit.Util;
 using Messaging.Module.ETO;
 using Messaging.Module.Messages;
 using Microsoft.EntityFrameworkCore;
@@ -124,14 +120,12 @@ namespace VPortal.JobScheduler.Module.DomainServices
       changedBy ??= string.Empty;
       try
       {
-        return await _unitOfWorkManager.ExecuteWithConcurrencyHandlingAsync(
+        var updatedActionsSuccessfully = await _unitOfWorkManager.ExecuteWithConcurrencyHandlingAsync(
           async uow =>
           {
-            var actionExecutions = await actionExecutionRepository.GetListByTaskExecutionIdAsync(
-              taskExecutionId
-            );
+            var taskExecution = await taskExecutionRepository.GetAsync(taskExecutionId);
+            var actionExecutions = taskExecution.ActionExecutions.ToList();
             var actionExecution = actionExecutions.Single(x => x.Id == actionExecutionId);
-            var taskExecution = await taskExecutionRepository.GetAsync(taskExecutionId, false);
 
             // Determine desired status
             var desiredStatus = actionResult switch
@@ -195,20 +189,34 @@ namespace VPortal.JobScheduler.Module.DomainServices
                 taskExecution.Id,
                 actionExecutions,
                 actionExecution,
-                taskExecution.Task
+                taskExecution.TaskId
               );
             }
 
-            var actionExecutionsAfterUpdate =
-              await actionExecutionRepository.GetListByTaskExecutionIdAsync(taskExecutionId);
-            bool anyExecutingAction = actionExecutionsAfterUpdate.Any(x =>
-              x.Status == JobSchedulerActionExecutionStatus.Executing
-            );
+            return true;
+          },
+          null,
+          logger.Log,
+          "AcknowledgeActionCompletedAsync",
+          actionExecutionId
+        );
+
+        if (updatedActionsSuccessfully)
+        {
+          return await _unitOfWorkManager.ExecuteWithConcurrencyHandlingAsync(async uow =>
+          {
+            var taskExecution = await taskExecutionRepository.GetAsync(taskExecutionId);
+            var actionExecutionsAfterUpdate = taskExecution.ActionExecutions.ToList();
+            var actionExecution = actionExecutionsAfterUpdate.Single(x => x.Id == actionExecutionId);
+
+            bool anyExecutingAction = actionExecutionsAfterUpdate.Any(x => x.Status == JobSchedulerActionExecutionStatus.Executing);
 
             if (!anyExecutingAction)
             {
               await FinishTaskExecutionAsync(taskExecution, actionExecutionsAfterUpdate);
             }
+
+            logger.Log.LogCritical($"Finished: t:{taskExecution.Id} a:{actionExecution.Id} {actionExecution.ActionName} status:{anyExecutingAction}:{actionExecutionsAfterUpdate.Where(x => x.Status == JobSchedulerActionExecutionStatus.Executing).Select(x => x.ActionName).JoinAsString(", ")}");
 
             await _eventBus.PublishAsync(
               new JobSchedulerActionExecutionCompletedMsg
@@ -224,8 +232,10 @@ namespace VPortal.JobScheduler.Module.DomainServices
           null,
           logger.Log,
           "AcknowledgeActionCompletedAsync",
-          actionExecutionId
-        );
+          actionExecutionId);
+        }
+
+        return updatedActionsSuccessfully;
       }
       catch (Exception e)
       {
@@ -244,6 +254,8 @@ namespace VPortal.JobScheduler.Module.DomainServices
     {
       try
       {
+        var task = await taskRepository.GetAsync(taskExecution.TaskId);
+
         // Idempotency check: if task execution is already in a final state, skip
         if (
           taskExecution.Status == JobSchedulerTaskExecutionStatus.Completed
@@ -251,7 +263,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
           || taskExecution.Status == JobSchedulerTaskExecutionStatus.Failed
         )
         {
-          if (taskExecution.FinishedAtUtc.HasValue)
+          if (taskExecution.FinishedAtUtc.HasValue && task.Status != JobSchedulerTaskStatus.Running)
           {
             logger.Log.LogWarning(
               "Task execution {TaskExecutionId} already in final state ({Status}). Skipping finish operation.",
@@ -260,33 +272,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
             );
             return;
           }
-        }
-
-        var allCompleted = actionExecutions.All(x =>
-          x.Status == JobSchedulerActionExecutionStatus.Completed
-        );
-        var anyCancelled = actionExecutions.Any(x =>
-          x.Status == JobSchedulerActionExecutionStatus.Cancelled
-        );
-
-        JobSchedulerTaskExecutionStatus desiredStatus;
-        if (allCompleted)
-        {
-          desiredStatus = JobSchedulerTaskExecutionStatus.Completed;
-        }
-        else if (anyCancelled)
-        {
-          desiredStatus = JobSchedulerTaskExecutionStatus.Cancelled;
-        }
-        else
-        {
-          desiredStatus = JobSchedulerTaskExecutionStatus.Failed;
-        }
-
-        // Only update if not already in desired state
-        if (taskExecution.Status != desiredStatus)
-        {
-          taskExecution.Status = desiredStatus;
         }
 
         if (!taskExecution.FinishedAtUtc.HasValue)
@@ -304,7 +289,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
           }
         );
 
-        var task = await taskRepository.GetWithTriggerAsync(taskExecution.TaskId);
         if (task.Status == JobSchedulerTaskStatus.Running)
         {
           task.Status = JobSchedulerTaskStatus.Ready;
@@ -393,7 +377,8 @@ namespace VPortal.JobScheduler.Module.DomainServices
 
         // Determine if this is a retry scenario
         // Retry happens when: last execution failed/cancelled, retry is enabled, not manually changed, and FinishedAtUtc is set
-        var lastExecution = task.Executions.OrderByDescending(x => x.FinishedAtUtc ?? DateTime.MinValue).FirstOrDefault();
+
+        var lastExecution = await taskExecutionRepository.GetNewestByFinishedAtAsync(task.Id);
         bool isRetryScenario = lastExecution != null &&
           (lastExecution.Status == JobSchedulerTaskExecutionStatus.Failed ||
            lastExecution.Status == JobSchedulerTaskExecutionStatus.Cancelled) &&
@@ -462,7 +447,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
             taskExecution.Id,
             taskExecution.ActionExecutions.ToList(),
             null,
-            task
+            task.Id
           );
         }
         return true;
@@ -481,7 +466,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
       Guid taskExecutionId,
       List<ActionExecutionEntity> actionExecutions,
       ActionExecutionEntity? actionExecutionEntity,
-      TaskEntity taskEntity
+      Guid taskId
     )
     {
 
@@ -504,7 +489,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
           }
 
           var parentJobs = parents.Where(x => x.JobId.HasValue).Select(x => x.JobId.Value).ToList();
-          await ExecuteActionAsync(actionExecutionToStart, parentJobs, taskEntity, taskExecutionId);
+          await ExecuteActionAsync(actionExecutionToStart, parentJobs, taskId, taskExecutionId);
         }
 
         return true;
@@ -522,13 +507,15 @@ namespace VPortal.JobScheduler.Module.DomainServices
     private async Task<bool> ExecuteActionAsync(
       ActionExecutionEntity actionExecution,
       List<Guid> parentJobsIds,
-      TaskEntity taskEntity,
+      Guid taskId,
       Guid taskExecutionEntityId
     )
     {
       bool result = false;
       try
       {
+        var taskEntity = await taskRepository.GetAsync(taskId, true);
+
         actionExecution = await actionExecutionRepository.GetAsync(actionExecution.Id); // Ensure that actionEntity was loaded
 
         // Ensure Action property is set - required for accessing Action properties
@@ -624,9 +611,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
     {
       try
       {
-        var previousExecution = task
-          .Executions.OrderByDescending(x => x.StartedAtUtc)
-          .FirstOrDefault();
+        var previousExecution = await taskExecutionRepository.GetNewestByStartedAtAsync(task.Id);
         if (
           previousExecution != null
           && (
@@ -674,7 +659,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
 
         var taskExecution = new TaskExecutionEntity(taskExecutionId, task.Id)
         {
-          Status = JobSchedulerTaskExecutionStatus.Executing,
           StartedAtUtc = DateTime.UtcNow,
           RunnedByUserId = currentUser?.Id,
           RunnedByUserName = currentUser?.Name,
@@ -724,7 +708,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
         {
           if (taskExecution.Status == JobSchedulerTaskExecutionStatus.Executing)
           {
-            taskExecution.Status = JobSchedulerTaskExecutionStatus.Cancelled;
+            //taskExecution.Status = JobSchedulerTaskExecutionStatus.Cancelled;
             taskExecution.FinishedAtUtc = now;
             await taskExecutionRepository.UpdateAsync(taskExecution);
             await _eventBus.PublishAsync(

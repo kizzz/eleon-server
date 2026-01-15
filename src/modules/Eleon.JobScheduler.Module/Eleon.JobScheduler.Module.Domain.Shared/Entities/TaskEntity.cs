@@ -24,15 +24,11 @@ namespace VPortal.JobScheduler.Module.Entities
     public virtual bool AllowForceStop { get; set; }
     public virtual DateTime? LastRunTimeUtc { get; set; }
     public virtual JobSchedulerTaskStatus Status { get; set; }
-    public virtual IList<TriggerEntity> Triggers { get; set; } = new List<TriggerEntity>();
-    public virtual IList<TaskExecutionEntity> Executions { get; set; } = new List<TaskExecutionEntity>();
     public virtual IList<ActionEntity> Actions { get; set; }
     public virtual string OnFailureRecepients { get; set; } = string.Empty;
 
     protected TaskEntity()
     {
-      Triggers = new List<TriggerEntity>();
-      Executions = new List<TaskExecutionEntity>();
       Actions = new List<ActionEntity>();
       OnFailureRecepients = string.Empty;
     }

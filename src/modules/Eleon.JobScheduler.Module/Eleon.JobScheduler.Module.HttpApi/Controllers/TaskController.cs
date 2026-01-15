@@ -27,7 +27,7 @@ namespace VPortal.JobScheduler.Module.Controllers
     }
 
     [HttpPost("Create")]
-    public async Task<TaskDto> CreateAsync(CreateTaskDto reqeust)
+    public async Task<TaskHeaderDto> CreateAsync(CreateTaskDto reqeust)
     {
 
       var response = await appService.CreateAsync(reqeust);
@@ -37,7 +37,7 @@ namespace VPortal.JobScheduler.Module.Controllers
     }
 
     [HttpGet("GetById")]
-    public async Task<TaskDto> GetByIdAsync(Guid id)
+    public async Task<TaskHeaderDto> GetByIdAsync(Guid id)
     {
 
       var response = await appService.GetByIdAsync(id);

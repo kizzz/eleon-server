@@ -31,7 +31,7 @@ public class TaskAppHubContext : ITaskAppHubContext, ITransientDependency
     _hubContext = hubContext;
   }
 
-  public async Task TaskCompleted(TaskDto job)
+  public async Task TaskCompleted(TaskHeaderDto job)
   {
     try
     {

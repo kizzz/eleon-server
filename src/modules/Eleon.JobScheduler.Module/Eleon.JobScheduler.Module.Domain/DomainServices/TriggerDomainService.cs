@@ -23,17 +23,20 @@ namespace VPortal.JobScheduler.Module.DomainServices
     private readonly ITriggerRepository triggerRepository;
     private readonly IDistributedEventBus messagePublisher;
     private readonly ITaskRepository _taskRepository;
+    private readonly ITaskExecutionRepository _taskExecutionRepository;
 
     public TriggerDomainService(
         IVportalLogger<TriggerDomainService> logger,
         ITriggerRepository triggerRepository,
         IDistributedEventBus messagePublisher,
-        ITaskRepository taskRepository)
+        ITaskRepository taskRepository,
+        ITaskExecutionRepository taskExecutionRepository)
     {
       this.logger = logger;
       this.triggerRepository = triggerRepository;
       this.messagePublisher = messagePublisher;
       _taskRepository = taskRepository;
+      _taskExecutionRepository = taskExecutionRepository;
     }
 
     public async Task<List<TriggerEntity>> GetListAsync(Guid? taskId, bool? isEnabledFilter = null)
@@ -260,7 +263,9 @@ namespace VPortal.JobScheduler.Module.DomainServices
     /// <returns></returns>
     public async Task<(DateTime? NextRunTime, TriggerEntity? Trigger)?> GetTaskNextRunTimeAsync(TaskEntity task)
     {
-      var lastExecution = task.Executions.OrderByDescending(x => x.FinishedAtUtc ?? DateTime.MinValue).FirstOrDefault();
+
+      
+      var lastExecution = await _taskExecutionRepository.GetNewestByFinishedAtAsync(task.Id);
       if (
           (lastExecution?.Status == JobSchedulerTaskExecutionStatus.Failed || lastExecution?.Status == JobSchedulerTaskExecutionStatus.Cancelled) &&
           lastExecution?.IsStatusChangedManually != true &&
@@ -275,7 +280,9 @@ namespace VPortal.JobScheduler.Module.DomainServices
       var triggersToUpdate = new List<TriggerEntity>();
       var nextRunTimes = new List<(DateTime? NextRunTime, TriggerEntity? trigger)>();
 
-      foreach (var taskTrigger in task.Triggers)
+      var triggers = await triggerRepository.GetListAsync(task.Id, true);
+
+      foreach (var taskTrigger in triggers)
       {
         var nextRunTime = await GetTriggerNextRunTimeAsync(taskTrigger, null);
         if (taskTrigger.NextRunUtc != nextRunTime)

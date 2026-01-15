@@ -1,9 +1,10 @@
-﻿using Logging.Module;
+using Logging.Module;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -69,6 +70,22 @@ namespace VPortal.JobScheduler.Module.Repositories
       }
 
       return result;
+    }
+
+    public async Task<TaskExecutionEntity> GetNewestByStartedAtAsync(Guid taskId)
+    {
+      return await (await WithDetailsAsync())
+        .Where(x => x.TaskId == taskId)
+          .OrderByDescending(x => x.StartedAtUtc ?? DateTime.MinValue)
+          .FirstOrDefaultAsync();
+    }
+
+    public async Task<TaskExecutionEntity> GetNewestByFinishedAtAsync(Guid taskId)
+    {
+      return await (await WithDetailsAsync())
+        .Where(x => x.TaskId == taskId)
+          .OrderByDescending(x => x.FinishedAtUtc ?? DateTime.MinValue)
+          .FirstOrDefaultAsync();
     }
   }
 }

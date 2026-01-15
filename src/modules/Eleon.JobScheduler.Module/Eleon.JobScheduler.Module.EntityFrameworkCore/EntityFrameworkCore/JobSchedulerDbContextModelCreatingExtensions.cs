@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp;
 using VPortal.JobScheduler.Module.Entities;
 
@@ -14,9 +14,9 @@ public static class JobSchedulerDbContextModelCreatingExtensions
     builder.Entity<TaskEntity>()
         .HasKey(x => x.Id);
 
-    builder.Entity<TaskEntity>()
-        .HasMany(x => x.Executions)
-        .WithOne(x => x.Task)
+    builder.Entity<TaskExecutionEntity>()
+        .HasOne<TaskEntity>()
+        .WithMany()
         .HasForeignKey(x => x.TaskId);
 
     builder.Entity<TaskEntity>()
@@ -24,9 +24,9 @@ public static class JobSchedulerDbContextModelCreatingExtensions
         .WithOne(x => x.Task)
         .HasForeignKey(x => x.TaskId);
 
-    builder.Entity<TaskEntity>()
-        .HasMany(x => x.Triggers)
-        .WithOne(x => x.Task)
+    builder.Entity<TriggerEntity>()
+        .HasOne<TaskEntity>()
+        .WithMany()
         .HasForeignKey(x => x.TaskId);
 
     builder.Entity<TaskExecutionEntity>()

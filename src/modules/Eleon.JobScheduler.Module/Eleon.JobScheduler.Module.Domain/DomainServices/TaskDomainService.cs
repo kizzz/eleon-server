@@ -20,16 +20,19 @@ namespace VPortal.JobScheduler.Module.DomainServices
   {
     private readonly IVportalLogger<TaskDomainService> logger;
     private readonly TriggerDomainService triggerDomainService;
+    private readonly ITriggerRepository _triggerRepository;
     private readonly ITaskRepository taskRepository;
 
     public TaskDomainService(
         IVportalLogger<TaskDomainService> logger,
         ITaskRepository taskRepository,
-        TriggerDomainService triggerDomainService)
+        TriggerDomainService triggerDomainService,
+        ITriggerRepository triggerRepository)
     {
       this.logger = logger;
       this.taskRepository = taskRepository;
       this.triggerDomainService = triggerDomainService;
+      _triggerRepository = triggerRepository;
     }
 
     public async Task<TaskEntity> GetByIdAsync(Guid id)
@@ -39,7 +42,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
       {
         var task = await taskRepository.GetAsync(id, true);
 
-        var nextTrigger = task.Triggers.OrderBy(x => x.NextRunUtc).FirstOrDefault();
+        var nextTrigger = await _triggerRepository.GetNextRunTriggerAsync(id);
         if (nextTrigger != null)
         {
           task.NextRunTimeUtc = nextTrigger.NextRunUtc;
@@ -64,7 +67,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
 
         foreach (var task in result.Value)
         {
-          var nextTrigger = task.Triggers.OrderBy(x => x.NextRunUtc).FirstOrDefault();
+          var nextTrigger = await _triggerRepository.GetNextRunTriggerAsync(task.Id);
           if (nextTrigger != null)
           {
             task.NextRunTimeUtc = nextTrigger.NextRunUtc;

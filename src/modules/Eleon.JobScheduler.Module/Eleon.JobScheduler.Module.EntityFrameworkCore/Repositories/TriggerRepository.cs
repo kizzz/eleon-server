@@ -1,4 +1,4 @@
-﻿using Logging.Module;
+using Logging.Module;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace VPortal.JobScheduler.Module.Repositories
     }
     public override async Task<IQueryable<TriggerEntity>> WithDetailsAsync()
     {
-      return (await GetQueryableAsync()).Include(x => x.Task);
+      return (await GetQueryableAsync());
     }
 
     public async Task<List<TriggerEntity>> GetListAsync(Guid? taskId, bool? isEnabledFilter = null)
@@ -48,6 +48,18 @@ namespace VPortal.JobScheduler.Module.Repositories
       }
 
       return result;
+    }
+
+    public async Task<TriggerEntity?> GetNextRunTriggerAsync(Guid taskId)
+    {
+      var dbSet = await GetDbSetAsync();
+
+      var trigger = await dbSet
+          .Where(x => x.TaskId == taskId && x.IsEnabled && x.NextRunUtc != null)
+          .OrderBy(x => x.NextRunUtc)
+          .FirstOrDefaultAsync();
+
+      return trigger;
     }
   }
 }

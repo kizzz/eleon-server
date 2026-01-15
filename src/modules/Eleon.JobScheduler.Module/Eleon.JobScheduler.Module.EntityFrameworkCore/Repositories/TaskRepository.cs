@@ -30,29 +30,8 @@ namespace VPortal.JobScheduler.Module.Repositories
     public override async Task<IQueryable<TaskEntity>> WithDetailsAsync()
     {
       return (await GetQueryableAsync())
-          .Include(x => x.Triggers)
-          .Include(x => x.Executions)
           .Include(x => x.Actions)
           .ThenInclude(x => x.ParentActions);
-    }
-
-    public async Task<List<Guid>> old__GetDueTasksAsync(DateTime dueDate)
-    {
-      var result = new List<Guid>();
-      try
-      {
-        var dbContext = await GetDbContextAsync();
-        var filtered = dbContext.Tasks
-            //.Where(x => x.NextRunTimeUtc != null && x.NextRunTimeUtc <= dueDate) Old version
-            .Select(x => x.Id);
-        result = await filtered.ToListAsync();
-      }
-      catch (Exception e)
-      {
-        logger.Capture(e);
-      }
-
-      return result;
     }
 
     public async Task<KeyValuePair<long, List<TaskEntity>>> GetList(int skipCount, int maxCount, string sorting, string nameFilter)
@@ -63,7 +42,6 @@ namespace VPortal.JobScheduler.Module.Repositories
         var dbContext = await GetDbContextAsync();
         string namePattern = nameFilter == null ? null : $"%{nameFilter}%";
         var filtered = dbContext.Tasks
-            .Include(x => x.Triggers)
             .WhereIf(namePattern != null, x => EF.Functions.Like(x.Name, namePattern) || EF.Functions.Like(x.Id.ToString(), namePattern));
         var paginated = filtered;
         if (!string.IsNullOrWhiteSpace(sorting))
@@ -92,37 +70,16 @@ namespace VPortal.JobScheduler.Module.Repositories
 
       try
       {
-        var result = await (await GetDbContextAsync())
+        var dbContext = await GetDbContextAsync();
+        var result = await dbContext
             .Tasks
-            .Include(x => x.Triggers)
-            .Include(x => x.Executions)
             .Where(x => x.Status == Common.Module.Constants.JobSchedulerTaskStatus.Ready || (x.AllowForceStop && x.Status == Common.Module.Constants.JobSchedulerTaskStatus.Running))
-            .Where(x => x.Triggers.Where(t => t.IsEnabled && (t.ExpireUtc == null || t.ExpireUtc > asOfTime)).Any())
+            .Where(x => dbContext.Triggers.Any(t =>
+                t.TaskId == x.Id &&
+                t.IsEnabled &&
+                (t.ExpireUtc == null || t.ExpireUtc > asOfTime)))
             .ToListAsync();
         ;
-        return result;
-      }
-      catch (Exception e)
-      {
-        logger.Capture(e);
-        throw;
-      }
-      finally
-      {
-      }
-    }
-
-    public async Task<TaskEntity> GetWithTriggerAsync(Guid id)
-    {
-
-      try
-      {
-        var result = await (await GetDbContextAsync())
-            .Tasks
-            .Where(x => x.Id == id)
-            .Include(x => x.Triggers)
-            .FirstAsync();
-
         return result;
       }
       catch (Exception e)

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace EleonsoftSdk.modules.HealthCheck.Module.Checks.Environment;
@@ -45,30 +46,27 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
             cancellationToken.ThrowIfCancellationRequested();
 
             long maxSizeBytes = rule.MaxSizeMb * 1024 * 1024;
+            var absPath = ResolvePath(rule.Path);
             var result = new PathCheckResult 
             { 
-                Path = rule.Path, 
+                RelativePath = rule.Path,
+                AbsolutePath = absPath,
                 MaxSizeMb = rule.MaxSizeMb
             };
             var pathSw = Stopwatch.StartNew();
 
             try
             {
-                var absPath = ResolvePath(rule.Path);
-
                 if (File.Exists(absPath))
                 {
                     var fi = new FileInfo(absPath);
                     result.SizeBytes = fi.Length;
-                    result.Kind = "File";
                     result.Success = result.SizeBytes <= maxSizeBytes;
                 }
                 else if (Directory.Exists(absPath))
                 {
                     var (totalBytes, fileCount) = await ScanDirectoryAsync(absPath, cancellationToken);
                     result.SizeBytes = totalBytes;
-                    result.FileCount = fileCount;
-                    result.Kind = "Directory";
                     result.Success = totalBytes <= maxSizeBytes;
                 }
                 else
@@ -91,7 +89,6 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
             finally
             {
                 pathSw.Stop();
-                result.LatencyMs = pathSw.ElapsedMilliseconds;
                 results.Add(result);
             }
         }
@@ -101,52 +98,38 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
         var total = results.Count;
         var ok = results.Count(r => r.Success);
         var failed = total - ok;
-        var exceeded = results.Count(r => !r.Success && r.Error == null);
 
-        var data = new Dictionary<string, object>
-        {
-            ["disk.latency_ms"] = sw.ElapsedMilliseconds,
-            ["disk.checks_total"] = total,
-            ["disk.checks_ok"] = ok,
-            ["disk.checks_failed"] = failed,
-            ["disk.checks_exceeded"] = exceeded
-        };
+        var data = new Dictionary<string, object>();
 
-        // Add per-path data
+        // Add per-path data - only full path and size
+        int i = 1;
         foreach (var r in results)
         {
-            var key = $"disk.path_{SanitizeKey(r.Path)}";
-            data[$"{key}.success"] = r.Success;
-            data[$"{key}.kind"] = r.Kind ?? "Unknown";
-            data[$"{key}.size_bytes"] = r.SizeBytes;
-            data[$"{key}.max_mb"] = r.MaxSizeMb;
-            data[$"{key}.size_mb"] = r.SizeBytes / (1024.0 * 1024.0);
-            data[$"{key}.latency_ms"] = r.LatencyMs;
-
-            if (r.FileCount.HasValue)
-                data[$"{key}.file_count"] = r.FileCount.Value;
-
-            if (!r.Success && !string.IsNullOrEmpty(r.Error))
-                data[$"{key}.error"] = r.Error;
+            data[$"[{i}].path"] = r.AbsolutePath;
+            data[$"[{i}].size_bytes"] = r.SizeBytes;
+            i++;
         }
+
+        // Build message with relative path and size current/max
+        var pathMessages = results.Select(r =>
+        {
+            var sizeMb = r.SizeBytes / (1024.0 * 1024.0);
+            return $"{r.RelativePath}: {sizeMb:F2}MB/{r.MaxSizeMb}MB";
+        });
+
+        var message = string.Join("; ", pathMessages);
 
         if (failed == 0)
         {
-            return HealthCheckResult.Healthy(
-                $"All {total} disk space check(s) passed",
-                data);
+            return HealthCheckResult.Healthy(message, data);
         }
 
         if (ok > 0)
         {
-            return HealthCheckResult.Degraded(
-                $"{ok} of {total} disk space check(s) passed, {failed} failed",
-                data: data);
+            return HealthCheckResult.Degraded(message, data: data);
         }
 
-        return HealthCheckResult.Unhealthy(
-            $"All {total} disk space check(s) failed",
-            data: data);
+        return HealthCheckResult.Unhealthy(message, data: data);
     }
 
     private static string ResolvePath(string path)
@@ -211,13 +194,11 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
 
     private sealed class PathCheckResult
     {
-        public string Path { get; set; } = string.Empty;
+        public string RelativePath { get; set; } = string.Empty;
+        public string AbsolutePath { get; set; } = string.Empty;
         public bool Success { get; set; }
         public long SizeBytes { get; set; }
         public long MaxSizeMb { get; set; }
-        public long LatencyMs { get; set; }
         public string? Error { get; set; }
-        public string? Kind { get; set; }
-        public long? FileCount { get; set; }
     }
 }

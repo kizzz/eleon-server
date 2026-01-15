@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities;
@@ -180,6 +181,65 @@ namespace VPortal.JobScheduler.Module.DomainServices
             {
             }
         }
+
+    public async Task DuplicateAction(Guid id, int count, string fieldToModify)
+    {
+      try
+      {
+        var action = await repository.GetAsync(id, false);
+        var actionsToInsert = new List<ActionEntity>();
+
+        var node = JsonNode.Parse(action.ActionParams) as JsonObject
+           ?? throw new ArgumentException("actionParams must be a JSON object.");
+
+        string current = string.Empty;
+
+        if (!string.IsNullOrEmpty(fieldToModify))
+        {
+          if (!node.TryGetPropertyValue(fieldToModify, out JsonNode? valueNode))
+            throw new KeyNotFoundException($"Key '{fieldToModify}' not found.");
+          current = valueNode?.GetValue<string>()
+                       ?? throw new InvalidOperationException($"Key '{fieldToModify}' is null or not a string.");
+        }
+
+        for (int i = 1; i <= count; i++)
+        {
+          string newActionParams = action.ActionParams;
+          if (!string.IsNullOrEmpty(fieldToModify))
+          {
+            node[fieldToModify] = $"{current} {i}/{count}";
+            newActionParams = node.ToJsonString(new JsonSerializerOptions { WriteIndented = false });
+          }
+
+          var newAction = new ActionEntity(GuidGenerator.Create())
+          {
+            DisplayName = $"{action.DisplayName}_{i}",
+            EventName = action.EventName,
+            ActionParams = newActionParams,
+            ActionExtraParams = action.ActionExtraParams,
+            RetryInterval = action.RetryInterval,
+            MaxRetryAttempts = action.MaxRetryAttempts,
+            TimeoutInMinutes = action.TimeoutInMinutes,
+            OnFailureRecepients = action.OnFailureRecepients,
+            ParamsFormat = action.ParamsFormat,
+            TaskId = action.TaskId,
+            ParentActions = action.ParentActions
+          };
+          actionsToInsert.Add(newAction);
+        }
+
+        await repository.InsertManyAsync(actionsToInsert, true);
+
+      }
+      catch (Exception e)
+      {
+        logger.Capture(e);
+        throw;
+      }
+      finally
+      {
+      }
+    }
 
     private void ValidateActionParams(ActionEntity action)
     {

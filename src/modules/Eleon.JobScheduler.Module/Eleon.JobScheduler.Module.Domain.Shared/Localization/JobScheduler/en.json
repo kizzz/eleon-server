@@ -298,6 +298,10 @@
     "Trigger:NextRuntimes:Title": "Next runtimes",
     "Trigger:NextRuntimes:Count": "Count",
     "Trigger:ViewNextRuntimes": "View next runtimes",
-    "Trigger:NextRunTime": "Next runtime (UTC)"
+    "Trigger:NextRunTime": "Next runtime (UTC)",
+    "Action:Duplicate": "Duplicate",
+    "Action:Duplicate:Count": "Count",
+    "Action:Duplicate:FieldToModify": "Modify field",
+    "Action:Duplicate:FieldToModify:Placeholder": "Field that will be modified"
   }
 }

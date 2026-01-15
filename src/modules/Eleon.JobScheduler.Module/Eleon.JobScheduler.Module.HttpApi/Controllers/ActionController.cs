@@ -52,6 +52,12 @@ namespace VPortal.JobScheduler.Module.Controllers
       }
     }
 
+    [HttpPost("DuplicateAction")]
+    public async Task DuplicateAction(DuplicateActionRequestDto input)
+    {
+      await appService.DuplicateAction(input);
+    }
+
     [HttpGet("GetById")]
     public async Task<ActionDto> GetByIdAsync(Guid id)
     {

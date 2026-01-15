@@ -10,11 +10,14 @@ using VPortal.DocMessageLog.Module.Repositories;
 namespace EleonsoftModuleCollector.SystemLog.Module.SystemLog.Module.Domain.Jobs;
 
 
-public class ShrinkSystemLogsJobArgs
+public sealed class ShrinkSystemLogsJobArgs
 {
-  public DateTime OlderThan { get; set; }
-}
+  // Absolute cutoff: delete logs older than this UTC timestamp
+  public DateTime? CutoffUtc { get; set; }
 
+  // Relative cutoff: delete logs older than N minutes from "now" (UTC)
+  public long? MaxAgeMinutes { get; set; }
+}
 
 public class ShrinkSystemLogsBackgroundJob : DefaultBackgroundJob, ITransientDependency
 {
@@ -33,8 +36,15 @@ public class ShrinkSystemLogsBackgroundJob : DefaultBackgroundJob, ITransientDep
   {
     var args = _jsonSerializer.Deserialize<ShrinkSystemLogsJobArgs>(execution.StartExecutionParams);
 
-    var count = await _systemLogRepository.ShrinkAsync(args.OlderThan);
+    var olderThan = args.CutoffUtc ?? DateTime.UtcNow;
 
-    return new JobResult(true, $"Completed successfully. Removed {count} entries");
+    if (args.MaxAgeMinutes.HasValue)
+    {
+      olderThan.AddMinutes(-args.MaxAgeMinutes.Value);
+    }
+
+    var count = await _systemLogRepository.ShrinkAsync(olderThan);
+
+    return new JobResult(true, $"Completed successfully. Removed {count} entries that are older than {olderThan}");
   }
 }

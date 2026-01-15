@@ -21,7 +21,7 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             Type = TemplateType.Action,
             TemplateContent = """
             {
-              "SystemLogLevel": 0,
+              "SystemLogLevel": "Info",
               "Message": "Info system log"
             }
             """,

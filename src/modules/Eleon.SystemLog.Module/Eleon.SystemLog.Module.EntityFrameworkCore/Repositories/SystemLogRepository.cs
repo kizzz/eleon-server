@@ -45,6 +45,11 @@ public class SystemLogRepository : EfCoreRepository<SystemLogDbContext, SystemLo
       if (existingEntity != null)
       {
         existingEntity.Count += 1;
+        existingEntity.ExtraProperties.Clear();
+        foreach (var property in entity.ExtraProperties)
+        {
+          existingEntity.ExtraProperties[property.Key] = property.Value;
+        }
         await UpdateAsync(existingEntity, true);
         return existingEntity;
       }

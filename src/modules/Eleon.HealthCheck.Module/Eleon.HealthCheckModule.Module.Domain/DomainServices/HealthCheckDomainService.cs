@@ -1,4 +1,4 @@
-﻿using EleonsoftModuleCollector.HealthCheckModule.HealthCheckModule.Module.Domain.Shared.Constants;
+using EleonsoftModuleCollector.HealthCheckModule.HealthCheckModule.Module.Domain.Shared.Constants;
 using EleonsoftModuleCollector.HealthCheckModule.HealthCheckModule.Module.Domain.Shared.Entities;
 using EleonsoftModuleCollector.HealthCheckModule.HealthCheckModule.Module.Domain.Shared.Repositories;
 using EleonsoftSdk.modules.Messaging.Module.SystemMessages.HealthCheck;
@@ -117,7 +117,7 @@ public class HealthCheckDomainService : DomainService
     await semaphore.WaitAsync();
     try
     {
-      using var uow = _unitOfWorkManager.Begin(requiresNew: true, isTransactional: true);
+      using var uow = _unitOfWorkManager.Begin(requiresNew: true, isTransactional: false);
 
       var existing = healthCheck.Id != Guid.Empty ? await _healthCheckRepository.FindAsync(healthCheck.Id) : null;
 
@@ -169,7 +169,7 @@ public class HealthCheckDomainService : DomainService
     await semaphore.WaitAsync();
     try
     {
-      using var uow = _unitOfWorkManager.Begin(requiresNew: true, isTransactional: true);
+      using var uow = _unitOfWorkManager.Begin(requiresNew: true, isTransactional: false);
 
       var healthCheck = await _healthCheckRepository.GetAsync(healthCheckId);
 

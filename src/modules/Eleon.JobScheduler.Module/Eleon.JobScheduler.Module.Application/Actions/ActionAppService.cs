@@ -1,4 +1,4 @@
-﻿using EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Application.Contracts.Actions;
+using EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Application.Contracts.Actions;
 using Logging.Module;
 using Microsoft.Extensions.Logging;
 using System;
@@ -102,6 +102,22 @@ namespace VPortal.JobScheduler.Module.Actions
       try
       {
         return domainService.DeleteAsync(id);
+      }
+      catch (Exception e)
+      {
+        logger.Capture(e);
+        throw;
+      }
+      finally
+      {
+      }
+    }
+
+    public Task DuplicateAction(DuplicateActionRequestDto input)
+    {
+      try
+      {
+        return domainService.DuplicateAction(input.Id, input.Count, input.FieldToModify);
       }
       catch (Exception e)
       {

@@ -31,6 +31,31 @@ public class CustomAbpExceptionFilter : AbpExceptionFilter
 
   protected override async Task HandleAndWrapException(ExceptionContext context)
   {
+    // Skip logging for authorization exceptions - they are expected business logic, not errors
+    if (context.Exception is AbpAuthorizationException)
+    {
+      // Get error info without logging
+      var exceptionToErrorInfoConverter = context.GetRequiredService<IExceptionToErrorInfoConverter>();
+      var authErrorInfo = exceptionToErrorInfoConverter.Convert(context.Exception, options =>
+      {
+        options.SendExceptionsDetailsToClients = false;
+        options.SendStackTraceToClients = false;
+      });
+      
+      // Continue with error handling but skip notification for authorization exceptions
+      if (!context.HttpContext.Response.HasStarted)
+      {
+        context.HttpContext.Response.Headers.Append(AbpHttpConsts.AbpErrorFormat, "true");
+        context.HttpContext.Response.StatusCode = (int)context
+            .GetRequiredService<IHttpExceptionStatusCodeFinder>()
+            .GetStatusCode(context.HttpContext, context.Exception);
+      }
+
+      context.Result = await ResolveResult(context, authErrorInfo);
+      context.ExceptionHandled = true;
+      return;
+    }
+
     LogException(context, out var remoteServiceErrorInfo);
 
     await context.GetRequiredService<IExceptionNotifier>().NotifyAsync(new ExceptionNotificationContext(context.Exception));

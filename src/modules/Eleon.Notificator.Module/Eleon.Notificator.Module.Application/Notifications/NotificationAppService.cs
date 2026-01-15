@@ -93,6 +93,7 @@ namespace VPortal.Notificator.Module.Notifications
         RunImmidiate = input.RunImmidiate
       };
 
+      notification.ExtraProperties = input.ExtraProperties ?? new Dictionary<string, string>();
       switch (input.Type)
       {
         case NotificationType.Email:
@@ -111,7 +112,7 @@ namespace VPortal.Notificator.Module.Notifications
             IsRedirectEnabled = input.IsRedirectEnabled,
             TemplateName = input.TemplateName,
             RedirectUrl = input.RedirectUrl,
-            DataParams = input.DataParams
+            LanguageKeyParams = input.LanguageKeyParams
           };
           break;
         case NotificationType.System:
@@ -127,7 +128,7 @@ namespace VPortal.Notificator.Module.Notifications
           {
             ApplicationName = input.ApplicationName,
             IsLocalizedData = input.IsLocalizedData,
-            DataParams = input.DataParams
+            LanguageKeyParams = input.LanguageKeyParams
           };
           break;
         case NotificationType.TwoFactor:

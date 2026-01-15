@@ -203,7 +203,7 @@ namespace VPortal.Lifecycle.Feature.Module.DomainServices
               Type = new MessageNotificationType
               {
                 IsRedirectEnabled = false,
-                DataParams = new List<string>() { result.DocumentId },
+                LanguageKeyParams = new List<string>() { result.DocumentId },
               },
               Recipients = new List<RecipientEto>()
               {
@@ -669,7 +669,7 @@ namespace VPortal.Lifecycle.Feature.Module.DomainServices
                   "Lifecycle::ApprovalNotification:Approved";
                 if (notificationMessage.Notification.Type is MessageNotificationType pushType)
                 {
-                  pushType.DataParams = new List<string>()
+                  pushType.LanguageKeyParams = new List<string>()
                   {
                     groupAudit.DocumentId,
                     currentActor.ActorName,
@@ -682,7 +682,7 @@ namespace VPortal.Lifecycle.Feature.Module.DomainServices
                   "Lifecycle::ApprovalNotification:Rejected";
                 if (notificationMessage.Notification.Type is MessageNotificationType pushType)
                 {
-                  pushType.DataParams = new List<string>()
+                  pushType.LanguageKeyParams = new List<string>()
                   {
                     groupAudit.DocumentId,
                     currentActor.ActorName,
@@ -1368,7 +1368,7 @@ namespace VPortal.Lifecycle.Feature.Module.DomainServices
 
             if (notificationMessage.Notification.Type is MessageNotificationType pushType)
             {
-              pushType.DataParams = new List<string>()
+              pushType.LanguageKeyParams = new List<string>()
               {
                 groupAudit.GetProperty("DocEntry", string.Empty),
               };
@@ -1388,7 +1388,7 @@ namespace VPortal.Lifecycle.Feature.Module.DomainServices
             );
             if (notificationMessage.Notification.Type is MessageNotificationType pushType)
             {
-              pushType.DataParams = new List<string>()
+              pushType.LanguageKeyParams = new List<string>()
               {
                 groupAudit.GetProperty("DocEntry", string.Empty),
               };
@@ -1410,7 +1410,7 @@ namespace VPortal.Lifecycle.Feature.Module.DomainServices
 
             if (notificationMessage.Notification.Type is MessageNotificationType pushType)
             {
-              pushType.DataParams = new List<string>()
+              pushType.LanguageKeyParams = new List<string>()
               {
                 groupAudit.GetProperty("DocEntry", string.Empty),
                 stateActorAudit.RefId,

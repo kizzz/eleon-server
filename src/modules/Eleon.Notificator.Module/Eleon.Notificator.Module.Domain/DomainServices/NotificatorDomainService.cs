@@ -100,28 +100,61 @@ namespace VPortal.Notificator.Module.DomainServices
         notification.ExtraProperties["Recipients"] = notification.Recipients.Select(x => $"{x.Type};{x.RefId}").JoinAsString(", ");
         notification.ExtraProperties["ExtraProperties"] = notification.ExtraProperties.Any() ? string.Join(";\n", notification.ExtraProperties.Where(x => (x.Value?.Length ?? 0) < 100).Select(kvp => $"{kvp.Key}: {kvp.Value}")) : "None";
 
-        if (notification.Type is not TwoFactorNotificationType && notification.Type is not SystemNotificationType)
-        {
-          if (!string.IsNullOrEmpty(notification.TemplateName))
-          {
-            var message = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
-            {
 
-              Placeholders = notification.ExtraProperties,
-              TemplateName = notification.TemplateName
-            });
-            notification.Message = message.RenderedTemplate;
-          }
-          else if (!string.IsNullOrEmpty(notification.TemplateType))
+        if (!string.IsNullOrEmpty(notification.TemplateName))
+        {
+          var message = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
           {
-            var message = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateByTextMsg
-            {
-              Text = notification.Message,
-              Placeholders = notification.ExtraProperties,
-              TemplateType = notification.TemplateType
-            });
-            notification.Message = message.RenderedTemplate;
-          }
+
+            Placeholders = notification.ExtraProperties,
+            TemplateName = notification.TemplateName
+          });
+          notification.Message = message.RenderedTemplate;
+        }
+        else if (!string.IsNullOrEmpty(notification.TemplateType))
+        {
+          var message = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateByTextMsg
+          {
+            Text = notification.Message,
+            Placeholders = notification.ExtraProperties,
+            TemplateType = notification.TemplateType
+          });
+          notification.Message = message.RenderedTemplate;
+        }
+        else if (notification.Type is TwoFactorNotificationType)
+        {
+          var args = new Dictionary<string, string>()
+              {
+                  { "code", notification.Message }
+              };
+          var message = await _eventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
+          {
+            TemplateName = "2FA Email",
+            Placeholders = args
+          });
+        }
+        else if (notification.Type is SystemNotificationType systemType)
+        {
+          var replacements = NotificatorHelperService.GetPlaceholdersReplacements(notification, systemType);
+          systemType.EmailMessage = notification.Message;
+          systemType.TgMessage = notification.Message;
+
+          var emailMessage = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
+          {
+
+            Placeholders = replacements,
+            TemplateName = "Notification Email"
+          });
+
+          var tgMessage = await _distributedEventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
+          {
+            Placeholders = replacements,
+            TemplateName = "Notification Telegram"
+          });
+
+          systemType.EmailMessage = emailMessage.RenderedTemplate;
+          systemType.TgMessage = tgMessage.RenderedTemplate;
+
         }
 
         await _notificationHandler.HandleAsync(notification);
@@ -191,7 +224,6 @@ namespace VPortal.Notificator.Module.DomainServices
           Id = notification.Id,
           Recipients = jsonSerializer.Deserialize<List<RecipientEto>>(notification.Receivers),
           Message = notification.Message,
-          //DataParams = notification.DataParams,
           Type = notification.Type,
           Priority = notification.Priority,
         });

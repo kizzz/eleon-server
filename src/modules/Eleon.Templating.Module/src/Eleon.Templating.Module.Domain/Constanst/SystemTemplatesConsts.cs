@@ -56,74 +56,6 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             IsSystem = true,
           }
       },
-      {
-          TemplatingDomainConstants.ActionSendMailNotification,
-          new Template(Guid.Empty)
-          {
-            Name = TemplatingDomainConstants.ActionSendMailNotification,
-            Type = TemplateType.Action,
-            TemplateContent = """
-            {
-              "Recipients": [
-                "vladymir.ogorodnytsky@eleonsoft.com"
-              ],
-              "RecipientsType": "direct",
-              "NotificationType": "Email",
-              "Message": "Email new message",
-              "isHtml": true, 
-              "subject": "30 Mixed, Email 3/6", 
-              "attachments": { 
-                "report.txt": " SGVsbG8gd29ybGQuCkkgaGF2ZSBlbmNvZGVkIHRoaXMgbWVzc2FnZSBoZXJlOiBodHRwczovL3d3dy5iYXNlNjRlbmNvZGUub3JnLw== " 
-              }
-            }
-
-            """,
-            Format = TextFormat.Json,
-            TemplateId = "SendNotificationAction",
-            IsSystem = true,
-          }
-      },
-      {
-          TemplatingDomainConstants.ActionSendTelegram,
-          new Template(Guid.Empty)
-          {
-            Name = TemplatingDomainConstants.ActionSendTelegram,
-            Type = TemplateType.Action,
-            TemplateContent = """
-            {
-              "NotificationType": "Social",
-              "Message": "Telegram new message",
-              "Platform": "telegram",
-              "ChannelId": "-1003077669273"
-            }
-            """,
-            Format = TextFormat.Json,
-            TemplateId = "SendNotificationAction",
-            IsSystem = true,
-          }
-      },
-      {
-          TemplatingDomainConstants.ActionSendMessageNotification,
-          new Template(Guid.Empty)
-          {
-            Name = TemplatingDomainConstants.ActionSendMessageNotification,
-            Type = TemplateType.Action,
-            TemplateContent = """
-            { 
-              "Recipients": [
-                "cf9500fb-e5d2-10c9-b5cb-3a1db801ca1e"
-              ],
-              "RecipientsType": "User",
-              "ApplicationName" : "Admin",
-              "Message": "Message for SA user", 
-              "NotificationType": "Message"
-            } 
-            """,
-            Format = TextFormat.Json,
-            TemplateId = "SendNotificationAction",
-            IsSystem = true,
-          }
-      },
        {
           TemplatingDomainConstants.ActionShrinkLogs,
           new Template(Guid.Empty)
@@ -138,6 +70,116 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             """,
             Format = TextFormat.Json,
             TemplateId = "ShrinkSystemLog",
+            IsSystem = true,
+          }
+      },
+      {
+          TemplatingDomainConstants.ActionSendEmailNotification,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionSendEmailNotification,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "Recipients": [
+                "vladymir.ogorodnytsky@eleonsoft.com"
+              ],
+              "RecipientsType": "direct",
+              "IsHtml": true,
+              "Subject": "Email notification",
+              "Message": "Email notification message",
+              "TemplateName": "",
+              "TemplateType": ""
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "SendEmailNotification",
+            IsSystem = true,
+          }
+      },
+      {
+          TemplatingDomainConstants.ActionSendSystemNotification,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionSendSystemNotification,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "Recipients": [
+                "cf9500fb-e5d2-10c9-b5cb-3a1db801ca1e"
+              ],
+              "RecipientsType": "user",
+              "WriteLog": true,
+              "LogLevel": 0,
+              "Message": "System notification message",
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "SendSystemNotification",
+            IsSystem = true,
+          }
+      },
+      {
+          TemplatingDomainConstants.ActionSendPushNotification,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionSendPushNotification,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "Recipients": [
+                "cf9500fb-e5d2-10c9-b5cb-3a1db801ca1e"
+              ],
+              "RecipientsType": "user",
+              "Message": "Push notification message",
+              "TemplateName": "",
+              "TemplateType": ""
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "SendPushNotification",
+            IsSystem = true,
+          }
+      },
+      {
+          TemplatingDomainConstants.ActionSendSmsNotification,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionSendSmsNotification,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "Recipients": [
+                "cf9500fb-e5d2-10c9-b5cb-3a1db801ca1e"
+              ],
+              "RecipientsType": "user",
+              "Message": "SMS notification message",
+              "TemplateName": "",
+              "TemplateType": ""
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "SendSmsNotification",
+            IsSystem = true,
+          }
+      },
+      {
+          TemplatingDomainConstants.ActionSendSocialNotification,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionSendSocialNotification,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "Platform": "telegram",
+              "ChannelId": "-1003077669273",
+              "Message": "Social notification message",
+              "TemplateName": "",
+              "TemplateType": ""
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "SendSocialNotification",
             IsSystem = true,
           }
       }

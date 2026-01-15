@@ -21,6 +21,7 @@ public static class NotificationHelper
       RunImmidiate = notification.RunImmidiate,
     };
 
+    dto.ExtraProperties = notification.ExtraProperties;
     if (notification.Type is SystemNotificationType system)
     {
       dto.Type = EleoncoreNotificationType.System;
@@ -43,14 +44,14 @@ public static class NotificationHelper
       dto.IsRedirectEnabled = message.IsRedirectEnabled;
       dto.TemplateName = message.TemplateName;
       dto.RedirectUrl = message.RedirectUrl;
-      dto.DataParams = message.DataParams;
+      dto.LanguageKeyParams = message.LanguageKeyParams;
     }
     else if (notification.Type is PushNotificationType push)
     {
       dto.Type = EleoncoreNotificationType.Push;
       dto.ApplicationName = push.ApplicationName;
       dto.IsLocalizedData = push.IsLocalizedData;
-      dto.DataParams = push.DataParams;
+      dto.LanguageKeyParams = push.LanguageKeyParams;
     }
     else if (notification.Type is SmsNotificationType sms)
     {

@@ -81,12 +81,7 @@ public class TwoFactorNotificationHandler : INotificationHandler<TwoFactorNotifi
         };
     try
     {
-      var emailMessage = await _eventBus.RequestAsync<RenderTemplateResponse>(new RenderTemplateMsg
-      {
-        TemplateName = "2FA Email",
-        Placeholders = args
-      });
-      await _emailNotificator.SendEmailAsync($"{_helperService.GetTenantName()} Two Factor", emailMessage.RenderedTemplate, emails, true);
+      await _emailNotificator.SendEmailAsync($"{_helperService.GetTenantName()} Two Factor", notification.Message, emails, true);
     }
     catch (Exception ex)
     {

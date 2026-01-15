@@ -1,4 +1,4 @@
-﻿using EventManagementModule.Module.Domain.Shared.Entities;
+using EventManagementModule.Module.Domain.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 using Migrations.Module;
 using SharedCollector.modules.Migration.Module.Extensions;
@@ -60,19 +60,7 @@ public class EventManagementModuleDbContext : AbpDbContext<EventManagementModule
       b.Property(x => x.LastError).HasMaxLength(1024);
 
       b.HasIndex(x => new { x.QueueId, x.Lane, x.Status, x.EnqueueSeq })
-          .IsClustered()
-          .IncludeProperties(x => new
-          {
-            x.Id,
-            x.Name,
-            x.TenantId,
-            x.CreatedUtc,
-            x.Attempts,
-            x.VisibleAfterUtc,
-            x.LockedUntilUtc,
-            x.MessageKey,
-            x.TraceId
-          });
+          .IsClustered();
 
       b.HasIndex(x => new { x.QueueId, x.Lane, x.Status, x.LockedUntilUtc })
           .IncludeProperties(x => new { x.Id, x.EnqueueSeq });

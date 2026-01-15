@@ -97,7 +97,7 @@ namespace VPortal.Notificator.Module.DomainServices
 
         notification.ExtraProperties ??= new Dictionary<string, string>();
         notification.ExtraProperties["Message"] = notification.Message;
-        notification.ExtraProperties["Recipients"] = notification.Recipients.Select(x => $"{x.Type};{x.RefId.ToString()}").JoinAsString(", ");
+        notification.ExtraProperties["Recipients"] = notification.Recipients.Select(x => $"{x.Type};{x.RefId}").JoinAsString(", ");
         notification.ExtraProperties["ExtraProperties"] = notification.ExtraProperties.Any() ? string.Join(";\n", notification.ExtraProperties.Where(x => (x.Value?.Length ?? 0) < 100).Select(kvp => $"{kvp.Key}: {kvp.Value}")) : "None";
 
         if (notification.Type is not TwoFactorNotificationType && notification.Type is not SystemNotificationType)

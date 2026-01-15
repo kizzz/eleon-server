@@ -81,7 +81,14 @@ public class CrossModuleRealDbTestStartupModule : AbpModule
         {
           configurationContext.UseSqlServer(
             connectionString,
-            sqlOptions => sqlOptions.UseCompatibilityLevel(configuration.GetValue("SqlServer:CompatibilityLevel", 120)));
+            opt =>
+                {
+                  opt.UseCompatibilityLevel(context.Services.GetConfiguration().GetValue("SqlServer:CompatibilityLevel", 120));
+                  opt.EnableRetryOnFailure(
+                      maxRetryCount: 5,
+                      maxRetryDelay: TimeSpan.FromSeconds(30),
+                      errorNumbersToAdd: null);
+                });
         });
       });
       return;

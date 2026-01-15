@@ -18,17 +18,17 @@ using Volo.Abp.TenantManagement.EntityFrameworkCore;
 namespace VPortal.EntityFrameworkCore;
 
 [DependsOn(
-    typeof(VPortalDomainModule),
-    typeof(AbpIdentityEntityFrameworkCoreModule),
-    // typeof(AbpIdentityServerEntityFrameworkCoreModule),
-    typeof(AbpPermissionManagementEntityFrameworkCoreModule),
-    typeof(AbpSettingManagementEntityFrameworkCoreModule),
-    typeof(AbpEntityFrameworkCoreSqlServerModule),
-    typeof(AbpBackgroundJobsEntityFrameworkCoreModule),
-    typeof(AbpAuditLoggingEntityFrameworkCoreModule),
-    typeof(AbpFeatureManagementEntityFrameworkCoreModule),
-    typeof(AbpTenantManagementEntityFrameworkCoreModule),
-    typeof(BlobStoringDatabaseEntityFrameworkCoreModule)
+  typeof(VPortalDomainModule),
+  typeof(AbpIdentityEntityFrameworkCoreModule),
+  // typeof(AbpIdentityServerEntityFrameworkCoreModule),
+  typeof(AbpPermissionManagementEntityFrameworkCoreModule),
+  typeof(AbpSettingManagementEntityFrameworkCoreModule),
+  typeof(AbpEntityFrameworkCoreSqlServerModule),
+  typeof(AbpBackgroundJobsEntityFrameworkCoreModule),
+  typeof(AbpAuditLoggingEntityFrameworkCoreModule),
+  typeof(AbpFeatureManagementEntityFrameworkCoreModule),
+  typeof(AbpTenantManagementEntityFrameworkCoreModule),
+  typeof(BlobStoringDatabaseEntityFrameworkCoreModule)
 )]
 public class VPortalEntityFrameworkCoreModule : AbpModule
 {
@@ -56,8 +56,17 @@ public class VPortalEntityFrameworkCoreModule : AbpModule
     var configuration = context.Services.GetConfiguration();
     Configure<AbpDbContextOptions>(options =>
     {
-      options.UseSqlServer(
-              opt => opt.UseCompatibilityLevel(configuration.GetValue("SqlServer:CompatibilityLevel", 120)));
+      options.UseSqlServer(opt =>
+      {
+        opt.UseCompatibilityLevel(
+          context.Services.GetConfiguration().GetValue("SqlServer:CompatibilityLevel", 120)
+        );
+        opt.EnableRetryOnFailure(
+          maxRetryCount: 5,
+          maxRetryDelay: TimeSpan.FromSeconds(30),
+          errorNumbersToAdd: null
+        );
+      });
     });
   }
 }

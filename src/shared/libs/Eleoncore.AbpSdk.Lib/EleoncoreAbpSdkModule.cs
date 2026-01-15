@@ -9,17 +9,24 @@ using Volo.Abp.Modularity;
 
 namespace Eleoncore.Abp.Sdk
 {
-  [DependsOn(
-      typeof(AbpEntityFrameworkCoreModule)
-  )]
+  [DependsOn(typeof(AbpEntityFrameworkCoreModule))]
   public class EleoncoreAbpSdkModule : AbpModule
   {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
       Configure<AbpDbContextOptions>(options =>
       {
-        options.UseSqlServer(
-                  opt => opt.UseCompatibilityLevel(context.Services.GetConfiguration().GetValue("SqlServer:CompatibilityLevel", 120)));
+        options.UseSqlServer(opt =>
+        {
+          opt.UseCompatibilityLevel(
+            context.Services.GetConfiguration().GetValue("SqlServer:CompatibilityLevel", 120)
+          );
+          opt.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null
+          );
+        });
       });
 
       context.Services.AddSingleton<IDbMigrationService, DefaultEleoncoreDbMigrationService>();
@@ -28,8 +35,6 @@ namespace Eleoncore.Abp.Sdk
     public override void OnPreApplicationInitialization(ApplicationInitializationContext context)
     {
       StaticServicesAccessor.Initialize(context.ServiceProvider);
-
     }
   }
 }
-

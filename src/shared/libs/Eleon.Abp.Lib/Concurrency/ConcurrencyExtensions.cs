@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
@@ -488,7 +491,7 @@ public static class ConcurrencyExtensions
       await uow.CompleteAsync(cancellationToken);
       return result;
     }
-    catch (AbpDbConcurrencyException ex)
+    catch (Exception ex) when (ex is AbpDbConcurrencyException || IsSqlDeadlock(ex))
     {
       var effectiveOptions = ResolveOptions(options, maxRetries, baseDelay, useExponentialBackoff);
       var stopwatch = Stopwatch.StartNew();
@@ -503,9 +506,11 @@ public static class ConcurrencyExtensions
 
         if (attempt == 1 || stopwatch.Elapsed - lastLogAt >= effectiveOptions.LogEvery)
         {
+          var exceptionType = IsSqlDeadlock(ex) ? "deadlock" : "concurrency conflict";
           logger.LogWarning(
             ex,
-            "Concurrency conflict in {OperationName}{EntityId} (attempt {Attempt}). Verifying current DB state...",
+            "{ExceptionType} in {OperationName}{EntityId} (attempt {Attempt}). Verifying current DB state...",
+            exceptionType,
             operationNameForLog,
             entityIdForLog != null ? $" for entity {entityIdForLog}" : string.Empty,
             attempt
@@ -583,7 +588,11 @@ public static class ConcurrencyExtensions
     throw new AbpDbConcurrencyException("Unexpected concurrency resolution flow.");
   }
 
-  public readonly record struct ConcurrencyWaitResult<TResult>(bool IsDesired, TResult? Result, string? Details);
+  public readonly record struct ConcurrencyWaitResult<TResult>(
+    bool IsDesired,
+    TResult? Result,
+    string? Details
+  );
 
   /// <summary>
   /// Waits for a desired state after a concurrency conflict by repeatedly verifying current state.
@@ -649,6 +658,63 @@ public static class ConcurrencyExtensions
     }
   }
 
+  /// <summary>
+  /// Enumerates all exceptions in the exception chain, including inner exceptions and flattened AggregateExceptions.
+  /// </summary>
+  private static IEnumerable<Exception> EnumerateExceptions(Exception ex)
+  {
+    // Flatten AggregateException(s)
+    if (ex is AggregateException ae)
+    {
+      ae = ae.Flatten();
+      foreach (var inner in ae.InnerExceptions.SelectMany(EnumerateExceptions))
+        yield return inner;
+      yield break;
+    }
+
+    for (Exception? cur = ex; cur is not null; cur = cur.InnerException)
+      yield return cur;
+  }
+
+  /// <summary>
+  /// Checks if an exception is a SQL Server deadlock (error 1205).
+  /// Traverses the entire exception chain including inner exceptions and AggregateExceptions.
+  /// </summary>
+  private static bool IsSqlDeadlock(Exception ex)
+  {
+    foreach (var e in EnumerateExceptions(ex))
+    {
+      if (e is SqlException se && se.Number == 1205)
+        return true;
+
+      // If you might also be on System.Data.SqlClient:
+      // if (e.GetType().FullName == "System.Data.SqlClient.SqlException"
+      //     && TryGetSqlErrorNumber(e, out var n) && n == 1205) return true;
+    }
+    return false;
+  }
+
+  /// <summary>
+  /// Checks if an exception is a retryable SQL Server error (deadlocks, lock timeouts, snapshot isolation conflicts).
+  /// Traverses the entire exception chain including inner exceptions and AggregateExceptions.
+  /// </summary>
+  private static bool IsRetryableSql(Exception ex)
+  {
+    foreach (var e in EnumerateExceptions(ex))
+    {
+      if (e is SqlException se)
+      {
+        // Concurrency / lock / isolation transient set
+        if (se.Number is 1205 or 1222 or 3960 or 41301 or 41302 or 41305 or 41325)
+          return true;
+
+        // Optional: Azure SQL / transient infra (only if you want broader retries)
+        // if (se.Number is 40501 or 40613 or 40197 or 10928 or 10929) return true;
+      }
+    }
+    return false;
+  }
+
   private static ConcurrencyHandlingOptions ResolveOptions(
     ConcurrencyHandlingOptions? options,
     int maxRetries,
@@ -663,7 +729,7 @@ public static class ConcurrencyExtensions
       BaseDelay = baseDelay ?? source.BaseDelay,
       UseExponentialBackoff = useExponentialBackoff ? true : source.UseExponentialBackoff,
       MaxDelay = source.MaxDelay,
-      LogEvery = source.LogEvery
+      LogEvery = source.LogEvery,
     };
 
     if (maxRetries > 0)

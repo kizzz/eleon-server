@@ -14,6 +14,7 @@
       "System": "Warning",
       "Microsoft": "Error",
       "Microsoft.AspNetCore": "Error",
+      "Microsoft.AspNetCore.Server.Kestrel": "Error",
       "Microsoft.EntityFrameworkCore": "Warning",
       "Volo.Abp": "Error",
       "Volo.Abp.Identity": "Error",

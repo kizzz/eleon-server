@@ -36,7 +36,7 @@ public class CustomAbpExceptionFilter : AbpExceptionFilter
     {
       // Get error info without logging
       var exceptionToErrorInfoConverter = context.GetRequiredService<IExceptionToErrorInfoConverter>();
-      var remoteServiceErrorInfo = exceptionToErrorInfoConverter.Convert(context.Exception, options =>
+      var authErrorInfo = exceptionToErrorInfoConverter.Convert(context.Exception, options =>
       {
         options.SendExceptionsDetailsToClients = false;
         options.SendStackTraceToClients = false;
@@ -51,7 +51,7 @@ public class CustomAbpExceptionFilter : AbpExceptionFilter
             .GetStatusCode(context.HttpContext, context.Exception);
       }
 
-      context.Result = await ResolveResult(context, remoteServiceErrorInfo);
+      context.Result = await ResolveResult(context, authErrorInfo);
       context.ExceptionHandled = true;
       return;
     }

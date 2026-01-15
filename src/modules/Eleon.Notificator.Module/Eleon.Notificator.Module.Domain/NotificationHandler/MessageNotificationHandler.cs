@@ -59,14 +59,14 @@ public class MessageNotificationHandler : INotificationHandler<MessageNotificati
                 userId,
                 notification.Message,
                 type.IsLocalizedData,
-                type.DataParams,
+                type.LanguageKeyParams,
                 type.ApplicationName,
                 type.IsRedirectEnabled,
                 type.RedirectUrl,
                 notification.Priority);
           }
 
-          await _pushNotificator.SendPushAsync(userIds.Distinct().ToList(), notification.Message, type.DataParams, type.IsLocalizedData, type.IsRedirectEnabled ? type.RedirectUrl : null, type.ApplicationName, notification.Priority);
+          await _pushNotificator.SendPushAsync(userIds.Distinct().ToList(), notification.Message, type.LanguageKeyParams, type.IsLocalizedData, type.IsRedirectEnabled ? type.RedirectUrl : null, type.ApplicationName, notification.Priority);
         }
       }
     }

@@ -21,7 +21,7 @@ namespace VPortal.Notificator.Module.Entities
 
     public bool IsLocalizedData { get; set; }
 
-    public string DataParams { get; set; }
+    public string LanguageKeyParams { get; set; }
     public string ApplicationName { get; set; }
 
     public bool IsRedirectEnabled { get; set; }
@@ -38,7 +38,7 @@ namespace VPortal.Notificator.Module.Entities
         Guid? userId,
         string content,
         bool isLocalizedData,
-        string dataParams,
+        string languageKeyParams,
         string applicationName,
         bool isRedirectEnabled,
         string redirectUrl,
@@ -48,7 +48,7 @@ namespace VPortal.Notificator.Module.Entities
       UserId = userId;
       Content = content;
       IsLocalizedData = isLocalizedData;
-      DataParams = dataParams;
+      LanguageKeyParams = languageKeyParams;
       IsRedirectEnabled = isRedirectEnabled;
       RedirectUrl = redirectUrl;
       Priority = priority;

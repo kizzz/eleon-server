@@ -15,7 +15,7 @@ public class PushNotificationValueObject
 
   public bool IsLocalizedData { get; set; }
 
-  public List<string> DataParams { get; set; }
+  public List<string> LanguageKeyParams { get; set; }
 
   public string ApplicationName { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using Common.Module.Constants;
+using Common.Module.Constants;
 using EleonsoftSdk.modules.Messaging.Module.SystemMessages.Notificator;
 using EleonsoftSdk.modules.Messaging.Module.SystemMessages.Notificator.NotificationType;
 using System;
@@ -61,23 +61,6 @@ namespace VPortal.Notificator.Module.Entities
       {
         _type = value;
         SerializedType = value.ToJsonString();
-      }
-    }
-
-    [NotMapped]
-    public Dictionary<string, string> DataParams
-    {
-      get
-      {
-        return ExtraProperties.ToDictionary(x => x.Key, x => x.Value?.ToString());
-      }
-      set
-      {
-        ExtraProperties.Clear();
-        foreach (var item in value)
-        {
-          ExtraProperties[item.Key] = item.Value;
-        }
       }
     }
   }

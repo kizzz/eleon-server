@@ -16,7 +16,7 @@ namespace VPortal.Notificator.Module.NotificationLogs
 
     public bool IsLocalizedData { get; set; }
 
-    public string DataParams { get; set; }
+    public string LanguageKeyParams { get; set; }
 
     public string ApplicationName { get; set; }
 

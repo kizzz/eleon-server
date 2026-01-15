@@ -29,7 +29,7 @@ namespace VPortal.Notificator.Module.Notifications
     public bool IsRedirectEnabled { get; set; }
     public string TemplateName { get; set; }
     public string RedirectUrl { get; set; }
-    public List<string> DataParams { get; set; }
+    public List<string> LanguageKeyParams { get; set; }
 
     // Social type
     public string Platform { get; set; } // e.g., Telegram, WhatsUp, Facebook, Twitter

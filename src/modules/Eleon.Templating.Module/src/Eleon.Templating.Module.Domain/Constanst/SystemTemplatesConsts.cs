@@ -63,31 +63,23 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             Name = TemplatingDomainConstants.ActionSendMailNotification,
             Type = TemplateType.Action,
             TemplateContent = """
-            { 
-              "recipients": [ 
-                { "type": 2, "recipientAddress": "vladymir.ogorodnytsky@eleonsoft.com" } 
-              ], 
-              "message": "<p>See the attached report.</p>", 
-              "type": { 
-                "Type": "Email", 
-                "isHtml": true, 
-                "subject": "Daily Report", 
-                "attachments": { 
-                  "report.txt": " SGVsbG8gd29ybGQuCkkgaGF2ZSBlbmNvZGVkIHRoaXMgbWVzc2FnZSBoZXJlOiBodHRwczovL3d3dy5iYXNlNjRlbmNvZGUub3JnLw== " 
-                } 
-
-              }, 
-
-              "priority": 0, 
-
-              "runImmidiate": true 
-
-            } 
-             
+            {
+              "Recipients": [
+                "vladymir.ogorodnytsky@eleonsoft.com"
+              ],
+              "RecipientsType": "direct",
+              "NotificationType": "Email",
+              "Message": "Email new message",
+              "isHtml": true, 
+              "subject": "30 Mixed, Email 3/6", 
+              "attachments": { 
+                "report.txt": " SGVsbG8gd29ybGQuCkkgaGF2ZSBlbmNvZGVkIHRoaXMgbWVzc2FnZSBoZXJlOiBodHRwczovL3d3dy5iYXNlNjRlbmNvZGUub3JnLw== " 
+              }
+            }
 
             """,
             Format = TextFormat.Json,
-            TemplateId = "SendNotification",
+            TemplateId = "SendNotificationAction",
             IsSystem = true,
           }
       },
@@ -98,23 +90,15 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             Name = TemplatingDomainConstants.ActionSendTelegram,
             Type = TemplateType.Action,
             TemplateContent = """
-            { 
-              "message": "Telegram Notification", 
-              "type": { 
-                "Type": "Social", 
-                "Platform": "telegram",
-                "ChannelId": "-1003077669273"
-
-              }, 
-
-              "priority": 0, 
-
-              "runImmidiate": true 
-
-            } 
+            {
+              "NotificationType": "Social",
+              "Message": "Telegram new message",
+              "Platform": "telegram",
+              "ChannelId": "-1003077669273"
+            }
             """,
             Format = TextFormat.Json,
-            TemplateId = "SendNotification",
+            TemplateId = "SendNotificationAction",
             IsSystem = true,
           }
       },
@@ -126,27 +110,34 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             Type = TemplateType.Action,
             TemplateContent = """
             { 
-              "recipients": [{ 
-                "refId": "9fe1dadd-ad2b-bbfd-92ad-3a1ddba6e04d", 
-                "type": 0 
-              }], 
-              "message": "Message for SA", 
-              "priority": 1, 
-              "runImmidiate": true, 
-              "type": { 
-                  "Type": "Message", 
-                  "isLocalizedData": true, 
-
-                  "isRedirectEnabled": true, 
-                  "redirectUrl": "/home",  
-                  "dataParams": ["Eleonsoft", "2025"], 
-                  "applicationName": "Admin" 
-                } 
+              "Recipients": [
+                "cf9500fb-e5d2-10c9-b5cb-3a1db801ca1e"
+              ],
+              "RecipientsType": "User",
+              "ApplicationName" : "Admin",
+              "Message": "Message for SA user", 
+              "NotificationType": "Message"
             } 
-            
             """,
             Format = TextFormat.Json,
-            TemplateId = "SendNotification",
+            TemplateId = "SendNotificationAction",
+            IsSystem = true,
+          }
+      },
+       {
+          TemplatingDomainConstants.ActionShrinkLogs,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionShrinkLogs,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "MaxAgeMinutes": 10,
+              "CutoffUtc": "2026-01-16T13:45:30Z"
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "ShrinkSystemLog",
             IsSystem = true,
           }
       }

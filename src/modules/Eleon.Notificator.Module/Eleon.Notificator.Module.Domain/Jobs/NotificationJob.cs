@@ -16,11 +16,6 @@ using Volo.Abp.Json;
 
 namespace EleonsoftModuleCollector.Notificator.Module.Notificator.Module.Domain.Jobs;
 
-public class NotificationJobParams
-{
-  public List<string> Recipients { get; set; } = new List<string>();
-}
-
 public class NotificationJob : DefaultBackgroundJob, ITransientDependency
 {
   private readonly IDistributedEventBus _eventBus;

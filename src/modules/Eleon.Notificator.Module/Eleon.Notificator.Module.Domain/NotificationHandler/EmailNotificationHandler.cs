@@ -1,4 +1,4 @@
-﻿using EleonsoftModuleCollector.Notificator.Module.Notificator.Module.Domain.Managers;
+using EleonsoftModuleCollector.Notificator.Module.Notificator.Module.Domain.Managers;
 using EleonsoftSdk.modules.Messaging.Module.SystemMessages.Notificator.NotificationType;
 using Messaging.Module.ETO;
 using Microsoft.CodeAnalysis.Emit;

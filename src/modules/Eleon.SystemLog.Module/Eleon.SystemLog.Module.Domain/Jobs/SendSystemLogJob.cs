@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Alerts;
 using Eleon.Logging.Lib.SystemLog.Contracts;
 using EleonsoftModuleCollector.Commons.Module.Messages.Notificator;
 using EleonsoftSdk.modules.Helpers.Module;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.Json;
@@ -52,6 +54,10 @@ public class SendSystemLogJob : DefaultBackgroundJob, ITransientDependency
     systemLog.LogLevel = jobParams.SystemLogLevel;
     systemLog.Message = jobParams.Message;
     systemLog.ApplicationName = "SendSystemLogJob";
+    foreach (var prop in job.ExtraProperties)
+    {
+      systemLog.SetProperty(prop.Key, prop.Value?.ToString());
+    }
     await _systemLogDomainService.WriteAsync(systemLog);
 
     var result = new JobResult(true, "System log successfully sent", new List<BackgroundJobTextInfoEto>());

@@ -13,6 +13,7 @@ namespace Eleon.Templating.Module.Constants
     public const string ActionSendMailNotification = "Send Mail Notification";
     public const string ActionSendTelegram = "Send Telegram Notification";
     public const string ActionSendMessageNotification = "Send Message Notification";
+    public const string ActionShrinkLogs = "Shrink old logs";
     public const string NotificationEmail = "Notification Email";
     public const string NotificationTelegram = "Notification Telegram";
     public const string TwoFAEmail = "2FA Email";

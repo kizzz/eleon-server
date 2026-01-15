@@ -111,7 +111,7 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
               "RecipientsType": "user",
               "WriteLog": true,
               "LogLevel": 0,
-              "Message": "System notification message",
+              "Message": "System notification message"
             }
             """,
             Format = TextFormat.Json,

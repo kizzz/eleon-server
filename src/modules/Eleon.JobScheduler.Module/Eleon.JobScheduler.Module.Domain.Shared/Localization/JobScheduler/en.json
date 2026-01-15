@@ -55,6 +55,7 @@
     "Trigger:Start": "Starts at (UTC)",
     "Trigger:Expire": "Expires at (UTC)",
     "Trigger:Period": "Recurs every",
+    "Trigger:LastRunTime": "Last runtime",
     "Trigger:PeriodType": "Occurs",
     "Trigger:DaysOfWeek": "Days of week",
     "Trigger:DaysOfMonth": "Days of month",

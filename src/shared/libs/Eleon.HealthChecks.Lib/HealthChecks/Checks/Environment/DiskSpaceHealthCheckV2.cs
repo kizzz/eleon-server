@@ -44,7 +44,12 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var result = new PathCheckResult { Path = rule.Path, MaxSizeBytes = rule.MaxSizeBytes };
+            long maxSizeBytes = rule.MaxSizeMb * 1024 * 1024;
+            var result = new PathCheckResult 
+            { 
+                Path = rule.Path, 
+                MaxSizeMb = rule.MaxSizeMb
+            };
             var pathSw = Stopwatch.StartNew();
 
             try
@@ -56,7 +61,7 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
                     var fi = new FileInfo(absPath);
                     result.SizeBytes = fi.Length;
                     result.Kind = "File";
-                    result.Success = result.SizeBytes <= rule.MaxSizeBytes;
+                    result.Success = result.SizeBytes <= maxSizeBytes;
                 }
                 else if (Directory.Exists(absPath))
                 {
@@ -64,7 +69,7 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
                     result.SizeBytes = totalBytes;
                     result.FileCount = fileCount;
                     result.Kind = "Directory";
-                    result.Success = totalBytes <= rule.MaxSizeBytes;
+                    result.Success = totalBytes <= maxSizeBytes;
                 }
                 else
                 {
@@ -114,7 +119,8 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
             data[$"{key}.success"] = r.Success;
             data[$"{key}.kind"] = r.Kind ?? "Unknown";
             data[$"{key}.size_bytes"] = r.SizeBytes;
-            data[$"{key}.max_bytes"] = r.MaxSizeBytes;
+            data[$"{key}.max_mb"] = r.MaxSizeMb;
+            data[$"{key}.size_mb"] = r.SizeBytes / (1024.0 * 1024.0);
             data[$"{key}.latency_ms"] = r.LatencyMs;
 
             if (r.FileCount.HasValue)
@@ -208,7 +214,7 @@ public class DiskSpaceHealthCheckV2 : IHealthCheck
         public string Path { get; set; } = string.Empty;
         public bool Success { get; set; }
         public long SizeBytes { get; set; }
-        public long MaxSizeBytes { get; set; }
+        public long MaxSizeMb { get; set; }
         public long LatencyMs { get; set; }
         public string? Error { get; set; }
         public string? Kind { get; set; }

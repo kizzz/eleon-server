@@ -1,4 +1,4 @@
-﻿using EleonsoftModuleCollector.HealthCheckModule.HealthCheckModule.Module.Application.Contracts.HealthCheck;
+using EleonsoftModuleCollector.HealthCheckModule.HealthCheckModule.Module.Application.Contracts.HealthCheck;
 using EleonsoftModuleCollector.HealthCheckModule.HealthCheckModule.Module.Domain.Shared.Constants;
 using EleonsoftSdk.modules.Messaging.Module.SystemMessages.HealthCheck;
 using HealthCheckModule.Module.Domain.Shared.Constants;
@@ -24,8 +24,8 @@ public sealed class FilePathRule
   /// <summary>File or folder path. If not absolute, resolved as AppContext.BaseDirectory + Path.</summary>
   public string Path { get; set; } = default!;
 
-  /// <summary>Maximum allowed size in BYTES (file size or total folder size).</summary>
-  public long MaxSizeBytes { get; set; }
+  /// <summary>Maximum allowed size in MEGABYTES (file size or total folder size).</summary>
+  public long MaxSizeMb { get; set; }
 }
 
 // ------------- Health Check ------------
@@ -68,26 +68,29 @@ public class DiskSpaceHealthCheck : DefaultHealthCheck
         {
           var fi = new FileInfo(absPath);
           long size = fi.Length;
+          long maxSizeBytes = rule.MaxSizeMb * 1024 * 1024;
 
           AddJson(report, $"File_{keyBase}_Info", new
           {
             Kind = "File",
             Path = absPath,
             SizeBytes = size,
-            MaxSizeBytes = rule.MaxSizeBytes
+            MaxSizeMb = rule.MaxSizeMb
           });
 
-          if (size > rule.MaxSizeBytes)
+          if (size > maxSizeBytes)
           {
             anyExceeded = true;
+            string limitMsg = $"Size={size}B ({size / (1024.0 * 1024.0):F2}MB), Allowed={rule.MaxSizeMb}MB ({maxSizeBytes}B)";
             AddSimple(report, $"File_{keyBase}_Exceeded",
-                $"File exceeds limit: Size={size}B, Allowed={rule.MaxSizeBytes}B",
+                $"File exceeds limit: {limitMsg}",
                 ReportInformationSeverity.Error);
           }
           else
           {
+            string limitMsg = $"Size={size}B ({size / (1024.0 * 1024.0):F2}MB), Allowed={rule.MaxSizeMb}MB ({maxSizeBytes}B)";
             AddSimple(report, $"File_{keyBase}_WithinLimit",
-                $"File within limit: Size={size}B, Allowed={rule.MaxSizeBytes}B");
+                $"File within limit: {limitMsg}");
           }
 
           ok++;
@@ -95,6 +98,7 @@ public class DiskSpaceHealthCheck : DefaultHealthCheck
         else if (Directory.Exists(absPath))
         {
           var (totalBytes, fileCount, largest) = ScanDirectory(absPath, LargestCount);
+          long maxSizeBytes = rule.MaxSizeMb * 1024 * 1024;
 
           AddJson(report, $"Folder_{absPath}_Info", new
           {
@@ -102,7 +106,7 @@ public class DiskSpaceHealthCheck : DefaultHealthCheck
             Path = absPath,
             TotalSizeBytes = totalBytes,
             FilesCount = fileCount,
-            MaxSizeBytes = rule.MaxSizeBytes
+            MaxSizeMb = rule.MaxSizeMb
           });
 
           AddJson(report, $"Folder_{absPath}_Top{LargestCount}", largest.Select(x => new
@@ -111,17 +115,19 @@ public class DiskSpaceHealthCheck : DefaultHealthCheck
             SizeBytes = x.Size
           }).ToList());
 
-          if (totalBytes > rule.MaxSizeBytes)
+          if (totalBytes > maxSizeBytes)
           {
             anyExceeded = true;
+            string limitMsg = $"Size={totalBytes}B ({totalBytes / (1024.0 * 1024.0):F2}MB), Allowed={rule.MaxSizeMb}MB ({maxSizeBytes}B)";
             AddSimple(report, $"Folder_{absPath}_Exceeded",
-                $"Folder exceeds limit: Size={totalBytes}B, Allowed={rule.MaxSizeBytes}B",
+                $"Folder exceeds limit: {limitMsg}",
                 ReportInformationSeverity.Error);
           }
           else
           {
+            string limitMsg = $"Size={totalBytes}B ({totalBytes / (1024.0 * 1024.0):F2}MB), Allowed={rule.MaxSizeMb}MB ({maxSizeBytes}B)";
             AddSimple(report, $"Folder_{absPath}_WithinLimit",
-                $"Folder within limit: Size={totalBytes}B, Allowed={rule.MaxSizeBytes}B");
+                $"Folder within limit: {limitMsg}");
           }
 
           ok++;

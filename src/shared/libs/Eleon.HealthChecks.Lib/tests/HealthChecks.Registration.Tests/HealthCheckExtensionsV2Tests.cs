@@ -25,7 +25,7 @@ public class HealthCheckExtensionsV2Tests
             ["HealthChecks:EnvironmentCheck:CpuThresholdPercent"] = "90",
             ["HealthChecks:CurrentProcessCheck:CpuThresholdPercent"] = "95",
             ["HealthChecks:DiskSpaceCheck:Items:0:Path"] = "/tmp",
-            ["HealthChecks:DiskSpaceCheck:Items:0:MaxSizeBytes"] = "1000000",
+            ["HealthChecks:DiskSpaceCheck:Items:0:MaxSizeMb"] = "1",
             ["HealthChecks:ConfigurationCheck:Enabled"] = "true",
             ["HealthChecks:HttpCheck:Timeout"] = "30",
             ["HealthChecks:HttpCheck:Urls:0:Name"] = "test",

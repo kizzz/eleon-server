@@ -168,7 +168,7 @@ public static class HealthCheckExtensionsV2
         if (diskSection.Exists())
         {
             builder.Services.Configure<DiskSpaceHealthCheckOptions>(diskSection);
-            builder.AddCheck<DiskSpaceHealthCheckV2>("disk-space", tags: new[] { "diag" });
+            builder.AddCheck<DiskSpaceHealthCheckV2>("logs-size", tags: new[] { "diag" });
         }
 
         return builder;

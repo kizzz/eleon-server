@@ -50,7 +50,7 @@
       "Items": [
         {
           "Path": "Logs",
-          "MaxSizeBytes": "1000000"
+          "MaxSizeMb": 500
         }
       ]
     },

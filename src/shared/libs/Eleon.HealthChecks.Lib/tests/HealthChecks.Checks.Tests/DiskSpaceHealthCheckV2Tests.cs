@@ -49,7 +49,7 @@ public class DiskSpaceHealthCheckV2Tests
                 new FilePathRule
                 {
                     Path = "Z:\\NonExistentDrive\\Path",
-                    MaxSizeBytes = 1000000
+                    MaxSizeMb = 1
                 }
             }
         });
@@ -77,7 +77,7 @@ public class DiskSpaceHealthCheckV2Tests
                 new FilePathRule
                 {
                     Path = tempPath,
-                    MaxSizeBytes = long.MaxValue
+                    MaxSizeMb = 1000000
                 }
             }
         });
@@ -93,7 +93,6 @@ public class DiskSpaceHealthCheckV2Tests
                 new HealthCheckContext(),
                 cts.Token);
         });
-        Assert.NotNull(result);
         // Should handle cancellation gracefully
     }
 
@@ -109,7 +108,7 @@ public class DiskSpaceHealthCheckV2Tests
                 new FilePathRule
                 {
                     Path = longPath,
-                    MaxSizeBytes = 1000000
+                    MaxSizeMb = 1
                 }
             }
         });

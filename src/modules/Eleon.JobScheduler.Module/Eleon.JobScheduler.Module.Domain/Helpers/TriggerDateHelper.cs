@@ -187,18 +187,14 @@ public static class TriggerDateHelper
     // Handle OneTime schedules
     if (trigger.PeriodType == TimePeriodType.OneTime)
     {
-      // If LastRun is set, OneTime already ran - return null
-      if (trigger.LastRun.HasValue)
-        return null;
-
-      // If now < StartUtc, return StartUtc (subject to expiry and monotonicity)
-      if (trigger.StartUtc > now)
+      // If now <= StartUtc, return StartUtc (subject to expiry and monotonicity)
+      if (trigger.StartUtc >= now || trigger.LastRun.HasValue)
       {
         candidateNext = trigger.StartUtc;
       }
       else
       {
-        // now >= StartUtc and LastRun is null - no catch-up, return null
+        // now > StartUtc and LastRun is null - no catch-up, return null
         return null;
       }
     }
@@ -223,44 +219,44 @@ public static class TriggerDateHelper
           _ => throw new Exception("Unsupported PeriodType"),
         };
       }
+    }
 
-      // If we have repeats, calculate the next repeat time
-      if (trigger.RepeatTask && candidateNext.HasValue)
+    // If we have repeats, calculate the next repeat time
+    if (trigger.RepeatTask && candidateNext.HasValue)
+    {
+      // For repeats, we need to find the major occurrence that the repeat window is based on
+      // This is the most recent major occurrence <= max(now, StartUtc) OR LastRun's major occurrence
+      DateTime repeatWindowBase = candidateNext.Value;
+      if (trigger.LastRun.HasValue && trigger.LastRun.Value > minNextRun)
       {
-        // For repeats, we need to find the major occurrence that the repeat window is based on
-        // This is the most recent major occurrence <= max(now, StartUtc) OR LastRun's major occurrence
-        DateTime repeatWindowBase = candidateNext.Value;
-        if (trigger.LastRun.HasValue && trigger.LastRun.Value > minNextRun)
-        {
-          // If LastRun is after minNextRun, find the major occurrence that LastRun belongs to
-          var lastRunMajor = FindMajorOccurrenceForTime(trigger, trigger.LastRun.Value);
-          if (lastRunMajor.HasValue && lastRunMajor.Value <= trigger.LastRun.Value)
-            repeatWindowBase = lastRunMajor.Value;
-        }
-        else if (trigger.StartUtc <= minNextRun)
-        {
-          // Find the major occurrence that minNextRun belongs to
-          var nowMajor = FindMajorOccurrenceForTime(trigger, minNextRun);
-          if (nowMajor.HasValue && nowMajor.Value <= minNextRun)
-            repeatWindowBase = nowMajor.Value;
-        }
-        else
-        {
-          repeatWindowBase = trigger.StartUtc;
-        }
+        // If LastRun is after minNextRun, find the major occurrence that LastRun belongs to
+        var lastRunMajor = FindMajorOccurrenceForTime(trigger, trigger.LastRun.Value);
+        if (lastRunMajor.HasValue && lastRunMajor.Value <= trigger.LastRun.Value)
+          repeatWindowBase = lastRunMajor.Value;
+      }
+      else if (trigger.StartUtc <= minNextRun)
+      {
+        // Find the major occurrence that minNextRun belongs to
+        var nowMajor = FindMajorOccurrenceForTime(trigger, minNextRun);
+        if (nowMajor.HasValue && nowMajor.Value <= minNextRun)
+          repeatWindowBase = nowMajor.Value;
+      }
+      else
+      {
+        repeatWindowBase = trigger.StartUtc;
+      }
 
-        var nextRepeat = CalculateNextRepeat(trigger, repeatWindowBase, minNextRun, candidateNext.Value);
+      var nextRepeat = CalculateNextRepeat(trigger, repeatWindowBase, minNextRun, candidateNext.Value);
 
-        // Use the earlier of nextRepeat or next major occurrence
-        // But only if nextRepeat is valid and within the repeat window
-        if (nextRepeat.HasValue)
+      // Use the earlier of nextRepeat or next major occurrence
+      // But only if nextRepeat is valid and within the repeat window
+      if (nextRepeat.HasValue)
+      {
+        if (nextRepeat < candidateNext.Value)
         {
-          if (nextRepeat < candidateNext.Value)
-          {
-            candidateNext = nextRepeat;
-          }
-          // If nextRepeat is at or after candidateNext, we'll use candidateNext (the major occurrence)
+          candidateNext = nextRepeat;
         }
+        // If nextRepeat is at or after candidateNext, we'll use candidateNext (the major occurrence)
       }
     }
 
@@ -292,6 +288,11 @@ public static class TriggerDateHelper
     {
       if (candidateNext.Value >= trigger.ExpireUtc.Value)
         return null; // Expired
+    }
+
+    if (candidateNext.HasValue && candidateNext.Value <= minNextRun)
+    {
+      return null;
     }
 
     return candidateNext;

@@ -261,10 +261,8 @@ namespace VPortal.JobScheduler.Module.DomainServices
     /// </summary>
     /// <param name="task"></param>
     /// <returns></returns>
-    public async Task<(DateTime? NextRunTime, TriggerEntity? Trigger)?> GetTaskNextRunTimeAsync(TaskEntity task)
+    public async Task<(DateTime? NextRunTime, TriggerEntity? Trigger)?> GetTaskNextRunTimeAsync(TaskEntity task, List<TriggerEntity> triggers, DateTime? utcNow)
     {
-
-      
       var lastExecution = await _taskExecutionRepository.GetNewestByFinishedAtAsync(task.Id);
       if (
           (lastExecution?.Status == JobSchedulerTaskExecutionStatus.Failed || lastExecution?.Status == JobSchedulerTaskExecutionStatus.Cancelled) &&
@@ -277,36 +275,14 @@ namespace VPortal.JobScheduler.Module.DomainServices
         return (lastExecution.FinishedAtUtc.Value.Add(task.RestartAfterFailInterval.Value), null);
       }
 
-      var triggersToUpdate = new List<TriggerEntity>();
-      var nextRunTimes = new List<(DateTime? NextRunTime, TriggerEntity? trigger)>();
-
-      var triggers = await triggerRepository.GetListAsync(task.Id, true);
-
-      foreach (var taskTrigger in triggers)
+      foreach (var taskTrigger in triggers.Where(t => t.NextRunUtc is null))
       {
-        var nextRunTime = await GetTriggerNextRunTimeAsync(taskTrigger, null);
-        if (taskTrigger.NextRunUtc != nextRunTime)
-        {
-          taskTrigger.NextRunUtc = nextRunTime;
-          triggersToUpdate.Add(taskTrigger);
-        }
-        if (nextRunTime != null)
-        {
-          nextRunTimes.Add((nextRunTime, taskTrigger));
-        }
+        taskTrigger.NextRunUtc = await GetTriggerNextRunTimeAsync(taskTrigger, utcNow);
       }
 
-      if (triggersToUpdate.Count > 0)
-      {
-        await triggerRepository.UpdateManyAsync(triggersToUpdate, true);
-      }
+      var closestNextRunTime = triggers.Where(x => x.NextRunUtc != null).OrderBy(x => x.NextRunUtc).FirstOrDefault();
 
-      if (nextRunTimes.Count == 0)
-      {
-        return null;
-      }
-
-      return nextRunTimes.OrderBy(x => x.NextRunTime ?? DateTime.MaxValue).FirstOrDefault();
+      return (closestNextRunTime?.NextRunUtc, closestNextRunTime);
     }
 
   public async Task<List<DateTime>> GetTriggerUpcomingRunTimes(Guid triggerId, DateTime? fromUtc, int count)

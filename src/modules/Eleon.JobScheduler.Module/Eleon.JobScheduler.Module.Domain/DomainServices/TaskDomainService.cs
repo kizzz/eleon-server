@@ -20,7 +20,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
   {
     private readonly IVportalLogger<TaskDomainService> logger;
     private readonly TriggerDomainService triggerDomainService;
-    private readonly ITriggerRepository _triggerRepository;
+    private readonly ITriggerRepository triggerRepository;
     private readonly ITaskRepository taskRepository;
 
     public TaskDomainService(
@@ -32,7 +32,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
       this.logger = logger;
       this.taskRepository = taskRepository;
       this.triggerDomainService = triggerDomainService;
-      _triggerRepository = triggerRepository;
+      this.triggerRepository = triggerRepository;
     }
 
     public async Task<TaskEntity> GetByIdAsync(Guid id)
@@ -42,7 +42,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
       {
         var task = await taskRepository.GetAsync(id, true);
 
-        var nextTrigger = await _triggerRepository.GetNextRunTriggerAsync(id);
+        var nextTrigger = await triggerRepository.GetNextRunTriggerAsync(id);
         if (nextTrigger != null)
         {
           task.NextRunTimeUtc = nextTrigger.NextRunUtc;
@@ -67,7 +67,7 @@ namespace VPortal.JobScheduler.Module.DomainServices
 
         foreach (var task in result.Value)
         {
-          var nextTrigger = await _triggerRepository.GetNextRunTriggerAsync(task.Id);
+          var nextTrigger = await triggerRepository.GetNextRunTriggerAsync(task.Id);
           if (nextTrigger != null)
           {
             task.NextRunTimeUtc = nextTrigger.NextRunUtc;
@@ -88,15 +88,18 @@ namespace VPortal.JobScheduler.Module.DomainServices
       {
 
         var now = DateTime.UtcNow;
+        var nowBefore = now - TimeSpan.FromSeconds(30);
         var tasks = await taskRepository.GetTasksToStartAsync(now);
 
         var result = new List<(TaskEntity, TriggerEntity)>();
+        var triggersToUpdate = new List<TriggerEntity>();
 
         foreach (var task in tasks)
         {
-          var nextRunTimeTrigger = await triggerDomainService.GetTaskNextRunTimeAsync(task);
+          var triggers = await triggerRepository.GetListAsync(task.Id, true);
+          var nextRunTimeTrigger = await triggerDomainService.GetTaskNextRunTimeAsync(task, triggers, now);
 
-          if (nextRunTimeTrigger.HasValue && nextRunTimeTrigger?.NextRunTime <= now)
+          if (nextRunTimeTrigger.HasValue && nextRunTimeTrigger?.NextRunTime >= nowBefore && nextRunTimeTrigger?.NextRunTime <= now)
           {
             var trigger = nextRunTimeTrigger.Value.Trigger;
             if (trigger != null)
@@ -104,6 +107,24 @@ namespace VPortal.JobScheduler.Module.DomainServices
               await triggerDomainService.UpdateTriggerLastRunTime(trigger.Id, now);
             }
             result.Add((task, trigger));
+          }
+          else
+          {
+            triggersToUpdate.Clear();
+            foreach (var trigger in triggers)
+            {
+              var nextRuntime = await triggerDomainService.GetTriggerNextRunTimeAsync(trigger, now);
+              if (trigger.NextRunUtc != nextRuntime)
+              {
+                trigger.NextRunUtc = nextRuntime;
+                triggersToUpdate.Add(trigger);
+              }
+            }
+
+            if (triggersToUpdate.Count > 0)
+            {
+              await triggerRepository.UpdateManyAsync(triggersToUpdate, true);
+            }
           }
         }
 

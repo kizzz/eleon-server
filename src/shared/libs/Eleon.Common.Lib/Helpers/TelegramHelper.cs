@@ -18,6 +18,10 @@ public static class TelegramHelper
   {
     try
     {
+      if (string.IsNullOrEmpty(botToken) || string.IsNullOrEmpty(chatId))
+      {
+        return false;
+      }
       using var client = new HttpClient();
 
       var sendUri = $"https://api.telegram.org/bot{botToken}/sendMessage";

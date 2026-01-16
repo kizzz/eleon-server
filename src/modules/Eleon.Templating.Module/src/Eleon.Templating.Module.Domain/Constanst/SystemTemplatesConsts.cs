@@ -204,6 +204,59 @@ namespace Eleon.Templating.Module.Eleon.Templating.Module.Domain.Constanst
             TemplateId = "SendMessageNotification",
             IsSystem = true,
           }
+      },
+       {
+          TemplatingDomainConstants.ActionTestFailedImmediately,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionTestFailedImmediately,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "ShouldFail": true,
+              "Message": "Intended immediately fail"
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "TestActionJob",
+            IsSystem = true,
+          }
+      },
+       {
+          TemplatingDomainConstants.ActionTestFailedWithDelay,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionTestFailedWithDelay,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "ShouldFail": true,
+              "Message": "Intended fail with delay 10000 ms",
+              "DelayInMiliseconds": 10000
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "TestActionJob",
+            IsSystem = true,
+          }
+      },
+       {
+          TemplatingDomainConstants.ActionTestWithDelay,
+          new Template(Guid.Empty)
+          {
+            Name = TemplatingDomainConstants.ActionTestWithDelay,
+            Type = TemplateType.Action,
+            TemplateContent = """
+            {
+              "ShouldFail": false,
+              "Message": "Completed with delay for 10000 ms",
+              "DelayInMiliseconds": 10000
+            }
+            """,
+            Format = TextFormat.Json,
+            TemplateId = "TestActionJob",
+            IsSystem = true,
+          }
       }
     };
 

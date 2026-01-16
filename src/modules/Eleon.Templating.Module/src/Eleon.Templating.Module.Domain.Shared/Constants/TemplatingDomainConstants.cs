@@ -15,8 +15,8 @@ namespace Eleon.Templating.Module.Constants
     public const string ActionSendPushNotification = "Send Push Notification";
     public const string ActionSendSmsNotification = "Send SMS Notification";
     public const string ActionSendSocialNotification = "Send Social Notification";
-    public const string ActionSendSystemNotification = "Send System Notification";
-    public const string ActionSendMessageNotification = "Send Message Notification";
+    public const string ActionSendSystemNotification = "Send System Alert";
+    public const string ActionSendMessageNotification = "Send Notification";
 
     public const string NotificationEmail = "Notification Email";
     public const string NotificationTelegram = "Notification Telegram";

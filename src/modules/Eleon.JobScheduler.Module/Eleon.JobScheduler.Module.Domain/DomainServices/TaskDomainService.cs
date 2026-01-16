@@ -86,7 +86,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
     {
       try
       {
-
         var now = DateTime.UtcNow;
         var nowBefore = now - TimeSpan.FromSeconds(30);
         var tasks = await taskRepository.GetTasksToStartAsync(now);
@@ -97,34 +96,30 @@ namespace VPortal.JobScheduler.Module.DomainServices
         foreach (var task in tasks)
         {
           var triggers = await triggerRepository.GetListAsync(task.Id, true);
-          var nextRunTimeTrigger = await triggerDomainService.GetTaskNextRunTimeAsync(task, triggers, now);
+          var nextRuntimeTuple = await triggerDomainService.GetTaskNextRunTimeAsync(task, triggers, now);
+          var nextRunTime = nextRuntimeTuple.NextRunTime;
+          var nextRunTimeTrigger = triggers.Where(x => x.Id == nextRuntimeTuple.TriggerID).FirstOrDefault();
 
-          if (nextRunTimeTrigger.HasValue && nextRunTimeTrigger?.NextRunTime >= nowBefore && nextRunTimeTrigger?.NextRunTime <= now)
+          if (nextRunTimeTrigger != null && nextRunTime.HasValue && nextRunTime >= nowBefore && nextRunTime <= now)
           {
-            var trigger = nextRunTimeTrigger.Value.Trigger;
-            if (trigger != null)
-            {
-              await triggerDomainService.UpdateTriggerLastRunTime(trigger.Id, now);
-            }
-            result.Add((task, trigger));
+            await triggerDomainService.UpdateTriggerLastRunTime(nextRunTimeTrigger.Id, now);
+            result.Add((task, nextRunTimeTrigger));
           }
-          else
-          {
-            triggersToUpdate.Clear();
-            foreach (var trigger in triggers)
-            {
-              var nextRuntime = await triggerDomainService.GetTriggerNextRunTimeAsync(trigger, now);
-              if (trigger.NextRunUtc != nextRuntime)
-              {
-                trigger.NextRunUtc = nextRuntime;
-                triggersToUpdate.Add(trigger);
-              }
-            }
 
-            if (triggersToUpdate.Count > 0)
+          triggersToUpdate.Clear();
+          foreach (var trigger in triggers)
+          {
+            var nextRuntime = await triggerDomainService.GetTriggerNextRunTimeAsync(trigger, now);
+            if (trigger.NextRunUtc != nextRuntime)
             {
-              await triggerRepository.UpdateManyAsync(triggersToUpdate, true);
+              trigger.NextRunUtc = nextRuntime;
+              triggersToUpdate.Add(trigger);
             }
+          }
+
+          if (triggersToUpdate.Count > 0)
+          {
+            await triggerRepository.UpdateManyAsync(triggersToUpdate, true);
           }
         }
 

@@ -100,8 +100,6 @@ namespace VPortal.JobScheduler.Module.DomainServices
       {
         var allTenants = await tenantRepository.GetListAsync();
 
-        var tenantRunErrors = new Dictionary<Guid?, string>();
-
         foreach (var tenant in allTenants.Concat([null]))
         {
           try
@@ -110,27 +108,13 @@ namespace VPortal.JobScheduler.Module.DomainServices
             {
               var tenantDueTasks = await taskService.GetDueTasksAsync();
               var successfullyRunned = await RequestTenantDueTasksExecutionAsync(tenantDueTasks);
-              if (successfullyRunned < tenantDueTasks.Count)
-              {
-                tenantRunErrors[tenant?.Id] = JobSchedulerErrorCodes.FailedToRunTenantDueTasks;
-              }
             }
           }
           catch (Exception e)
           {
             logger.CaptureAndSuppress(new Exception($"Failed to run tenant {tenant?.Id} tasks", e));
-            tenantRunErrors[tenant?.Id] = JobSchedulerErrorCodes.FailedToRunTenantDueTasks;
           }
         }
-
-        var resultMessage = new JobSchedulerDueTasksExecutionsAddedMsg();
-        if (tenantRunErrors.Any())
-        {
-          resultMessage.Success = false;
-          resultMessage.FailedTenantsIds = tenantRunErrors.Select(x => x.Key).ToList();
-          resultMessage.TenantTasksExecutionsAddErrorCodes = tenantRunErrors.Select(x => x.Value).ToList();
-        }
-        await messagePublisher.PublishAsync(resultMessage);
 
         return true;
       }

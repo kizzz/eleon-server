@@ -73,7 +73,7 @@ namespace VPortal.JobScheduler.Module.Repositories
         var dbContext = await GetDbContextAsync();
         var result = await dbContext
             .Tasks
-            .Where(x => x.Status == Common.Module.Constants.JobSchedulerTaskStatus.Ready || (x.AllowForceStop && x.Status == Common.Module.Constants.JobSchedulerTaskStatus.Running))
+            .Where(x => x.IsActive && (x.Status == Common.Module.Constants.JobSchedulerTaskStatus.Ready || (x.AllowForceStop && x.Status == Common.Module.Constants.JobSchedulerTaskStatus.Running)))
             .Where(x => dbContext.Triggers.Any(t =>
                 t.TaskId == x.Id &&
                 t.IsEnabled &&

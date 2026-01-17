@@ -116,6 +116,32 @@ public class TriggerDateHelperSpecialCasesTests
         result.Value.Day.Should().Be(16); // Next day after LastRun
     }
 
+    [Fact]
+    public void GetNextRunTime_RepeatDurationNull_DoesNotRepeat()
+    {
+        // Arrange - RepeatTask enabled but no duration should disable repeats
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+        var lastRun = new DateTime(2024, 1, 1, 10, 5, 0, DateTimeKind.Utc);
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Daily)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithLastRun(lastRun)
+            .WithRepeatTask(true)
+            .WithRepeatInterval(5, TimeUnit.Minutes)
+            .WithIsEnabled(true)
+            .Build();
+
+        var now = lastRun;
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Value.Should().Be(new DateTime(2024, 1, 2, 10, 0, 0, DateTimeKind.Utc));
+    }
+
     #endregion
 
     #region Repeat Interval Edge Cases
@@ -255,24 +281,106 @@ public class TriggerDateHelperSpecialCasesTests
         // Should calculate next repeat correctly (10:07, 10:14, etc.)
     }
 
+    [Fact]
+    public void GetNextRunTime_RepeatIntervalGreaterThanDuration_FallsBackToMajorOccurrence()
+    {
+        // Arrange - Repeat interval greater than duration should disable repeats
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+        var lastRun = new DateTime(2024, 1, 1, 10, 30, 0, DateTimeKind.Utc);
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Daily)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithLastRun(lastRun)
+            .WithRepeatTask(true)
+            .WithRepeatInterval(90, TimeUnit.Minutes)
+            .WithRepeatDuration(60, TimeUnit.Minutes)
+            .WithIsEnabled(true)
+            .Build();
+
+        var now = lastRun;
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Value.Should().Be(new DateTime(2024, 1, 2, 10, 0, 0, DateTimeKind.Utc));
+    }
+
+    [Fact]
+    public void GetNextRunTime_RepeatDurationZero_DoesNotRepeat()
+    {
+        // Arrange - Repeat duration zero should disable repeats
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+        var lastRun = new DateTime(2024, 1, 1, 10, 5, 0, DateTimeKind.Utc);
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Daily)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithLastRun(lastRun)
+            .WithRepeatTask(true)
+            .WithRepeatInterval(5, TimeUnit.Minutes)
+            .WithRepeatDuration(0, TimeUnit.Minutes)
+            .WithIsEnabled(true)
+            .Build();
+
+        var now = lastRun;
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Value.Should().Be(new DateTime(2024, 1, 2, 10, 0, 0, DateTimeKind.Utc));
+    }
+
+    [Fact]
+    public void GetNextRunTime_RepeatWithinWindow_ReturnsNextRepeat()
+    {
+        // Arrange - Repeat within window should return next repeat before next major occurrence
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+        var lastRun = new DateTime(2024, 1, 1, 10, 5, 0, DateTimeKind.Utc);
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Daily)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithLastRun(lastRun)
+            .WithRepeatTask(true)
+            .WithRepeatInterval(15, TimeUnit.Minutes)
+            .WithRepeatDuration(60, TimeUnit.Minutes)
+            .WithIsEnabled(true)
+            .Build();
+
+        var now = new DateTime(2024, 1, 1, 10, 20, 0, DateTimeKind.Utc);
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Value.Should().Be(new DateTime(2024, 1, 1, 10, 30, 0, DateTimeKind.Utc));
+    }
+
     #endregion
 
     #region Monthly Schedule Edge Cases
 
     [Fact]
-    public void GetNextRunTime_Monthly_AllMonthsFilteredOut_ReturnsNull()
+    public void GetNextRunTime_Monthly_EmptyMonthsList_FallsBackToMask_AllMonths()
     {
-        // Arrange - Monthly schedule with all months filtered out
+        // Arrange - Monthly schedule with empty MonthsList falls back to mask
+        // Empty list + mask=0 means all months (default behavior)
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
         var trigger = TriggerTestDataBuilder.Create()
             .WithPeriodType(TimePeriodType.Monthly)
             .WithPeriod(1)
             .WithStartUtc(startDate)
+            .WithMonths(0) // Mask = 0 means all months
             .WithIsEnabled(true)
             .Build();
 
-        // Set months list to empty (all filtered out)
-        trigger.MonthsList = new List<int>(); // Empty list
+        trigger.MonthsList = new List<int>(); // Empty list triggers mask fallback
         trigger.DaysOfMonthList = new List<int> { 1 };
 
         var now = new DateTime(2024, 1, 2, 9, 0, 0, DateTimeKind.Utc);
@@ -281,9 +389,96 @@ public class TriggerDateHelperSpecialCasesTests
         var result = TriggerDateHelper.GetNextRunTime(trigger, now);
 
         // Assert
-        // Should return null quickly due to iteration limit
-        // Note: This might return null or might hit iteration limit
-        // The important thing is it doesn't loop forever
+        // Should return next month (Feb 1) because mask=0 means all months
+        result.Should().NotBeNull();
+        result.Value.Month.Should().Be(2);
+        result.Value.Day.Should().Be(1);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Monthly_EmptyMonthsList_FallsBackToMask_SpecificMonths()
+    {
+        // Arrange - Monthly schedule with empty MonthsList falls back to mask
+        // Mask selects Jan (bit 0), Apr (bit 3), Dec (bit 11)
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Monthly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithMonths((1 << 0) | (1 << 3) | (1 << 11)) // Jan, Apr, Dec
+            .WithIsEnabled(true)
+            .Build();
+
+        trigger.MonthsList = new List<int>(); // Empty list triggers mask fallback
+        trigger.DaysOfMonthList = new List<int> { 15 };
+
+        var now = new DateTime(2024, 1, 20, 9, 0, 0, DateTimeKind.Utc);
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should return Apr 15 (next selected month)
+        result.Should().NotBeNull();
+        result.Value.Month.Should().Be(4);
+        result.Value.Day.Should().Be(15);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Monthly_NoMonthsList_FallsBackToMask()
+    {
+        // Arrange - Monthly schedule with null MonthsList falls back to mask
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Monthly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithMonths((1 << 0) | (1 << 5)) // Jan, Jun
+            .WithIsEnabled(true)
+            .Build();
+
+        trigger.MonthsList = null; // Null triggers mask fallback
+        trigger.DaysOfMonthList = new List<int> { 10 };
+
+        var now = new DateTime(2024, 1, 15, 9, 0, 0, DateTimeKind.Utc);
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should return Jun 10 (next selected month)
+        result.Should().NotBeNull();
+        result.Value.Month.Should().Be(6);
+        result.Value.Day.Should().Be(10);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Monthly_NoCandidates_ReturnsNull()
+    {
+        // Arrange - Monthly schedule with no DOM and no weekday-occurrence config
+        // This should return null quickly without looping
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Monthly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithIsEnabled(true)
+            .Build();
+
+        trigger.DaysOfMonthList = new List<int>(); // Empty
+        trigger.DaysOfMonthLast = false;
+        trigger.DaysOfWeekList = new List<int>(); // Empty
+        trigger.DaysOfWeekOccurencesList = new List<int>(); // Empty
+        trigger.DaysOfWeekOccurencesLast = false;
+
+        var now = new DateTime(2024, 1, 2, 9, 0, 0, DateTimeKind.Utc);
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should return null because no candidates can be generated
+        result.Should().BeNull();
     }
 
     [Fact]
@@ -492,6 +687,199 @@ public class TriggerDateHelperSpecialCasesTests
         result.Value.Day.Should().Be(8); // Next Monday (+7 days)
         result.Value.DayOfWeek.Should().Be(DayOfWeek.Monday);
         result.Value.Hour.Should().Be(10);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Weekly_StartUtcOnDisallowedWeekday_ReturnsNextAllowedWeekday()
+    {
+        // Arrange - Weekly schedule where StartUtc is NOT on an allowed weekday
+        // StartUtc is Tuesday, but schedule is Mondays only
+        var startDate = new DateTime(2024, 1, 2, 10, 0, 0, DateTimeKind.Utc); // Tuesday
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Weekly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithIsEnabled(true)
+            .Build();
+
+        trigger.DaysOfWeekList = new List<int> { 1 }; // Monday only
+
+        // Now is before StartUtc
+        var now = new DateTime(2024, 1, 1, 9, 0, 0, DateTimeKind.Utc); // Monday before StartUtc
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should return next allowed weekday (Monday) after StartUtc, not StartUtc itself
+        result.Should().NotBeNull();
+        result.Value.DayOfWeek.Should().Be(DayOfWeek.Monday);
+        result.Value.Day.Should().Be(8); // Next Monday after StartUtc (Jan 2)
+        result.Value.Hour.Should().Be(10);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Weekly_EmptyDaysOfWeekList_FallsBackToMask_SpecificDays()
+    {
+        // Arrange - Weekly schedule with empty DaysOfWeekList falls back to mask
+        // Mask selects Monday (bit 0) and Wednesday (bit 2)
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc); // Monday
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Weekly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithDaysOfWeek((1 << 0) | (1 << 2)) // Mon, Wed
+            .WithIsEnabled(true)
+            .Build();
+
+        trigger.DaysOfWeekList = new List<int>(); // Empty list triggers mask fallback
+
+        var now = new DateTime(2024, 1, 3, 9, 0, 0, DateTimeKind.Utc); // Wednesday
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should return next Monday (next week)
+        result.Should().NotBeNull();
+        result.Value.DayOfWeek.Should().Be(DayOfWeek.Monday);
+        result.Value.Day.Should().Be(8);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Weekly_NullDaysOfWeekList_FallsBackToMask()
+    {
+        // Arrange - Weekly schedule with null DaysOfWeekList falls back to mask
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc); // Monday
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Weekly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithDaysOfWeek((1 << 4) | (1 << 6)) // Fri, Sun
+            .WithIsEnabled(true)
+            .Build();
+
+        trigger.DaysOfWeekList = null; // Null triggers mask fallback
+
+        var now = new DateTime(2024, 1, 2, 9, 0, 0, DateTimeKind.Utc); // Tuesday
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should return Friday (next selected day)
+        result.Should().NotBeNull();
+        result.Value.DayOfWeek.Should().Be(DayOfWeek.Friday);
+        result.Value.Day.Should().Be(5);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Weekly_MaskZero_AllDays()
+    {
+        // Arrange - Weekly schedule with mask=0 means all days
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc); // Monday
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Weekly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithDaysOfWeek(0) // Mask = 0 means all days
+            .WithIsEnabled(true)
+            .Build();
+
+        trigger.DaysOfWeekList = new List<int>(); // Empty list triggers mask fallback
+
+        var now = new DateTime(2024, 1, 3, 9, 0, 0, DateTimeKind.Utc); // Wednesday
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should return next day (Thursday) because all days are allowed
+        result.Should().NotBeNull();
+        result.Value.Day.Should().Be(4); // Thursday
+        result.Value.DayOfWeek.Should().Be(DayOfWeek.Thursday);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Weekly_InvalidISOValues_Ignored()
+    {
+        // Arrange - Weekly schedule with invalid ISO values (0, 8, 14) should be ignored
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc); // Monday
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Weekly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithIsEnabled(true)
+            .Build();
+
+        // Invalid values: 0, 8, 14 should be ignored; valid: 1 (Monday), 3 (Wednesday)
+        trigger.DaysOfWeekList = new List<int> { 0, 1, 8, 3, 14 }; // Invalid values mixed with valid
+
+        var now = new DateTime(2024, 1, 2, 9, 0, 0, DateTimeKind.Utc); // Tuesday
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should use only valid values (Mon, Wed), so next should be Wednesday
+        result.Should().NotBeNull();
+        result.Value.DayOfWeek.Should().Be(DayOfWeek.Wednesday);
+        result.Value.Day.Should().Be(3);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Monthly_WeekdayModel_EmptyDaysOfWeekList_FallsBackToMask()
+    {
+        // Arrange - Monthly weekday model with empty DaysOfWeekList falls back to mask
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc); // Monday
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Monthly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithDaysOfWeek((1 << 0) | (1 << 2)) // Mon, Wed
+            .WithIsEnabled(true)
+            .Build();
+
+        trigger.DaysOfWeekList = new List<int>(); // Empty triggers mask fallback
+        trigger.DaysOfWeekOccurencesList = new List<int> { 1 }; // First occurrence
+
+        var now = new DateTime(2024, 1, 2, 9, 0, 0, DateTimeKind.Utc); // Tuesday
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should return first Wednesday of January (next selected weekday)
+        result.Should().NotBeNull();
+        result.Value.DayOfWeek.Should().Be(DayOfWeek.Wednesday);
+        result.Value.Month.Should().Be(1);
+    }
+
+    [Fact]
+    public void GetNextRunTime_Monthly_WeekdayModel_MaskZero_AllWeekdays()
+    {
+        // Arrange - Monthly weekday model with mask=0 means all weekdays
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc); // Monday
+        var trigger = TriggerTestDataBuilder.Create()
+            .WithPeriodType(TimePeriodType.Monthly)
+            .WithPeriod(1)
+            .WithStartUtc(startDate)
+            .WithDaysOfWeek(0) // Mask = 0 means all weekdays
+            .WithIsEnabled(true)
+            .Build();
+
+        trigger.DaysOfWeekList = new List<int>(); // Empty triggers mask fallback
+        trigger.DaysOfWeekOccurencesList = new List<int> { 1 }; // First occurrence
+
+        var now = new DateTime(2024, 1, 2, 9, 0, 0, DateTimeKind.Utc); // Tuesday
+
+        // Act
+        var result = TriggerDateHelper.GetNextRunTime(trigger, now);
+
+        // Assert
+        // Should return first occurrence of any weekday (should be valid)
+        result.Should().NotBeNull();
+        result.Value.Month.Should().Be(1);
     }
 
     #endregion

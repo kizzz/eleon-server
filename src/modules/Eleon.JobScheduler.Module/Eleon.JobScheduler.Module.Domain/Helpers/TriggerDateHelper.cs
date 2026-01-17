@@ -9,7 +9,7 @@ namespace EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Domai
 
 /// <summary>
 /// Helper class for calculating trigger next run times based on schedules.
-/// 
+///
 /// <para><strong>Performance Characteristics:</strong></para>
 /// <list type="bullet">
 /// <item><description><strong>Daily schedules:</strong> O(1) - Direct calculation using period arithmetic</description></item>
@@ -17,38 +17,38 @@ namespace EleonsoftModuleCollector.JobScheduler.Module.JobScheduler.Module.Domai
 /// <item><description><strong>Monthly schedules:</strong> O(n) where n is the number of months searched (max 1200 iterations = 100 years)</description></item>
 /// <item><description><strong>Repeat intervals:</strong> O(1) - Direct calculation using Math.Ceiling</description></item>
 /// </list>
-/// 
+///
 /// <para><strong>Maximum Recommended Values:</strong></para>
 /// <list type="bullet">
-/// <item><description><strong>Period:</strong> Recommended maximum of 1000 days for Daily, 52 weeks for Weekly, 120 months (10 years) for Monthly. 
+/// <item><description><strong>Period:</strong> Recommended maximum of 1000 days for Daily, 52 weeks for Weekly, 120 months (10 years) for Monthly.
 /// Larger values are supported but may impact performance for Monthly schedules due to iteration limits.</description></item>
-/// <item><description><strong>RepeatInterval:</strong> Validated range: 5 minutes to 100 years (3650 days). 
+/// <item><description><strong>RepeatInterval:</strong> Validated range: 5 minutes to 100 years (3650 days).
 /// Recommended maximum: 1 year for optimal performance.</description></item>
-/// <item><description><strong>RepeatDuration:</strong> Validated range: 5 minutes to 100 years (3650 days). 
+/// <item><description><strong>RepeatDuration:</strong> Validated range: 5 minutes to 100 years (3650 days).
 /// Must be greater than or equal to RepeatInterval.</description></item>
 /// </list>
-/// 
+///
 /// <para><strong>Precision Considerations:</strong></para>
 /// <list type="bullet">
-/// <item><description><strong>TimeSpan precision:</strong> All time intervals use TimeSpan which has millisecond precision. 
+/// <item><description><strong>TimeSpan precision:</strong> All time intervals use TimeSpan which has millisecond precision.
 /// Calculations use TotalMilliseconds for interval arithmetic to maintain precision.</description></item>
-/// <item><description><strong>Floating point arithmetic:</strong> For very small intervals (close to 5-minute minimum), 
+/// <item><description><strong>Floating point arithmetic:</strong> For very small intervals (close to 5-minute minimum),
 /// floating point precision is handled by adding one additional interval if the calculated value equals or is before the minimum.</description></item>
-/// <item><description><strong>DateTime precision:</strong> All dates are trimmed to minute precision (seconds/milliseconds set to 0) 
+/// <item><description><strong>DateTime precision:</strong> All dates are trimmed to minute precision (seconds/milliseconds set to 0)
 /// for consistency and to avoid sub-minute scheduling issues.</description></item>
 /// </list>
-/// 
+///
 /// <para><strong>Timezone and UTC Requirements:</strong></para>
 /// <list type="bullet">
-/// <item><description><strong>All dates must be in UTC:</strong> All DateTime values (StartUtc, ExpireUtc, LastRun, nowUtc parameter) 
+/// <item><description><strong>All dates must be in UTC:</strong> All DateTime values (StartUtc, ExpireUtc, LastRun, nowUtc parameter)
 /// must use DateTimeKind.Utc. The helper does not perform timezone conversions.</description></item>
-/// <item><description><strong>No DST handling:</strong> Since all calculations use UTC, Daylight Saving Time (DST) transitions 
-/// are not a concern. If local time support is ever needed, DST transitions would need special handling 
+/// <item><description><strong>No DST handling:</strong> Since all calculations use UTC, Daylight Saving Time (DST) transitions
+/// are not a concern. If local time support is ever needed, DST transitions would need special handling
 /// (e.g., 2 AM occurrences might not exist or occur twice during DST transitions).</description></item>
-/// <item><description><strong>Leap years:</strong> All date calculations use DateTime.DaysInMonth which correctly handles leap years. 
+/// <item><description><strong>Leap years:</strong> All date calculations use DateTime.DaysInMonth which correctly handles leap years.
 /// No hardcoded month lengths are used.</description></item>
 /// </list>
-/// 
+///
 /// <para><strong>Performance Optimizations:</strong></para>
 /// <list type="bullet">
 /// <item><description>Reflection results are cached to reduce overhead when accessing TriggerEntity properties</description></item>
@@ -305,6 +305,10 @@ public static class TriggerDateHelper
   private static DateTime? CalculateNextRepeat(TriggerEntity trigger, DateTime repeatWindowBase, DateTime minNextRun, DateTime nextMajorOccurrence)
   {
     if (!trigger.RepeatTask || trigger.RepeatInterval <= TimeSpan.Zero)
+      return null;
+
+    // RepeatDuration is required to enable repeats; without it, behave as non-repeating
+    if (!trigger.RepeatDuration.HasValue || trigger.RepeatDuration.Value <= TimeSpan.Zero)
       return null;
 
     // Defensive check: if RepeatInterval > RepeatDuration, this is invalid configuration
